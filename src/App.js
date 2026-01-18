@@ -265,7 +265,7 @@ const content = {
     couple: { name1: "Marijo", name2: "Juanca", full1: "Maria Jose Licona", full2: "Juan Carlos Moreno" },
     date: { full: "1 de Octubre, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, España", scroll: "Desliza para descubrir" },
-    nav: ["RSVP", "Itinerario", "Hospedaje", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
+    nav: ["Confirmar", "Itinerario", "Hospedaje", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
     story: { title: "Nuestra Historia", subtitle: "6 años de amor", intro: "Algo en todos estos años dejó macerar la forma de amor que sentimos por el otro... lo que nos permite elegirnos día a día de forma libre y poder mirarnos y acompañarnos con más amor, aceptación, paciencia, apañe y ternura.",
       items: [
         { year: "2019", title: "Nos Conocimos", text: "El destino nos cruzó hace 6 años. Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "mjc_couple_portrait.jpg" },
@@ -1069,12 +1069,12 @@ export default function Wedding() {
         </div>
       </nav>
 
-      <section className="min-h-screen flex flex-col items-center justify-center pt-16 md:pt-16 px-4 md:px-6 relative overflow-hidden">
+      <section className="min-h-screen flex flex-col items-center justify-start pt-20 md:pt-16 md:justify-center px-4 md:px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="center 40%" /></div>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
         <div className="relative z-10 flex flex-col items-center">
-          <p className="text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-4 md:mb-6 uppercase" style={{ color: C.blueLight }}>{t.hero.subtitle}</p>
-          <CoupleWordmark className="w-[180px] md:w-[320px] mb-2 md:mb-4" mobileScale={2.2} desktopScale={4} />
+          <p className="text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-2 md:mb-6 uppercase" style={{ color: C.blueLight }}>{t.hero.subtitle}</p>
+          <CoupleWordmark className="w-[320px] md:w-[360px] mb-6 md:mb-4" mobileScale={4} desktopScale={4.5} />
           <p className="text-lg md:text-2xl mb-1" style={{ color: C.blue }}>{t.date.full}</p>
           <p className="text-sm md:text-base mb-6 md:mb-8" style={{ color: C.blueLight, fontStyle: 'italic' }}>{t.hero.location}</p>
           <div className="flex gap-3 md:gap-8 mb-6 md:mb-8">
