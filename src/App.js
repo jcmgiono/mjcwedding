@@ -5,21 +5,21 @@ const C = { blue: '#5B7B94', blueDark: '#4A6A82', blueLight: '#7A9BB5', bluePale
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyfRhJ1OTWeCgiEg1qzzEh4UYBwdUX_lNl6EE_4HD42Cim_B_FOC2XtuYaHEWwUWH9b/exec';
 
 const Icons = {
-  image: () => (
+  Image: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <circle cx="8.5" cy="8.5" r="1.5" />
       <path d="M21 15l-5-5L5 21" />
     </svg>
   ),
-  sunset: () => (
+  Sunset: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">
       <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
       <path d="M12 8a4 4 0 100 8 4 4 0 000-8z" />
       <path d="M4 19h16" />
     </svg>
   ),
-  church: () => (
+  Church: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">
       <path d="M12 2v4m0 0l3 2v3H9V8l3-2z" />
       <path d="M6 11h12v10H6z" />
@@ -27,25 +27,25 @@ const Icons = {
       <path d="M12 6V2M10 4h4" />
     </svg>
   ),
-  sparkles: () => (
+  Sparkles: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">
       <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
       <path d="M5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1z" />
       <path d="M18 14l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5L16 16l1.5-.5.5-1.5z" />
     </svg>
   ),
-  sun: () => (
+  Sun: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">
       <circle cx="12" cy="12" r="4" />
       <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636" />
     </svg>
   ),
-  plane: () => (
+  Plane: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">
       <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
     </svg>
   ),
-  train: () => (
+  Train: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">
       <rect x="4" y="3" width="16" height="16" rx="2" />
       <path d="M4 11h16M12 3v8M8 19l-2 3M16 19l2 3" />
@@ -53,7 +53,7 @@ const Icons = {
       <circle cx="16" cy="15" r="1" />
     </svg>
   ),
-  car: () => (
+  Car: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8">
       <path d="M5 17h14v-5l-2-4H7l-2 4v5z" />
       <circle cx="7.5" cy="17.5" r="1.5" />
@@ -61,46 +61,46 @@ const Icons = {
       <path d="M5 12h14" />
     </svg>
   ),
-  gift: () => (
+  Gift: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-12 h-12">
       <rect x="3" y="8" width="18" height="13" rx="2" />
       <path d="M12 8v13M3 12h18" />
       <path d="M12 8c-2-2-5-2.5-5 0s3 2.5 5 2.5c2 0 5-.5 5-2.5s-3-2-5 0z" />
     </svg>
   ),
-  celebration: () => (
+  Celebration: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-16 h-16">
       <path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7l2-7z" />
     </svg>
   ),
-  phone: () => (
+  Phone: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
       <rect x="5" y="2" width="14" height="20" rx="2" />
       <path d="M12 18h.01" />
     </svg>
   ),
-  location: () => (
+  Location: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 inline">
       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
       <circle cx="12" cy="9" r="2.5" />
     </svg>
   ),
-  heart: () => (
+  Heart: () => (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 inline text-red-400">
       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
     </svg>
   ),
-  send: () => (
+  Send: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
       <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
     </svg>
   ),
-  whatsapp: () => (
+  Whatsapp: () => (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
   ),
-  imessage: () => (
+  Imessage: () => (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
       <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.546 20.2A1.5 1.5 0 003.8 21.454l3.032-.892A9.96 9.96 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
     </svg>
@@ -115,7 +115,7 @@ const Img = ({ src, alt, className = "", style = {}, position = "center" }) => {
     return (
       <div className={`flex items-center justify-center bg-gray-200 text-gray-500 ${className}`} style={style}>
         <div className="text-center p-4">
-          <Icons.image />
+          <Icons.Image />
           <p className="text-xs mt-2 break-all">{src}</p>
         </div>
       </div>
@@ -169,18 +169,18 @@ const content = {
       title: "Código de Vestimenta", subtitle: "Qué Ponerse en Cada Evento",
       note: "Octubre en Córdoba: 20-25°C de día, noches frescas (15-18°C). Recomendamos traer una chaqueta ligera.",
       codes: [
-        { event: "Rompe Hielo", code: "Smart Casual", desc: "Casual elegante. Lino, vestidos de verano, mocasines.", icon: "sunset", colors: ["Tonos tierra", "Pasteles", "Blanco"] },
-        { event: "Ceremonia", code: "Formal", desc: "Trajes, vestidos de cóctel. Hombros cubiertos para las damas.", icon: "church", colors: ["Colores sobrios", "Evitar blanco/crudo"] },
-        { event: "Celebración", code: "Etiqueta Opcional", desc: "Vestidos largos, trajes oscuros. Zapatos cómodos para bailar.", icon: "sparkles", colors: ["Elegancia nocturna"] },
-        { event: "Brunch", code: "Casual", desc: "Relax total. Algo cómodo para un brunch tranquilo.", icon: "sun", colors: ["Lo que sea cómodo"] }
+        { event: "Rompe Hielo", code: "Smart Casual", desc: "Casual elegante. Lino, vestidos de verano, mocasines.", icon: "Sunset", colors: ["Tonos tierra", "Pasteles", "Blanco"] },
+        { event: "Ceremonia", code: "Formal", desc: "Trajes, vestidos de cóctel. Hombros cubiertos para las damas.", icon: "Church", colors: ["Colores sobrios", "Evitar blanco/crudo"] },
+        { event: "Celebración", code: "Etiqueta Opcional", desc: "Vestidos largos, trajes oscuros. Zapatos cómodos para bailar.", icon: "Sparkles", colors: ["Elegancia nocturna"] },
+        { event: "Brunch", code: "Casual", desc: "Relax total. Algo cómodo para un brunch tranquilo.", icon: "Sun", colors: ["Lo que sea cómodo"] }
       ]
     },
     travel: {
       title: "Cómo Llegar a Córdoba", subtitle: "Tu guía de viaje",
       sections: [
-        { icon: "plane", title: "Por Avión", text: "Aeropuertos más cercanos: Sevilla (SVQ) a 1.5h, Málaga (AGP) a 2h.", tips: ["Vuelos directos desde Europa", "Reserva con anticipación", "Alquiler de coche recomendado"] },
-        { icon: "train", title: "Por Tren", text: "El AVE conecta Córdoba con Madrid en 1h 45min y con Sevilla en 45min.", tips: ["Reserva en renfe.com", "Estación céntrica", "Muy cómodo y puntual"] },
-        { icon: "car", title: "Por Coche", text: "Bien conectada por autopista. Desde Sevilla (1.5h), Madrid (4h), Málaga (2h).", tips: ["Parking difícil en centro", "Hoteles con parking privado", "GPS recomendado"] }
+        { icon: "Plane", title: "Por Avión", text: "Aeropuertos más cercanos: Sevilla (SVQ) a 1.5h, Málaga (AGP) a 2h.", tips: ["Vuelos directos desde Europa", "Reserva con anticipación", "Alquiler de coche recomendado"] },
+        { icon: "Train", title: "Por Tren", text: "El AVE conecta Córdoba con Madrid en 1h 45min y con Sevilla en 45min.", tips: ["Reserva en renfe.com", "Estación céntrica", "Muy cómodo y puntual"] },
+        { icon: "Car", title: "Por Coche", text: "Bien conectada por autopista. Desde Sevilla (1.5h), Madrid (4h), Málaga (2h).", tips: ["Parking difícil en centro", "Hoteles con parking privado", "GPS recomendado"] }
       ]
     },
     gifts: {
@@ -256,18 +256,18 @@ const content = {
       title: "Dress Code", subtitle: "What to Wear at Each Event",
       note: "October in Córdoba: 68-77°F (20-25°C) days, cool evenings (59-64°F). Bring a light jacket.",
       codes: [
-        { event: "Ice Breaker", code: "Smart Casual", desc: "Elevated casual. Linen, sundresses, loafers.", icon: "sunset", colors: ["Earth tones", "Pastels", "White"] },
-        { event: "Ceremony", code: "Formal", desc: "Suits, cocktail dresses. Shoulders covered for ladies.", icon: "church", colors: ["Muted colors", "Avoid white/ivory"] },
-        { event: "Celebration", code: "Black Tie Optional", desc: "Gowns, dark suits. Comfy shoes for dancing.", icon: "sparkles", colors: ["Evening elegance"] },
-        { event: "Brunch", code: "Casual", desc: "Total relaxation. Something comfy for a chill brunch.", icon: "sun", colors: ["Whatever's comfortable"] }
+        { event: "Ice Breaker", code: "Smart Casual", desc: "Elevated casual. Linen, sundresses, loafers.", icon: "Sunset", colors: ["Earth tones", "Pastels", "White"] },
+        { event: "Ceremony", code: "Formal", desc: "Suits, cocktail dresses. Shoulders covered for ladies.", icon: "Church", colors: ["Muted colors", "Avoid white/ivory"] },
+        { event: "Celebration", code: "Black Tie Optional", desc: "Gowns, dark suits. Comfy shoes for dancing.", icon: "Sparkles", colors: ["Evening elegance"] },
+        { event: "Brunch", code: "Casual", desc: "Total relaxation. Something comfy for a chill brunch.", icon: "Sun", colors: ["Whatever's comfortable"] }
       ]
     },
     travel: {
       title: "Getting to Córdoba", subtitle: "Your travel guide",
       sections: [
-        { icon: "plane", title: "By Air", text: "Nearest airports: Seville (SVQ) 1.5h, Málaga (AGP) 2h.", tips: ["Direct flights from Europe", "Book in advance", "Car rental recommended"] },
-        { icon: "train", title: "By Train", text: "AVE high-speed connects Córdoba with Madrid in 1h 45min and Seville in 45min.", tips: ["Book at renfe.com", "Central station", "Very comfortable"] },
-        { icon: "car", title: "By Car", text: "Well connected by highway. From Seville (1.5h), Madrid (4h), Málaga (2h).", tips: ["Parking tricky downtown", "Hotels have parking", "GPS recommended"] }
+        { icon: "Plane", title: "By Air", text: "Nearest airports: Seville (SVQ) 1.5h, Málaga (AGP) 2h.", tips: ["Direct flights from Europe", "Book in advance", "Car rental recommended"] },
+        { icon: "Train", title: "By Train", text: "AVE high-speed connects Córdoba with Madrid in 1h 45min and Seville in 45min.", tips: ["Book at renfe.com", "Central station", "Very comfortable"] },
+        { icon: "Car", title: "By Car", text: "Well connected by highway. From Seville (1.5h), Madrid (4h), Málaga (2h).", tips: ["Parking tricky downtown", "Hotels have parking", "GPS recommended"] }
       ]
     },
     gifts: {
@@ -306,13 +306,13 @@ const content = {
 };
 
 const getDressIcon = (iconName) => {
-  const iconMap = { sunset: Icons.sunset, church: Icons.church, sparkles: Icons.sparkles, sun: Icons.sun };
+  const iconMap = { Sunset: Icons.Sunset, Church: Icons.Church, Sparkles: Icons.Sparkles, Sun: Icons.Sun };
   const IconComponent = iconMap[iconName];
   return IconComponent ? <IconComponent /> : null;
 };
 
 const getTravelIcon = (iconName) => {
-  const iconMap = { plane: Icons.plane, train: Icons.train, car: Icons.car };
+  const iconMap = { Plane: Icons.Plane, Train: Icons.Train, Car: Icons.Car };
   const IconComponent = iconMap[iconName];
   return IconComponent ? <IconComponent /> : null;
 };
@@ -346,7 +346,7 @@ export default function Wedding() {
 
   const submitRSVP = async () => {
     if (!form.name.trim()) return;
-    try { await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ ...form, allergies: form.allergies.join(', '), timestamp: new Date().toISOString(), lang }) }); } catch (e) {}
+    try { await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ ...form, allergies: form.allergies.join(', '), timestamp: new Date().toISOString(), lang }) }); } catch (e) { console.log(e); }
     setRsvpDone(true);
   };
 
@@ -362,18 +362,15 @@ export default function Wedding() {
           {t.lang}
         </button>
 
-        {/* Envelope Flap */}
         <div className="absolute top-0 left-0 right-0 origin-top" style={{ height: '52vh', zIndex: stage >= 1 ? 5 : 30, transform: stage >= 1 ? 'perspective(1200px) rotateX(-178deg)' : 'perspective(1200px) rotateX(0deg)', transition: 'transform 1.4s cubic-bezier(0.32, 0, 0.67, 0)', transformStyle: 'preserve-3d' }}>
           <div className="absolute inset-0" style={{ background: 'linear-gradient(178deg, #7A9BB8 0%, #6B8CA8 15%, #5B7B94 40%, #5A7A93 60%, #6B8BA5 85%, #7A9AB5 100%)', clipPath: 'polygon(0 0, 100% 0, 50% 100%)', backfaceVisibility: 'hidden' }} />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(5deg, #3A5565 0%, #4A6575 50%, #3D5868 100%)', clipPath: 'polygon(0 0, 100% 0, 50% 100%)', backfaceVisibility: 'hidden', transform: 'rotateX(180deg)' }} />
         </div>
 
-        {/* Envelope Pocket */}
         <div className="absolute bottom-0 left-0 right-0" style={{ height: '35vh', zIndex: 18 }}>
           <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg, #3A5565 0%, #4A6575 30%, #5A7585 60%, #5B7B94 85%, transparent 100%)' }} />
         </div>
 
-        {/* Invitation Card */}
         <div className="absolute left-3 right-3 md:left-[15%] md:right-[15%] rounded-sm overflow-hidden" style={{ top: stage >= 2 ? '5%' : '58%', bottom: stage >= 2 ? '5%' : '18%', opacity: stage >= 1 ? 1 : 0, zIndex: 15, transition: 'all 1.8s cubic-bezier(0.16, 1, 0.3, 1)', boxShadow: stage >= 2 ? '0 50px 100px rgba(0,0,0,0.5)' : '0 10px 40px rgba(0,0,0,0.3)', backgroundColor: '#FAF9F6' }}>
           <div className="relative h-full flex flex-col items-center justify-center p-6 md:p-10">
             <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-48 h-40 md:w-64 md:h-52 rounded-lg mb-4" />
@@ -391,7 +388,6 @@ export default function Wedding() {
           </div>
         </div>
 
-        {/* Wax Seal */}
         <div className="absolute left-1/2 -translate-x-1/2 z-40" style={{ top: 'calc(52vh - 65px)' }}>
           <div onClick={openEnvelope} onMouseEnter={() => setSealHover(true)} onMouseLeave={() => setSealHover(false)} className={`relative cursor-pointer ${stage >= 1 ? 'pointer-events-none' : ''}`} style={{ transform: stage >= 1 ? 'scale(0) rotate(180deg)' : sealHover ? 'scale(1.05)' : 'scale(1)', opacity: stage >= 1 ? 0 : 1, transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}>
             <div className="relative w-32 h-32 md:w-36 md:h-36 rounded-full flex items-center justify-center" style={{ background: 'radial-gradient(circle at 50% 50%, #D4C4A8 0%, #C4B498 30%, #B8A888 60%, #A89878 80%, #988868 100%)', boxShadow: '0 12px 40px rgba(0,0,0,0.4), inset 0 3px 12px rgba(255,255,255,0.35), inset 0 -4px 15px rgba(0,0,0,0.25)' }}>
@@ -400,7 +396,6 @@ export default function Wedding() {
           </div>
         </div>
 
-        {/* Invitation Text */}
         <div className={`absolute left-0 right-0 text-center px-8 ${stage >= 1 ? 'opacity-0 translate-y-10' : ''}`} style={{ top: 'calc(52vh + 85px)', zIndex: 35, transition: 'all 0.8s ease' }}>
           <p className="text-xl md:text-2xl mb-1" style={{ color: C.goldLight, fontFamily: 'Georgia, serif', fontStyle: 'italic', textShadow: '0 2px 15px rgba(0,0,0,0.4)' }}>{t.envelope.exclusive}</p>
           <p className="text-2xl md:text-3xl" style={{ color: C.goldLight, fontFamily: 'Georgia, serif', fontStyle: 'italic', textShadow: '0 2px 15px rgba(0,0,0,0.4)' }}>{t.envelope.forYou}</p>
@@ -411,10 +406,8 @@ export default function Wedding() {
     );
   }
 
-  // MAIN SITE
   return (
     <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: 'Georgia, serif' }}>
-      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md" style={{ backgroundColor: 'rgba(250,248,245,0.92)', borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <span className="text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>M & J</span>
@@ -426,7 +419,6 @@ export default function Wedding() {
         </div>
       </nav>
 
-      {/* Hero */}
       <section className="min-h-screen flex flex-col items-center justify-center pt-16 px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="bottom" /></div>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
@@ -451,10 +443,8 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Portrait Banner */}
       <section className="py-4"><Img src="mjc_couple_portrait.jpg" alt="Engagement" className="w-full h-[500px] md:h-[700px]" position="center 60%" /></section>
 
-      {/* Story */}
       <section id="s1" className="py-20 px-6" style={{ backgroundColor: C.creamDark }}>
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.story.title}</h2>
@@ -473,15 +463,13 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Ring Image */}
       <section className="relative h-64 md:h-80">
         <Img src="mjc_ring_bw.jpg" alt="Ring" className="w-full h-full" />
         <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(91,123,148,0.4)' }}>
-          <p className="text-white text-2xl md:text-4xl flex items-center gap-2" style={{ fontStyle: 'italic' }}>Sí, quiero <Icons.heart /></p>
+          <p className="text-white text-2xl md:text-4xl flex items-center gap-2" style={{ fontStyle: 'italic' }}>Sí, quiero <Icons.Heart /></p>
         </div>
       </section>
 
-      {/* Itinerary */}
       <section id="s2" className="py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.itinerary.title}</h2>
@@ -498,7 +486,7 @@ export default function Wedding() {
               <p className="text-sm mb-4" style={{ color: C.blueLight }}>{e.desc}</p>
               <div className="flex flex-wrap gap-2">
                 <span className="px-4 py-1.5 rounded-full text-xs text-white" style={{ backgroundColor: C.blue }}>{e.dress}</span>
-                <span className="px-4 py-1.5 rounded-full text-xs flex items-center gap-1" style={{ backgroundColor: 'rgba(91,123,148,0.1)', color: C.blueLight }}><Icons.location /> {e.venue}</span>
+                <span className="px-4 py-1.5 rounded-full text-xs flex items-center gap-1" style={{ backgroundColor: 'rgba(91,123,148,0.1)', color: C.blueLight }}><Icons.Location /> {e.venue}</span>
                 {e.tbd && <span className="px-4 py-1.5 rounded-full text-xs" style={{ backgroundColor: C.gold, color: '#5C4D3C' }}>{lang === 'es' ? 'Detalles pronto' : 'Details coming'}</span>}
               </div>
             </div>
@@ -506,7 +494,6 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Córdoba Image */}
       <section className="relative h-48 md:h-72">
         <Img src="mjc_cordoba_flowers.jpg" alt="Córdoba" className="w-full h-full" />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 50%)' }} />
@@ -516,7 +503,6 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Hotels */}
       <section id="s3" className="py-20 px-6" style={{ backgroundColor: C.creamDark }}>
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.hotels.title}</h2>
@@ -542,7 +528,6 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Dress Code */}
       <section className="py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.dress.title}</h2>
@@ -562,7 +547,6 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Travel */}
       <section className="py-20 px-6 relative" style={{ backgroundColor: C.blue }}>
         <div className="absolute inset-0 opacity-20"><Img src="mjc_cordoba_mezquita.jpg" alt="Mezquita" className="w-full h-full" /></div>
         <div className="relative z-10 max-w-3xl mx-auto">
@@ -581,10 +565,9 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Gifts */}
       <section id="s4" className="py-20 px-6" style={{ backgroundColor: C.blue }}>
         <div className="max-w-xl mx-auto text-center">
-          <div className="flex justify-center text-white mb-4"><Icons.gift /></div>
+          <div className="flex justify-center text-white mb-4"><Icons.Gift /></div>
           <h2 className="text-3xl md:text-4xl mt-4 mb-2 text-white" style={{ fontStyle: 'italic' }}>{t.gifts.title}</h2>
           <p className="text-white/70 text-sm mb-4" style={{ fontStyle: 'italic' }}>{t.gifts.subtitle}</p>
           <p className="text-white/80 text-sm mb-8">{t.gifts.msg}</p>
@@ -601,12 +584,11 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* RSVP */}
       <section id="s0" className="py-20 px-6">
         <div className="max-w-md mx-auto">
           {rsvpDone ? (
             <div className="text-center py-10">
-              <div className="flex justify-center" style={{ color: C.gold }}><Icons.celebration /></div>
+              <div className="flex justify-center" style={{ color: C.gold }}><Icons.Celebration /></div>
               <h2 className="text-3xl mt-4 mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.rsvp.thanks.title}</h2>
               <p className="text-sm mb-4" style={{ color: C.blueLight }}>{t.rsvp.thanks.subtitle}</p>
               <p className="text-sm mb-8" style={{ color: C.blueLight }}>{t.rsvp.thanks.msg}</p>
@@ -665,14 +647,13 @@ export default function Wedding() {
                   <label className="block text-xs mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.msg}</label>
                   <textarea value={form.msg} onChange={e => setForm({ ...form, msg: e.target.value })} className="w-full px-4 py-3 rounded-xl border bg-white text-sm resize-none" style={{ borderColor: '#E8E4DF' }} rows={3} />
                 </div>
-                <button onClick={submitRSVP} className="w-full py-4 rounded-full text-white flex items-center justify-center gap-2 text-sm tracking-wider hover:scale-[1.02] transition-transform" style={{ backgroundColor: C.blue, boxShadow: '0 4px 20px rgba(91,123,148,0.3)' }}><Icons.send /> {t.rsvp.fields.submit}</button>
+                <button onClick={submitRSVP} className="w-full py-4 rounded-full text-white flex items-center justify-center gap-2 text-sm tracking-wider hover:scale-[1.02] transition-transform" style={{ backgroundColor: C.blue, boxShadow: '0 4px 20px rgba(91,123,148,0.3)' }}><Icons.Send /> {t.rsvp.fields.submit}</button>
               </div>
             </>
           )}
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="py-20 px-6" style={{ backgroundColor: C.creamDark }}>
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl text-center mb-10" style={{ color: C.blue, fontStyle: 'italic' }}>{t.faq.title}</h2>
@@ -688,7 +669,6 @@ export default function Wedding() {
         </div>
       </section>
 
-      {/* Contact */}
       <section className="py-20 px-6">
         <div className="max-w-lg mx-auto text-center">
           <h2 className="text-3xl mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.contact.title}</h2>
@@ -699,23 +679,22 @@ export default function Wedding() {
               <p className="text-lg mb-3" style={{ color: C.blue }}>{t.contact.marijo.name}</p>
               <p className="text-sm mb-3" style={{ color: C.blueLight }}>{t.contact.marijo.phone}</p>
               <div className="flex gap-3 justify-center">
-                <a href={`https://wa.me/${t.contact.marijo.wa}`} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#25D366', color: 'white' }}><Icons.whatsapp /> WhatsApp</a>
-                <a href={`sms:${t.contact.marijo.phone}`} className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#007AFF', color: 'white' }}><Icons.imessage /> iMessage</a>
+                <a href={`https://wa.me/${t.contact.marijo.wa}`} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#25D366', color: 'white' }}><Icons.Whatsapp /> WhatsApp</a>
+                <a href={`sms:${t.contact.marijo.phone}`} className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#007AFF', color: 'white' }}><Icons.Imessage /> iMessage</a>
               </div>
             </div>
             <div className="p-4 rounded-2xl" style={{ backgroundColor: C.creamDark }}>
               <p className="text-lg mb-3" style={{ color: C.blue }}>{t.contact.juanca.name}</p>
               <p className="text-sm mb-3" style={{ color: C.blueLight }}>{t.contact.juanca.phone}</p>
               <div className="flex gap-3 justify-center">
-                <a href={`https://wa.me/${t.contact.juanca.wa}`} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#25D366', color: 'white' }}><Icons.whatsapp /> WhatsApp</a>
-                <a href={`sms:${t.contact.juanca.phone}`} className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#007AFF', color: 'white' }}><Icons.imessage /> iMessage</a>
+                <a href={`https://wa.me/${t.contact.juanca.wa}`} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#25D366', color: 'white' }}><Icons.Whatsapp /> WhatsApp</a>
+                <a href={`sms:${t.contact.juanca.phone}`} className="px-5 py-2.5 rounded-full flex items-center gap-2 text-sm hover:scale-105 transition-transform" style={{ backgroundColor: '#007AFF', color: 'white' }}><Icons.Imessage /> iMessage</a>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="relative py-16 text-center overflow-hidden" style={{ backgroundColor: C.blue }}>
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard.jpg" alt="Footer" className="w-full h-full" /></div>
         <div className="relative z-10">
@@ -723,7 +702,7 @@ export default function Wedding() {
           <p className="text-white text-2xl mb-2" style={{ fontStyle: 'italic' }}>Marijo & Juanca</p>
           <p className="text-white/60 text-sm">{t.date.full} · {t.hero.location}</p>
           <p className="text-white/80 text-lg mt-4">{t.footer.hash}</p>
-          <p className="text-white/40 text-xs mt-8 flex items-center justify-center gap-1">{t.footer.made} <Icons.heart /></p>
+          <p className="text-white/40 text-xs mt-8 flex items-center justify-center gap-1">{t.footer.made} <Icons.Heart /></p>
         </div>
       </footer>
     </div>
