@@ -17,16 +17,32 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw9FlMDDga_k0BdFeJxR
 
 const CoupleWordmark = ({ className = "", style = {}, scale = 1 }) => {
   return (
-    <div className={className} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <img 
-        src="/images/mjc_doodle_names.png" 
-        alt="Marijo & Juanca" 
-        style={{ width: '100%', height: 'auto', transform: `scale(${scale})`, ...style }} 
-        draggable={false} 
+    <div
+      className={className}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <img
+        src="/images/mjc_doodle_names.png"
+        alt="Marijo & Juanca"
+        draggable={false}
+        style={{
+          display: 'block',
+          margin: '0 auto',
+          width: '100%',
+          height: 'auto',
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+          ...style,
+        }}
       />
     </div>
   );
 };
+
 
 const Icons = {
   Image: () => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg>),
@@ -261,7 +277,7 @@ const content = {
     couple: { name1: "Marijo", name2: "Juanca", full1: "Maria Jose Licona", full2: "Juan Carlos Moreno" },
     date: { full: "1 de Octubre, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, España", scroll: "Desliza para descubrir" },
-    nav: ["RSVP", "Itinerario", "Hospedaje", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
+    nav: ["RSVP", "Itinerario", "Hospedaje", "Transporte", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
     story: { title: "Nuestra Historia", subtitle: "6 años de amor", intro: "Algo en todos estos años dejó macerar la forma de amor que sentimos por el otro... lo que nos permite elegirnos día a día de forma libre y poder mirarnos y acompañarnos con más amor, aceptación, paciencia, apañe y ternura.",
       items: [
         { year: "2019", title: "Nos Conocimos", text: "El destino nos cruzó hace 6 años. Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "mjc_couple_portrait.jpg" },
@@ -280,6 +296,24 @@ const content = {
       ]}
     ]},
     hotels: { title: "Hospedaje", subtitle: "Dónde Quedarse", bookBy: "Reserva antes del 1 Ago 2026", intro: "Hoteles seleccionados por su ubicación y encanto.", list: [{ name: "Hospes Palacio del Bailío", dist: "5 min", price: "€€€€", note: "Palacio siglo XVI. Código: BODA26", top: true, img: "hotel_hospes.jpg", url: "#" },{ name: "Hotel Balcón de Córdoba", dist: "8 min", price: "€€€", note: "Vistas a la Mezquita", top: false, img: "hotel_balcon.jpg", url: "#" },{ name: "Las Casas de la Judería", dist: "10 min", price: "€€€", note: "Casas históricas conectadas", top: false, img: "hotel_juderia.jpg", url: "#" },{ name: "Hotel Madinat", dist: "12 min", price: "€€", note: "Moderno, buena relación calidad-precio", top: false, img: "hotel_madinat.jpg", url: "#" }] },
+    transport: {
+      title: 'Transporte',
+      subtitle: 'Cómo movernos',
+      cards: [
+        {
+          title: 'Shuttle',
+          text: 'Habrá shuttle desde hoteles seleccionados (horarios pronto).'
+        },
+        {
+          title: 'Taxi / Uber',
+          text: 'Taxis locales funcionan muy bien en el centro.'
+        },
+        {
+          title: 'Parking',
+          text: 'El centro tiene calles estrechas; recomendamos parkings públicos o ir caminando.'
+        }
+      ]
+    },
     dress: { title: "Vestimenta", subtitle: "Qué Ponerse", note: "Octubre en Córdoba: 68-77°F de día, noches frescas.", codes: [{ event: "Rompe Hielo", code: "Smart Casual", desc: "Casual elegante. Lino, vestidos de verano.", icon: "Sunset", colors: ["Tonos tierra", "Pasteles"] },{ event: "Ceremonia", code: "Formal", desc: "Trajes, vestidos de cóctel.", icon: "Church", colors: ["Evitar blanco"] },{ event: "Celebración", code: "Etiqueta", desc: "Vestidos largos, trajes oscuros.", icon: "Sparkles", colors: ["Elegancia"] }] },
     travel: { title: "Cómo Llegar", subtitle: "Tu guía de viaje", sections: [{ icon: "Plane", title: "Por Avión", text: "Sevilla (SVQ) 1.5h, Málaga (AGP) 2h.", tips: ["Vuelos desde Europa", "Reserva temprano"] },{ icon: "Train", title: "Por Tren", text: "AVE: Madrid 1h 45min, Sevilla 45min.", tips: ["Reserva en renfe.com", "Muy cómodo"] },{ icon: "Car", title: "Por Coche", text: "Sevilla 1.5h, Madrid 4h, Málaga 2h.", tips: ["Parking difícil en centro", "GPS recomendado"] }] },
     gifts: { title: "Regalos", subtitle: "Vuestra presencia es el mejor regalo", msg: "Si deseáis hacernos un regalo, una contribución para nuestra luna de miel sería muy apreciada.", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
@@ -293,7 +327,7 @@ const content = {
     couple: { name1: "Marijo", name2: "Juanca", full1: "Maria Jose Licona", full2: "Juan Carlos Moreno" },
     date: { full: "October 1, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, Spain", scroll: "Scroll to discover" },
-    nav: ["RSVP", "Itinerary", "Stay", "Dress Code", "Story", "Gifts", "FAQ", "Contact"],
+    nav: ["RSVP", "Itinerary", "Stay", "Transportation", "Dress Code", "Story", "Gifts", "FAQ", "Contact"],
     story: { title: "Our Story", subtitle: "6 years of love", intro: "Something in all these years allowed our love to mature... what allows us to choose each other day by day, freely, and to look at and accompany each other with more love, acceptance, patience, support and tenderness.",
       items: [
         { year: "2019", title: "We Met", text: "Destiny brought us together 6 years ago. One look, one smile, and we knew something special was beginning.", img: "mjc_couple_portrait.jpg" },
@@ -312,6 +346,24 @@ const content = {
       ]}
     ]},
     hotels: { title: "Where to Stay", subtitle: "Accommodation", bookBy: "Book before Aug 1, 2026", intro: "Hotels selected for location and charm.", list: [{ name: "Hospes Palacio del Bailío", dist: "5 min", price: "€€€€", note: "16th century palace. Code: WEDDING26", top: true, img: "hotel_hospes.jpg", url: "#" },{ name: "Hotel Balcón de Córdoba", dist: "8 min", price: "€€€", note: "Mezquita views from rooftop", top: false, img: "hotel_balcon.jpg", url: "#" },{ name: "Las Casas de la Judería", dist: "10 min", price: "€€€", note: "Connected historic houses", top: false, img: "hotel_juderia.jpg", url: "#" },{ name: "Hotel Madinat", dist: "12 min", price: "€€", note: "Modern, great value", top: false, img: "hotel_madinat.jpg", url: "#" }] },
+    transport: {
+      title: 'Transportation',
+      subtitle: 'Getting around',
+      cards: [
+        {
+          title: 'Shuttle',
+          text: 'Shuttle service from select hotels (schedule coming soon).'
+        },
+        {
+          title: 'Taxi / Rideshare',
+          text: 'Local taxis work great around the historic center.'
+        },
+        {
+          title: 'Parking',
+          text: 'Historic center streets are tight; public garages or walking are easiest.'
+        }
+      ]
+    },
     dress: { title: "Dress Code", subtitle: "What to Wear", note: "October in Córdoba: 68-77°F days, cool evenings.", codes: [{ event: "Ice Breaker", code: "Smart Casual", desc: "Elevated casual. Linen, sundresses.", icon: "Sunset", colors: ["Earth tones", "Pastels"] },{ event: "Ceremony", code: "Formal", desc: "Suits, cocktail dresses.", icon: "Church", colors: ["Avoid white"] },{ event: "Celebration", code: "Black Tie", desc: "Gowns, dark suits.", icon: "Sparkles", colors: ["Elegant"] }] },
     travel: { title: "Getting There", subtitle: "Travel guide", sections: [{ icon: "Plane", title: "By Air", text: "Seville (SVQ) 1.5h, Málaga (AGP) 2h.", tips: ["Flights from Europe", "Book early"] },{ icon: "Train", title: "By Train", text: "AVE: Madrid 1h 45min, Seville 45min.", tips: ["Book at renfe.com", "Very comfortable"] },{ icon: "Car", title: "By Car", text: "Seville 1.5h, Madrid 4h, Málaga 2h.", tips: ["Downtown parking tricky", "GPS recommended"] }] },
     gifts: { title: "Gifts", subtitle: "Your presence is our greatest gift", msg: "If you'd like to give a gift, a honeymoon contribution would be appreciated.", bank: { title: "Bank Details", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "View bank details", note: "Venmo and PayPal also accepted" },
@@ -322,6 +374,7 @@ const content = {
     lang: "ES"
   }
 };
+
 
 const ItineraryIcon = ({ type, className = "", style = {} }) => {
   const icons = {
@@ -346,6 +399,77 @@ const HandDrawnCard = ({ children, className = "", style = {} }) => (
     <div className="relative z-10">{children}</div>
   </div>
 );
+
+const WigglyPostcard = ({ children, className = "", style = {} }) => (
+  <div className={`relative ${className}`} style={style}>
+    <svg
+      className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)]"
+      viewBox="0 0 220 140"
+      preserveAspectRatio="none"
+      style={{ overflow: "visible" }}
+    >
+      {/* different “wiggle”: sketchy rounded-rect (NOT the blob) */}
+      <path
+        d="
+          M 14,18
+          Q 22,10 34,14
+          T 72,12
+          T 116,14
+          T 160,12
+          Q 196,10 206,20
+          Q 214,30 210,44
+          T 210,70
+          T 208,98
+          Q 206,122 190,124
+          T 144,126
+          T 96,124
+          T 50,126
+          Q 18,128 12,112
+          T 10,78
+          T 12,46
+          Q 10,28 14,18
+          Z
+        "
+        fill={C.cream}
+        stroke={C.gold}
+        strokeWidth="2.5"
+        vectorEffect="non-scaling-stroke"
+      />
+
+      {/* second offset stroke = “hand-drawn” feel, still not like transport */}
+      <path
+        d="
+          M 18,20
+          Q 26,12 38,16
+          T 74,14
+          T 118,16
+          T 162,14
+          Q 194,12 202,22
+          Q 210,32 206,46
+          T 206,70
+          T 204,96
+          Q 202,118 186,120
+          T 142,122
+          T 96,120
+          T 52,122
+          Q 22,124 16,110
+          T 14,78
+          T 16,48
+          Q 14,30 18,20
+          Z
+        "
+        fill="none"
+        stroke={C.bluePale}
+        strokeWidth="1.5"
+        opacity="0.55"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+
+    <div className="relative z-10">{children}</div>
+  </div>
+);
+
 
 const CalendarCard = ({ date, month, day }) => (
   <div className="flex-shrink-0 w-20 md:w-24 relative">
@@ -455,6 +579,33 @@ const PAYMENT_INFO = {
   zelle: '+1-915-588-9258',
 };
 
+const getVenmoLinks = ({ username, amount, note }) => {
+  const cleanUser = (username || '').replace('@', '');
+  const a = typeof amount === 'number' ? amount : parseFloat(amount);
+  const amt = Number.isFinite(a) ? a.toFixed(2) : ''; // blank if custom/invalid
+  const encodedNote = encodeURIComponent(note || '');
+
+  // Venmo deep link (app)
+  const app = `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(cleanUser)}${amt ? `&amount=${encodeURIComponent(amt)}` : ''}${encodedNote ? `&note=${encodedNote}` : ''}`;
+
+  // Web fallback (universal link)
+  const web = `https://venmo.com/${encodeURIComponent(cleanUser)}?txn=pay${amt ? `&amount=${encodeURIComponent(amt)}` : ''}${encodedNote ? `&note=${encodedNote}` : ''}`;
+
+  return { app, web, amt };
+};
+
+const openVenmo = ({ username, amount, note }) => {
+  const { app, web } = getVenmoLinks({ username, amount, note });
+
+  // Attempt app first…
+  window.location.href = app;
+
+  // …then fallback to web shortly after (if app didn’t take over)
+  setTimeout(() => {
+    window.location.href = web;
+  }, 600);
+};
+
 export default function Wedding() {
   const [showIntro, setShowIntro] = useState(true);
   const [lang, setLang] = useState('es');
@@ -470,6 +621,7 @@ export default function Wedding() {
   const [formError, setFormError] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [zelleCopied, setZelleCopied] = useState(false);
   const t = content[lang];
 
   // Check if this code was already submitted (client-side backup)
@@ -602,9 +754,22 @@ export default function Wedding() {
     setSelectedGift(gift);
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = async (text, onCopied) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      onCopied?.();
+    } catch {
+      // fallback (older browsers)
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      onCopied?.();
+    }
   };
+
 
   if (showIntro) {
     return (
@@ -721,24 +886,42 @@ export default function Wedding() {
                   </p>
                   
                   <div className="space-y-3">
-                    <a 
-                      href={`https://venmo.com/${PAYMENT_INFO.venmo.replace('@', '')}?txn=pay&amount=${selectedGift.amount}&note=${encodeURIComponent(selectedGift.title + ' - MJC Wedding')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openVenmo({
+                          username: PAYMENT_INFO.venmo,
+                          amount: selectedGift.amount,
+                          note: `${selectedGift.title} - MJC Wedding`,
+                        })
+                      }
                       className="block w-full py-3 rounded-full text-white text-sm md:text-base hover:scale-[1.02] transition-transform"
                       style={{ backgroundColor: '#3D95CE' }}
                     >
                       Venmo {PAYMENT_INFO.venmo}
-                    </a>
-                    
-                    <button 
-                      onClick={() => copyToClipboard(PAYMENT_INFO.zelle)}
-                      className="block w-full py-3 rounded-full text-white text-sm md:text-base hover:scale-[1.02] transition-transform"
-                      style={{ backgroundColor: '#6D1ED4' }}
-                    >
-                      Zelle: {PAYMENT_INFO.zelle}
-                      <span className="ml-2 text-xs opacity-70">({lang === 'es' ? 'clic para copiar' : 'click to copy'})</span>
                     </button>
+                    
+                    <button
+                      onClick={() => {
+                        copyToClipboard(PAYMENT_INFO.zelle, () => {
+                          setZelleCopied(true);
+                          setTimeout(() => setZelleCopied(false), 1600);
+                        });
+                      }}
+                      className="block w-full py-3 rounded-full text-white text-sm md:text-base hover:scale-[1.02] transition-transform"
+                      style={{
+                        backgroundColor: zelleCopied ? '#22c55e' : '#6D1ED4',
+                        transform: zelleCopied ? 'scale(1.01)' : 'scale(1)',
+                      }}
+                    >
+                      {zelleCopied
+                        ? (lang === 'es' ? '✅ Copiado' : '✅ Copied')
+                        : `Zelle: ${PAYMENT_INFO.zelle}`}
+                      <span className="ml-2 text-xs opacity-70">
+                        ({lang === 'es' ? 'clic para copiar' : 'click to copy'})
+                      </span>
+                    </button>
+
                     
                     <div className="relative mt-4 pt-4">
                       <div className="absolute inset-x-0 top-0 flex items-center">
@@ -1127,7 +1310,7 @@ export default function Wedding() {
         )}
       </nav>
 
-      <section className="min-h-screen flex flex-col items-center justify-center pt-12 md:pt-16 px-4 md:px-6 relative">
+      <section className="min-h-screen flex flex-col items-center justify-center pt-12 md:pt-16 px-4 md:px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="center 40%" /></div>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
         <div className="relative z-10 flex flex-col items-center mt-4 md:mt-0">
@@ -1206,7 +1389,23 @@ export default function Wedding() {
         </div>
       </section>
 
-      <section className="relative h-48 md:h-64"><Img src="cordoba.jpg" alt="Córdoba" className="w-full h-full" style={{ filter: 'brightness(1.1)' }} position="top" /><div className="absolute inset-0" style={{ backgroundColor: 'rgba(96,121,141,0.2)' }} /><div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 100%)' }} /></section>
+      <section className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.cream }}>
+        <div className="max-w-5xl mx-auto flex justify-center">
+          <img
+            src="/images/cordoba_watercolor.png"
+            alt="Córdoba"
+            className="w-full max-w-5xl"
+            style={{
+              height: 'auto',
+              display: 'block',
+              // shows top of image already baked into the asset
+            }}
+            draggable={false}
+          />
+        </div>
+      </section>
+
+
 
       <section id="s2" className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.creamDark }}>
         <div className="max-w-4xl mx-auto">
@@ -1259,6 +1458,78 @@ export default function Wedding() {
 
       <section className="relative h-48 md:h-80"><Img src="mjc_ring_bw.jpg" alt="Ring" className="w-full h-full" /><div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(91,123,148,0.4)' }}><p className="text-white text-xl md:text-4xl flex items-center gap-2" style={{ fontStyle: 'italic' }}>Sí, quiero</p></div></section>
 
+      <section id="transport" className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.blue }}>
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-4xl text-center mb-2 text-white" style={{ fontStyle: 'italic' }}>
+            {t.transport.title}
+          </h2>
+          <p className="text-center text-xs md:text-sm mb-8 md:mb-10 text-white/70">
+            {t.transport.subtitle}
+          </p>
+
+          <div className="relative">
+            {/* Hand-drawn “paper” blob */}
+            <svg
+              className="absolute -inset-6 md:-inset-8 w-[calc(100%+48px)] md:w-[calc(100%+64px)] h-[calc(100%+48px)] md:h-[calc(100%+64px)]"
+              viewBox="0 0 200 120"
+              preserveAspectRatio="none"
+              style={{ overflow: "visible" }}
+            >
+              <path
+                d="M 8,10 Q 40,4 70,8 T 130,6 Q 165,4 192,12
+                  Q 197,30 195,60 T 190,110
+                  Q 165,116 130,112 T 70,114
+                  Q 35,116 10,110
+                  Q 3,85 6,60 T 8,10 Z"
+                fill={C.cream}
+                stroke={C.bluePale}
+                strokeWidth="2.5"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+
+            <div className="relative z-10 p-5 md:p-8">
+              <div className="space-y-5 md:space-y-6">
+                {t.transport.cards.map((c, i) => (
+                  <div key={i}>
+                    <div className="flex items-center gap-3">
+                      {/* small doodle bullet (varies so it doesn’t feel numbered) */}
+                      {i === 0 ? <DoodleSparkle size={18} color={C.gold} className="opacity-80" />
+                      : i === 1 ? <DoodleLeaf size={18} color={C.blue} className="opacity-70" />
+                      : <DoodleHeart size={18} color={C.blue} className="opacity-70" filled />}
+
+                      <h3 className="text-lg md:text-2xl" style={{ color: C.blue, fontStyle: 'italic' }}>
+                        {c.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-xs md:text-sm mt-2 leading-relaxed" style={{ color: C.text }}>
+                      {c.text}
+                    </p>
+
+                    {/* divider, but not after last */}
+                    {i !== t.transport.cards.length - 1 && (
+                      <div className="mt-5 md:mt-6 h-px opacity-60" style={{ backgroundColor: C.bluePale }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* optional small footer note */}
+              <div
+                className="mt-6 md:mt-8 text-center text-xs md:text-sm"
+                style={{ color: C.blueLight, fontStyle: "italic" }}
+              >
+                {lang === "es"
+                  ? "Compartiremos horarios y detalles finales más cerca de la fecha."
+                  : "We’ll share final schedules and details closer to the date."}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       <section id="s3" className="py-12 md:py-20 px-4 md:px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.dress.title}</h2>
@@ -1309,36 +1580,193 @@ export default function Wedding() {
         </div>
       </section>
 
-      <section className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.blue }}>
-        <div className="max-w-xl mx-auto text-center">
-          <p className="text-4xl md:text-6xl mb-4">🇯🇵</p>
-          <h2 className="text-2xl md:text-4xl mb-2 text-white" style={{ fontStyle: 'italic' }}>{t.gifts.title}</h2>
-          <p className="text-white/70 text-xs md:text-sm mb-3 md:mb-4" style={{ fontStyle: 'italic' }}>{t.gifts.subtitle}</p>
-          <p className="text-white/80 text-xs md:text-sm mb-6 md:mb-8">
-            {lang === 'es' 
-              ? 'Regaladnos experiencias para nuestra luna de miel en Japón.' 
-              : 'Gift us experiences for our honeymoon in Japan.'}
-          </p>
-          <button onClick={goToGifts} className="px-8 md:px-10 py-3 md:py-4 rounded-full bg-white text-sm md:text-base hover:scale-105 transition-transform" style={{ color: C.blue }}>
-            {lang === 'es' ? 'Ver experiencias' : 'View experiences'}
-          </button>
+      <section id="s0" className="py-16 md:py-24 px-4 md:px-6 relative" style={{ backgroundColor: C.cream }}>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-8 md:gap-10 items-center">
+          {/* left: copy */}
+          <div className="md:col-span-7">
+            <h2 className="text-3xl md:text-6xl leading-tight" style={{ color: C.blue, fontStyle: "italic" }}>
+              {t.rsvp.title}
+            </h2>
+            <p className="text-xs md:text-sm mt-3 max-w-md" style={{ color: C.blueLight }}>
+              {t.rsvp.subtitle}
+            </p>
+
+            {/* deadline as “handwritten line” */}
+            <div className="mt-6 inline-flex items-center gap-2">
+              <span className="text-sm md:text-base" style={{ color: C.blue }}>
+                🕊️ {t.rsvp.deadline}
+              </span>
+              <svg width="120" height="16" viewBox="0 0 120 16" className="opacity-60">
+                <path
+                  d="M2 10 C 20 2, 40 14, 60 8 S 100 12, 118 6"
+                  fill="none"
+                  stroke={C.goldDark}
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+
+            <p className="mt-8 text-xs md:text-sm" style={{ color: C.blueLight, fontStyle: "italic" }}>
+              {lang === "es" ? "¡Nos ayuda muchísimo saberlo con tiempo!" : "It helps us a lot to know in advance!"}
+            </p>
+          </div>
+
+          {/* right: actions */}
+          <div className="md:col-span-5 flex flex-col gap-4 md:gap-5">
+            <button
+              onClick={goToRsvp("yes")}
+              className="px-10 py-5 rounded-full text-white text-lg md:text-2xl tracking-wider hover:scale-105 transition-transform"
+              style={{ backgroundColor: C.blue, boxShadow: "0 12px 30px rgba(91,123,148,0.35)" }}
+            >
+              {lang === "es" ? "Asistiré" : "Will Attend"}
+            </button>
+
+            <button
+              onClick={goToRsvp("no")}
+              className="px-10 py-5 rounded-full text-lg md:text-2xl tracking-wider hover:scale-105 transition-transform"
+              style={{ backgroundColor: "white", border: `2px solid ${C.blue}`, color: C.blue }}
+            >
+              {lang === "es" ? "No Asistiré" : "Won't Attend"}
+            </button>
+
+            {/* tiny hint, no container */}
+            <div className="flex items-center gap-2 justify-center opacity-70">
+              <DoodleSparkle size={18} color={C.goldDark} />
+              <span className="text-xs" style={{ color: C.blueLight }}>
+                {lang === "es" ? "Toma 20 segundos" : "Takes 20 seconds"}
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section id="s0" className="py-12 md:py-20 px-4 md:px-6">
-        <div className="max-w-md mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.rsvp.title}</h2>
-          <p className="text-xs md:text-sm mb-2" style={{ color: C.blueLight }}>{t.rsvp.subtitle}</p>
-          <p className="text-xs md:text-sm mb-6 md:mb-8 px-3 py-1.5 rounded-full mx-auto" style={{ backgroundColor: C.creamDark, color: C.blue, display: 'table' }}>{t.rsvp.deadline}</p>
-          
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
-            <button onClick={goToRsvp('yes')} className="px-8 md:px-12 py-3 md:py-4 rounded-full text-white text-base md:text-lg tracking-wider hover:scale-105 transition-transform" style={{ backgroundColor: C.blue, boxShadow: '0 6px 25px rgba(91,123,148,0.4)' }}>
-              {lang === 'es' ? 'Asistiré' : 'Will Attend'}
-            </button>
-            <button onClick={goToRsvp('no')} className="px-8 md:px-12 py-3 md:py-4 rounded-full text-base md:text-lg tracking-wider hover:scale-105 transition-transform" style={{ border: `2px solid ${C.blue}`, color: C.blue }}>
-              {lang === 'es' ? 'No Asistiré' : "Won't Attend"}
-            </button>
+      <section className="py-12 md:py-20 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: C.blue }}>
+        {/* floating doodles (light) */}
+        <div className="absolute inset-0 pointer-events-none opacity-15">
+          <div className="absolute -top-10 left-6 rotate-[-12deg]">
+            <DoodleSparkle size={52} color={C.gold} />
           </div>
+          <div className="absolute top-24 right-8 rotate-[10deg]">
+            <DoodleLeaf size={64} color={C.goldLight} />
+          </div>
+          <div className="absolute bottom-10 left-10 rotate-[8deg]">
+            <DoodleHeart size={46} color={C.gold} filled />
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto relative">
+          <WigglyPostcard className="mx-auto max-w-3xl">
+            <div
+              className="px-6 py-7 md:px-10 md:py-10 text-center relative"
+              style={{
+                backgroundColor: "transparent",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.20)"
+              }}
+            >
+              {/* top airmail stripes */}
+              <div
+                className="absolute left-0 right-0 top-0 h-3 rounded-t-2xl"
+                style={{
+                  background: `repeating-linear-gradient(
+                    90deg,
+                    ${C.blue} 0px,
+                    ${C.blue} 12px,
+                    ${C.gold} 12px,
+                    ${C.gold} 24px,
+                    ${C.creamDark} 24px,
+                    ${C.creamDark} 36px
+                  )`
+                }}
+              />
+
+              {/* bottom airmail stripes */}
+              <div
+                className="absolute left-0 right-0 bottom-0 h-3 rounded-b-2xl"
+                style={{
+                  background: `repeating-linear-gradient(
+                    90deg,
+                    ${C.blue} 0px,
+                    ${C.blue} 12px,
+                    ${C.gold} 12px,
+                    ${C.gold} 24px,
+                    ${C.creamDark} 24px,
+                    ${C.creamDark} 36px
+                  )`
+                }}
+              />
+
+              {/* stamp cluster */}
+              <div className="absolute -top-5 right-6 md:right-10 flex gap-2">
+                <div
+                  className="px-3 py-2 rounded-xl"
+                  style={{
+                    backgroundColor: C.blue,
+                    color: "white",
+                    border: `2px dashed ${C.goldLight}`,
+                    transform: "rotate(8deg)"
+                  }}
+                >
+                  <div className="text-[10px] tracking-widest uppercase opacity-80">JP</div>
+                  <div className="text-lg leading-none">🇯🇵</div>
+                </div>
+
+                <div
+                  className="px-3 py-2 rounded-xl"
+                  style={{
+                    backgroundColor: C.goldLight,
+                    color: C.blue,
+                    border: `2px dashed ${C.bluePale}`,
+                    transform: "rotate(-6deg)"
+                  }}
+                >
+                  <div className="text-[10px] tracking-widest uppercase opacity-80">
+                    {lang === "es" ? "LUNA" : "HONEY"}
+                  </div>
+                  <div className="text-lg leading-none">✈️</div>
+                </div>
+              </div>
+
+              <div className="relative z-10">
+                <p className="text-4xl md:text-6xl mb-3">🇯🇵</p>
+
+                <h2 className="text-2xl md:text-4xl mb-2" style={{ color: C.blue, fontStyle: "italic" }}>
+                  {t.gifts.title}
+                </h2>
+
+                <p className="text-xs md:text-sm mb-4" style={{ color: C.blueLight, fontStyle: "italic" }}>
+                  {t.gifts.subtitle}
+                </p>
+
+                <p className="text-xs md:text-sm mb-7 md:mb-8" style={{ color: C.text }}>
+                  {lang === "es"
+                    ? "Regaladnos experiencias para nuestra luna de miel en Japón."
+                    : "Gift us experiences for our honeymoon in Japan."}
+                </p>
+
+                <button
+                  onClick={goToGifts}
+                  className="px-8 md:px-10 py-3 md:py-4 rounded-full text-sm md:text-base hover:scale-105 transition-transform"
+                  style={{
+                    backgroundColor: C.blue,
+                    color: "white",
+                    boxShadow: "0 10px 30px rgba(91,123,148,0.35)"
+                  }}
+                >
+                  {lang === "es" ? "Ver experiencias" : "View experiences"}
+                </button>
+
+                <div className="mt-6 flex justify-center opacity-70">
+                  <span
+                    className="px-4 py-1 rounded-full text-[10px] md:text-xs tracking-widest uppercase"
+                    style={{ border: `1px dashed ${C.bluePale}`, color: C.blueLight }}
+                  >
+                    {lang === "es" ? "Desde Córdoba → Japón" : "From Córdoba → Japan"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </WigglyPostcard>
         </div>
       </section>
 
