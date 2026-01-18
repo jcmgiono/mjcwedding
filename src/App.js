@@ -466,6 +466,7 @@ export default function Wedding() {
   const [selectedGift, setSelectedGift] = useState(null);
   const [formError, setFormError] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const t = content[lang];
 
   // Check if this code was already submitted (client-side backup)
@@ -498,12 +499,14 @@ export default function Wedding() {
     e.preventDefault(); 
     setForm((f) => ({ ...f, attending })); 
     setPage('rsvp');
+    setMobileMenuOpen(false);
     window.scrollTo(0, 0);
   };
 
   const goToGifts = (e) => {
     e.preventDefault();
     setPage('gifts');
+    setMobileMenuOpen(false);
     window.scrollTo(0, 0);
   };
 
@@ -515,6 +518,7 @@ export default function Wedding() {
     setMaxGuests(null);
     setCodeError(false);
     setIsUpdating(false);
+    setMobileMenuOpen(false);
     setForm({ name: '', email: '', attending: 'yes', guests: 1, allergies: [], other: '', msg: '', code: '', additionalGuests: [] });
     window.scrollTo(0, 0);
   };
@@ -1053,13 +1057,63 @@ export default function Wedding() {
       
       <nav className="fixed top-0 left-0 right-0 z-50 md:backdrop-blur-md" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
         <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 md:gap-2"><Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-8 h-7 md:w-12 md:h-10 rounded" /><span className="text-base md:text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span></div>
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden flex items-center gap-1.5">
+            <div className="relative">
+              <Img src="mjc_doodle_dancing.png" alt="Menu" className="w-8 h-7 rounded" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full flex items-center justify-center" style={{ backgroundColor: C.blue }}>
+                <span className="text-white text-[8px]">{mobileMenuOpen ? '×' : '≡'}</span>
+              </div>
+            </div>
+            <span className="text-base" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
+          </button>
+          <div className="hidden md:flex items-center gap-1.5 md:gap-2">
+            <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-12 h-10 rounded" />
+            <span className="text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
+          </div>
           <div className="flex items-center gap-1.5 md:gap-4 text-xs md:text-sm leading-snug">
             {t.nav.slice(0, 5).map((n, i) => <a key={i} href={`#s${i}`} className="hidden md:block px-2 py-1 hover:opacity-70" style={{ color: i === 0 ? C.blue : C.blueLight }}>{n}</a>)}
             <a href="#s0" className="md:hidden px-2.5 py-1 rounded-full text-white text-xs" style={{ backgroundColor: C.blue }}>RSVP</a>
             <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')} className="px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm" style={{ border: `1px solid ${C.blue}`, color: C.blue }}>{t.lang}</button>
           </div>
         </div>
+        
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 shadow-lg" style={{ backgroundColor: C.cream, borderTop: `1px solid ${C.bluePale}` }}>
+            <div className="px-4 py-3 space-y-1">
+              {[
+                { label: lang === 'es' ? 'Confirmar Asistencia' : 'RSVP', action: () => { setMobileMenuOpen(false); goToRsvp('yes')({ preventDefault: () => {} }); } },
+                { label: lang === 'es' ? 'Itinerario' : 'Itinerary', href: '#s1' },
+                { label: lang === 'es' ? 'Hospedaje' : 'Stay', href: '#s2' },
+                { label: lang === 'es' ? 'Vestimenta' : 'Dress Code', href: '#s3' },
+                { label: lang === 'es' ? 'Nuestra Historia' : 'Our Story', href: '#s4' },
+                { label: lang === 'es' ? 'Regalos' : 'Gifts', action: () => { setMobileMenuOpen(false); goToGifts({ preventDefault: () => {} }); } },
+                { label: 'FAQ', href: '#faq' },
+              ].map((item, i) => (
+                item.action ? (
+                  <button
+                    key={i}
+                    onClick={item.action}
+                    className="block w-full text-left px-3 py-2.5 rounded-xl text-sm hover:opacity-70 transition-opacity"
+                    style={{ color: C.blue }}
+                  >
+                    {item.label}
+                  </button>
+                ) : (
+                  <a
+                    key={i}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-3 py-2.5 rounded-xl text-sm hover:opacity-70 transition-opacity"
+                    style={{ color: C.blue }}
+                  >
+                    {item.label}
+                  </a>
+                )
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
 
       <section className="min-h-screen flex flex-col items-center justify-center pt-12 md:pt-16 px-4 md:px-6 relative overflow-hidden">
@@ -1277,7 +1331,7 @@ export default function Wedding() {
         </div>
       </section>
 
-      <section className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.creamDark }}>
+      <section id="faq" className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.creamDark }}>
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-4xl text-center mb-6 md:mb-10" style={{ color: C.blue, fontStyle: 'italic' }}>{t.faq.title}</h2>
           {t.faq.items.map((f, i) => (<div key={i} className="mb-2 md:mb-3 rounded-2xl overflow-hidden" style={{ backgroundColor: C.cream }}><button onClick={() => setExpandedFaq(expandedFaq === i ? null : i)} className="w-full px-4 md:px-6 py-4 md:py-5 flex justify-between items-center text-left hover:opacity-90"><span className="text-sm md:text-base pr-3 md:pr-4" style={{ color: C.blue }}>{f.q}</span><span className="text-lg md:text-xl shrink-0" style={{ color: C.blueLight }}>{expandedFaq === i ? '−' : '+'}</span></button>{expandedFaq === i && <div className="px-4 md:px-6 pb-4 md:pb-5 text-sm md:text-base" style={{ color: C.blueLight }}>{f.a}</div>}</div>))}
