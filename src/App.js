@@ -17,17 +17,10 @@ const SHEETS_URL = 'https://script.google.com/macros/s/YOUR_NEW_SCRIPT_ID_HERE/e
 
 // Alternative: Use a Google Form or Formspree as backup
 
-const CoupleWordmark = ({ className = "", style = {}, mobileScale = 1.5, desktopScale = 3 }) => {
-  const [scale, setScale] = useState(1);
-  useEffect(() => {
-    const updateScale = () => setScale(window.innerWidth < 768 ? mobileScale : desktopScale);
-    updateScale();
-    window.addEventListener('resize', updateScale);
-    return () => window.removeEventListener('resize', updateScale);
-  }, [mobileScale, desktopScale]);
+const CoupleWordmark = ({ className = "", style = {} }) => {
   return (
     <div className={className} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <img src="/images/mjc_doodle_names.png" alt="Marijo & Juanca" style={{ width: '100%', height: 'auto', transform: `scale(${scale})`, transformOrigin: 'center', ...style }} draggable={false} />
+      <img src="/images/mjc_doodle_names.png" alt="Marijo & Juanca" style={{ width: '100%', height: 'auto', ...style }} draggable={false} />
     </div>
   );
 };
@@ -1069,12 +1062,14 @@ export default function Wedding() {
         </div>
       </nav>
 
-      <section className="min-h-screen flex flex-col items-center justify-start pt-20 md:pt-16 md:justify-center px-4 md:px-6 relative overflow-hidden">
+      <section className="min-h-screen flex flex-col items-center justify-center pt-12 md:pt-16 px-4 md:px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="center 40%" /></div>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
-        <div className="relative z-10 flex flex-col items-center">
+        <div className="relative z-10 flex flex-col items-center mt-4 md:mt-0">
           <p className="text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-2 md:mb-6 uppercase" style={{ color: C.blueLight }}>{t.hero.subtitle}</p>
-          <CoupleWordmark className="w-[320px] md:w-[360px] mb-6 md:mb-4" mobileScale={4} desktopScale={4.5} />
+          <div className="w-screen overflow-visible flex justify-center">
+            <CoupleWordmark className="w-[180vw] md:w-[800px] mb-6 md:mb-8" />
+          </div>
           <p className="text-lg md:text-2xl mb-1" style={{ color: C.blue }}>{t.date.full}</p>
           <p className="text-sm md:text-base mb-6 md:mb-8" style={{ color: C.blueLight, fontStyle: 'italic' }}>{t.hero.location}</p>
           <div className="flex gap-3 md:gap-8 mb-6 md:mb-8">
@@ -1297,7 +1292,7 @@ export default function Wedding() {
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard.jpg" alt="Footer" className="w-full h-full" /></div>
         <div className="relative z-10">
           <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-28 h-24 md:w-48 md:h-40 rounded-xl mx-auto mb-3 md:mb-4 opacity-70" style={{ filter: 'brightness(0) invert(1)' }}/>
-          <CoupleWordmark className="w-[140px] md:w-[280px] mx-auto mb-2 md:mb-4" mobileScale={1.8} desktopScale={3} style={{ filter: 'brightness(0) invert(1)' }} />
+          <CoupleWordmark className="w-[220px] md:w-[320px] mx-auto mb-2 md:mb-4" style={{ filter: 'brightness(0) invert(1)' }} />
           <p className="text-white/60 text-xs md:text-sm">{t.date.full} · {t.hero.location}</p>
           <p className="text-white/80 text-base md:text-lg mt-3 md:mt-4">{t.footer.hash}</p>
           
