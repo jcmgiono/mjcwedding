@@ -17,6 +17,18 @@ const SHEETS_URL = 'https://script.google.com/macros/s/YOUR_NEW_SCRIPT_ID_HERE/e
 
 // Alternative: Use a Google Form or Formspree as backup
 
+const MenuDoodle = ({ className = "" }) => (
+  <svg viewBox="0 0 50 45" className={className} fill="none" stroke={C.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    {/* Two simple dancing figures */}
+    <circle cx="15" cy="8" r="4" />
+    <path d="M15 12 L15 25 M10 18 L20 18 M15 25 L10 35 M15 25 L20 35" />
+    <circle cx="35" cy="8" r="4" />
+    <path d="M35 12 L35 25 M30 18 L40 18 M35 25 L30 35 M35 25 L40 35" />
+    {/* Hearts between */}
+    <path d="M25 15 L23 17 L25 20 L27 17 Z" fill={C.blue} stroke="none" />
+  </svg>
+);
+
 const CoupleWordmark = ({ className = "", style = {} }) => {
   return (
     <div className={className} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -100,10 +112,37 @@ const DoodleChampagne = ({ size = 24, color = C.blue, className = "" }) => (
   </svg>
 );
 
-const Img = ({ src, alt, className = "", style = {}, position = "center" }) => {
+const Img = ({ src, alt, className = "", style = {}, position = "center", lazy = true }) => {
   const [error, setError] = React.useState(false);
-  if (error) return (<div className={`flex items-center justify-center bg-gray-200 text-gray-500 ${className}`} style={style}><div className="text-center p-4"><Icons.Image /><p className="text-sm mt-2">Image unavailable</p></div></div>);
-  return <img src={`/images/${src}`} alt={alt} className={`object-cover ${className}`} style={{ objectPosition: position, ...style }} onError={() => setError(true)} />;
+  const [loading, setLoading] = React.useState(true);
+  
+  if (error) return (
+    <div className={`flex items-center justify-center bg-gray-200 text-gray-500 ${className}`} style={style}>
+      <div className="text-center p-4">
+        <Icons.Image />
+        <p className="text-sm mt-2">Image unavailable</p>
+      </div>
+    </div>
+  );
+  
+  return (
+    <div className={`relative overflow-hidden ${className}`} style={style}>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: C.creamDark }}>
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: C.bluePale, borderTopColor: 'transparent' }}></div>
+        </div>
+      )}
+      <img 
+        src={`/images/${src}`} 
+        alt={alt} 
+        className={`object-cover w-full h-full ${loading ? 'opacity-0' : 'opacity-100'}`} 
+        style={{ objectPosition: position, transition: 'opacity 0.3s', ...style }} 
+        onError={() => { setError(true); setLoading(false); }}
+        onLoad={() => setLoading(false)}
+        loading={lazy ? "lazy" : "eager"}
+      />
+    </div>
+  );
 };
 
 const SideDoodles = ({ stroke = 'rgba(96,121,141,0.38)' }) => {
@@ -258,7 +297,7 @@ const content = {
     couple: { name1: "Marijo", name2: "Juanca", full1: "Maria Jose Licona", full2: "Juan Carlos Moreno" },
     date: { full: "1 de Octubre, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, España", scroll: "Desliza para descubrir" },
-    nav: ["RSVP", "Itinerario", "Hospedaje", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
+    nav: ["Confirmar", "Itinerario", "Hospedaje", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
     story: { title: "Nuestra Historia", subtitle: "6 años de amor", intro: "Algo en todos estos años dejó macerar la forma de amor que sentimos por el otro... lo que nos permite elegirnos día a día de forma libre y poder mirarnos y acompañarnos con más amor, aceptación, paciencia, apañe y ternura.",
       items: [
         { year: "2019", title: "Nos Conocimos", text: "El destino nos cruzó hace 6 años. Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "mjc_couple_portrait.jpg" },
@@ -604,11 +643,34 @@ export default function Wedding() {
   };
 
   if (showIntro) {
+    const handleSkip = () => {
+      if (imagesPreloaded) {
+        setShowIntro(false);
+      } else {
+        setVideoEnded(true); // Will auto-dismiss when images load
+      }
+    };
+
     return (
-      <div className={`fixed inset-0 flex items-center justify-center ${loaded ? 'opacity-100' : 'opacity-0'}`} style={{ backgroundColor: C.cream, transition: 'opacity 0.8s' }}>
+      <div className={`fixed inset-0 flex flex-col items-center justify-center ${loaded ? 'opacity-100' : 'opacity-0'}`} style={{ backgroundColor: C.cream, transition: 'opacity 0.8s' }}>
         <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')} className="absolute top-3 right-3 md:top-4 md:right-4 z-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm tracking-wider" style={{ color: C.blue, border: `1px solid ${C.blue}` }}>{t.lang}</button>
-        <video autoPlay muted playsInline onEnded={() => setShowIntro(false)} className="w-full h-auto max-h-[100vh] object-contain"><source src="/images/mjc_doodle_dancing.mp4" type="video/mp4" /></video>
-        <button onClick={() => setShowIntro(false)} className="absolute bottom-4 right-4 md:bottom-8 md:right-8 px-4 py-2 md:px-6 rounded-full text-xs md:text-sm tracking-wider hover:opacity-80 transition-opacity" style={{ backgroundColor: 'rgba(96,121,141,0.2)', color: C.blue, backdropFilter: 'blur(4px)' }}>{lang === 'es' ? 'Saltar' : 'Skip'}</button>
+        <video autoPlay muted playsInline onEnded={() => setVideoEnded(true)} className="w-full h-auto max-h-[85vh] object-contain"><source src="/images/mjc_doodle_dancing.mp4" type="video/mp4" /></video>
+        
+        {/* Loading indicator - shows after video ends if images still loading */}
+        {videoEnded && !imagesPreloaded && (
+          <div className="mt-4 flex items-center gap-2" style={{ color: C.blueLight }}>
+            <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: C.bluePale, borderTopColor: 'transparent' }}></div>
+            <span className="text-xs">{lang === 'es' ? 'Cargando...' : 'Loading...'}</span>
+          </div>
+        )}
+        
+        <button 
+          onClick={handleSkip} 
+          className="absolute bottom-4 right-4 md:bottom-8 md:right-8 px-4 py-2 md:px-6 rounded-full text-xs md:text-sm tracking-wider hover:opacity-80 transition-opacity" 
+          style={{ backgroundColor: 'rgba(96,121,141,0.2)', color: C.blue, backdropFilter: 'blur(4px)' }}
+        >
+          {lang === 'es' ? 'Saltar' : 'Skip'}
+        </button>
       </div>
     );
   }
@@ -1059,7 +1121,7 @@ export default function Wedding() {
         <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden flex items-center gap-2">
             <div className="relative">
-              <Img src="mjc_doodle_dancing.png" alt="Menu" className="w-12 h-10 rounded" />
+              <MenuDoodle className="w-10 h-9" />
               <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: C.blue }}>
                 <span className="text-white text-[10px]">{mobileMenuOpen ? '×' : '≡'}</span>
               </div>
@@ -1067,7 +1129,7 @@ export default function Wedding() {
             <span className="text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
           </button>
           <div className="hidden md:flex items-center gap-1.5 md:gap-2">
-            <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-12 h-10 rounded" />
+            <MenuDoodle className="w-12 h-10" />
             <span className="text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
           </div>
           <div className="flex items-center gap-1.5 md:gap-4 text-xs md:text-sm leading-snug">
@@ -1125,7 +1187,7 @@ export default function Wedding() {
       </nav>
 
       <section className="min-h-screen flex flex-col items-center justify-center pt-12 md:pt-16 px-4 md:px-6 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="center 40%" /></div>
+        <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="center 40%" lazy={false} /></div>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
         <div className="relative z-10 flex flex-col items-center mt-4 md:mt-0">
           <p className="text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-2 md:mb-6 uppercase" style={{ color: C.blueLight }}>{t.hero.subtitle}</p>
@@ -1150,7 +1212,7 @@ export default function Wedding() {
         </div>
       </section>
       
-      <section className="py-2 md:py-4"><Img src="mjc_couple_portrait.jpg" alt="Engagement" className="w-full h-[350px] md:h-[700px]" position="center 60%" /></section>
+      <section className="py-2 md:py-4"><Img src="mjc_couple_portrait.jpg" alt="Engagement" className="w-full h-[350px] md:h-[700px]" position="center 60%" lazy={false} /></section>
 
       <section id="s1" className="py-12 md:py-20 px-4 md:px-6">
         <div className="max-w-3xl mx-auto">
