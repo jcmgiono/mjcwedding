@@ -258,7 +258,7 @@ const content = {
     couple: { name1: "Marijo", name2: "Juanca", full1: "Maria Jose Licona", full2: "Juan Carlos Moreno" },
     date: { full: "1 de Octubre, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, España", scroll: "Desliza para descubrir" },
-    nav: ["Confirmar", "Itinerario", "Hospedaje", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
+    nav: ["RSVP", "Itinerario", "Hospedaje", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
     story: { title: "Nuestra Historia", subtitle: "6 años de amor", intro: "Algo en todos estos años dejó macerar la forma de amor que sentimos por el otro... lo que nos permite elegirnos día a día de forma libre y poder mirarnos y acompañarnos con más amor, aceptación, paciencia, apañe y ternura.",
       items: [
         { year: "2019", title: "Nos Conocimos", text: "El destino nos cruzó hace 6 años. Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "mjc_couple_portrait.jpg" },
@@ -1079,40 +1079,48 @@ export default function Wedding() {
         
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 shadow-lg" style={{ backgroundColor: C.cream, borderTop: `1px solid ${C.bluePale}` }}>
-            <div className="px-4 py-3 space-y-1">
-              {[
-                { label: lang === 'es' ? 'Confirmar Asistencia' : 'RSVP', action: () => { setMobileMenuOpen(false); goToRsvp('yes')({ preventDefault: () => {} }); } },
-                { label: lang === 'es' ? 'Itinerario' : 'Itinerary', href: '#s1' },
-                { label: lang === 'es' ? 'Hospedaje' : 'Stay', href: '#s2' },
-                { label: lang === 'es' ? 'Vestimenta' : 'Dress Code', href: '#s3' },
-                { label: lang === 'es' ? 'Nuestra Historia' : 'Our Story', href: '#s4' },
-                { label: lang === 'es' ? 'Regalos' : 'Gifts', action: () => { setMobileMenuOpen(false); goToGifts({ preventDefault: () => {} }); } },
-                { label: 'FAQ', href: '#faq' },
-              ].map((item, i) => (
-                item.action ? (
-                  <button
-                    key={i}
-                    onClick={item.action}
-                    className="block w-full text-left px-3 py-2.5 rounded-xl text-sm hover:opacity-70 transition-opacity"
-                    style={{ color: C.blue }}
-                  >
-                    {item.label}
-                  </button>
-                ) : (
-                  <a
-                    key={i}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-xl text-sm hover:opacity-70 transition-opacity"
-                    style={{ color: C.blue }}
-                  >
-                    {item.label}
-                  </a>
-                )
-              ))}
+          <>
+            {/* Backdrop - click to close */}
+            <div 
+              className="md:hidden fixed inset-0 top-[52px] z-40" 
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
+            />
+            <div className="md:hidden absolute top-full left-0 right-0 shadow-lg z-50" style={{ backgroundColor: C.cream, borderTop: `1px solid ${C.bluePale}` }}>
+              <div className="px-4 py-3 space-y-1">
+                {[
+                  { label: lang === 'es' ? 'Confirmar Asistencia' : 'RSVP', action: () => { setMobileMenuOpen(false); goToRsvp('yes')({ preventDefault: () => {} }); } },
+                  { label: lang === 'es' ? 'Itinerario' : 'Itinerary', href: '#s1' },
+                  { label: lang === 'es' ? 'Hospedaje' : 'Stay', href: '#s2' },
+                  { label: lang === 'es' ? 'Vestimenta' : 'Dress Code', href: '#s3' },
+                  { label: lang === 'es' ? 'Nuestra Historia' : 'Our Story', href: '#s4' },
+                  { label: lang === 'es' ? 'Regalos' : 'Gifts', action: () => { setMobileMenuOpen(false); goToGifts({ preventDefault: () => {} }); } },
+                  { label: 'FAQ', href: '#faq' },
+                ].map((item, i) => (
+                  item.action ? (
+                    <button
+                      key={i}
+                      onClick={item.action}
+                      className="block w-full text-left px-3 py-2.5 rounded-xl text-sm hover:opacity-70 transition-opacity"
+                      style={{ color: C.blue }}
+                    >
+                      {item.label}
+                    </button>
+                  ) : (
+                    <a
+                      key={i}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-3 py-2.5 rounded-xl text-sm hover:opacity-70 transition-opacity"
+                      style={{ color: C.blue }}
+                    >
+                      {item.label}
+                    </a>
+                  )
+                ))}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </nav>
 
