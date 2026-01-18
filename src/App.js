@@ -1057,14 +1057,14 @@ export default function Wedding() {
       
       <nav className="fixed top-0 left-0 right-0 z-50 md:backdrop-blur-md" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
         <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden flex items-center gap-1.5">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden flex items-center gap-2">
             <div className="relative">
-              <Img src="mjc_doodle_dancing.png" alt="Menu" className="w-8 h-7 rounded" />
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full flex items-center justify-center" style={{ backgroundColor: C.blue }}>
-                <span className="text-white text-[8px]">{mobileMenuOpen ? '×' : '≡'}</span>
+              <Img src="mjc_doodle_dancing.png" alt="Menu" className="w-12 h-10 rounded" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: C.blue }}>
+                <span className="text-white text-[10px]">{mobileMenuOpen ? '×' : '≡'}</span>
               </div>
             </div>
-            <span className="text-base" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
+            <span className="text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
           </button>
           <div className="hidden md:flex items-center gap-1.5 md:gap-2">
             <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-12 h-10 rounded" />
