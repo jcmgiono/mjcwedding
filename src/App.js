@@ -1127,7 +1127,7 @@ export default function Wedding() {
         )}
       </nav>
 
-      <section className="min-h-screen flex flex-col items-center justify-center pt-12 md:pt-16 px-4 md:px-6 relative overflow-hidden">
+      <section className="min-h-screen flex flex-col items-center justify-center pt-12 md:pt-16 px-4 md:px-6 relative">
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="center 40%" /></div>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
         <div className="relative z-10 flex flex-col items-center mt-4 md:mt-0">
