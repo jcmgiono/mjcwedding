@@ -121,30 +121,58 @@ const preloadImages = (urls, onProgress) => {
   );
 };
 
-const CoupleWordmark = ({ className = "", style = {}, scale = 1 }) => {
+const CoupleWordmark = ({
+  className = "",
+  style = {},
+  variant = "hero", // "hero" | "footer"
+  scale = 1,
+  // Negative values move the image LEFT. Percent is relative to the image’s own width.
+  // This is the “ampersand centering” knob.
+  offsetPct,
+}) => {
+  // Good defaults (tweak if you want):
+  const defaultOffset = variant === "footer" ? 2 : 2;
+  const x = (offsetPct ?? defaultOffset);
+
+  // Responsive sizes (bigger on mobile + desktop)
+  // clamp(min, preferred, max)
+  const width =
+    variant === "footer"
+      ? `clamp(${260 * scale}px, ${78 * scale}vw, ${560 * scale}px)`
+      : `clamp(${340 * scale}px, ${120 * scale}vw, ${980 * scale}px)`;
+
   return (
     <div
       className={className}
       style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        lineHeight: 0,
+        overflow: "visible",
       }}
     >
-      <img
-        src="/images/mjc_doodle_names_dark_blue.png"
-        alt="Marijo & Juanca"
-        draggable={false}
+      {/* A wrapper lets us shift the PNG without breaking true centering */}
+      <div
         style={{
-          display: 'block',
-          margin: '0 auto',
-          width: '100%',
-          height: 'auto',
-          transform: `scale(${scale})`,
-          transformOrigin: 'center center',
-          ...style,
+          width,
+          transform: `translateX(${x}%)`,
+          willChange: "transform",
         }}
-      />
+      >
+        <img
+          src="/images/mjc_doodle_names_dark_blue.png"
+          alt="Marijo & Juanca"
+          draggable={false}
+          style={{
+            display: "block",
+            width: "100%",
+            height: "auto",
+            ...style,
+          }}
+        />
+      </div>
     </div>
   );
 };
@@ -1564,12 +1592,24 @@ export default function Wedding() {
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
         <div className="relative z-10 flex flex-col items-center mt-4 md:mt-0">
           <p className="text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-2 md:mb-6 uppercase" style={{ color: C.blueLight }}>{t.hero.subtitle}</p>
-          <div className="w-screen overflow-visible flex justify-center">
+         <div
+            className="flex justify-center items-center overflow-visible"
+            style={{
+              height: "clamp(190px, 26vh, 280px)", // more room for the bigger title
+              marginTop: 4,
+            }}
+          >
             <CoupleWordmark
-              className="w-[320px] md:w-[520px] mb-6 md:mb-8"
-              scale={3.0}
+              variant="hero"
+              // optional: fine tune the & centering if needed
+              // offsetPct={-3.2}
+              style={{
+                transform: "translateY(-10px)", // keep your optical vertical centering
+              }}
             />
           </div>
+
+
           <p className="text-lg md:text-2xl mb-1" style={{ color: C.blue }}>{t.date.full}</p>
           <p className="text-sm md:text-base mb-6 md:mb-8" style={{ color: C.blueLight, fontStyle: 'italic' }}>{t.hero.location}</p>
           <div className="flex gap-3 md:gap-8 mb-6 md:mb-8">
@@ -2095,7 +2135,15 @@ export default function Wedding() {
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard.jpg" alt="Footer" className="w-full h-full" /></div>
         <div className="relative z-10">
           <Img src="mjc_doodle_dancing_dark_blue.png" alt="Dancing" className="w-28 h-24 md:w-48 md:h-40 rounded-xl mx-auto mb-3 md:mb-4 opacity-70" style={{ filter: 'brightness(0) invert(1)' }}/>
-          <CoupleWordmark className="w-[220px] md:w-[320px] mx-auto mb-2 md:mb-4" scale={3.0} style={{ filter: 'brightness(0) invert(1)' }} />
+          <CoupleWordmark
+            variant="footer"
+            // optional: fine tune footer independently
+            offsetPct={2}
+            style={{
+              filter: "brightness(0) invert(1)",
+              transform: "translateY(-4px)",
+            }}
+          />
           <p className="text-white/60 text-xs md:text-sm">{t.date.full} · {t.hero.location}</p>
           <p className="text-white/80 text-base md:text-lg mt-3 md:mt-4">{t.footer.hash}</p>
           
