@@ -1,21 +1,57 @@
 import React, { useState, useEffect } from 'react';
 
 const C = {
-  blue: '#60798D',
-  blueDark: '#4F6374',
-  blueLight: '#8096A8',
-  bluePale: '#B1BFCA',
-  cream: '#F6F0E7',
-  creamDark: '#EEE6DC',
+  // Friendlier primary blue (softer + slightly warmer than #073D61)
+  blue: '#05111A',
+
+  blueDark: '#234B60',
+  blueLight: '#05111A',
+  bluePale: '#05111A',
+
+  cream: '#DED9C5',
+  creamDark: '#DED9C5',
+  creamDifferent: '#e0dac3',
+
   gold: '#D4C4A8',
-  goldLight: '#EDE5D8',
+  goldLight: '#be862b',
   goldDark: '#B8A888',
+
   text: '#5E6F7E',
+
+  blueA: (a) => `rgba(46,94,120,${a})`,
+};
+
+
+const FONTS = {
+  body: "'Edu SA Hand', cursive",
 };
 
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw9FlMDDga_k0BdFeJxR3Y_HQGWsWcCIT5h3Q1s5-0veZKeLPhEwqaBPeFnaQXcrY_V/exec';
 
-const MIN_INTRO_MS = 3000; // try 700–1200
+const MIN_INTRO_MS = 1500; // try 700–1200
+
+const NAV_TARGETS = {
+  es: [
+    { label: "RSVP", href: "#s0" },
+    { label: "Itinerario", href: "#s1" },
+    { label: "Hospedaje", href: "#s2" },
+    { label: "Transporte", href: "#transport" },
+    { label: "Vestimenta", href: "#s3" },
+    { label: "Historia", href: "#s4" },
+    { label: "Regalos", action: "gifts" }, // page route
+    { label: "FAQ", href: "#faq" },
+  ],
+  en: [
+    { label: "RSVP", href: "#s0" },
+    { label: "Itinerary", href: "#s1" },
+    { label: "Stay", href: "#s2" },
+    { label: "Transportation", href: "#transport" },
+    { label: "Dress Code", href: "#s3" },
+    { label: "Story", href: "#s4" },
+    { label: "Gifts", action: "gifts" },
+    { label: "FAQ", href: "#faq" },
+  ],
+};
 
 // --- Preload helpers ---
 const collectImageUrls = () => {
@@ -23,14 +59,16 @@ const collectImageUrls = () => {
 
   // Always include these:
   const always = [
-    "/images/mjc_doodle_dancing.png",
-    "/images/mjc_doodle_names.png",
+    "/images/mjc_doodle_dancing_dark_blue.png",
+    "/images/mjc_doodle_names_dark_blue.png",
     "/images/cordoba_watercolor.png",
     "/images/mjc_couple_vineyard_bw.jpg",
     "/images/mjc_couple_portrait.jpg",
     "/images/mjc_ring_bw.jpg",
     "/images/mjc_cordoba_mezquita.jpg",
     "/images/mjc_couple_vineyard.jpg",
+    "/images/monclova_doodle.png",
+    "/images/kyoto.jpg",
   ];
   always.forEach((u) => urls.add(u));
 
@@ -94,7 +132,7 @@ const CoupleWordmark = ({ className = "", style = {}, scale = 1 }) => {
       }}
     >
       <img
-        src="/images/mjc_doodle_names.png"
+        src="/images/mjc_doodle_names_dark_blue.png"
         alt="Marijo & Juanca"
         draggable={false}
         style={{
@@ -127,31 +165,30 @@ const Icons = {
   Heart: () => (<svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 inline text-red-400"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>),
   Send: () => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>),
   Whatsapp: () => (<svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>),
-  Imessage: () => (<svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.546 20.2A1.5 1.5 0 003.8 21.454l3.032-.892A9.96 9.96 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>)
+  Imessage: () => (<svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.546 20.2A1.5 1.5 0 003.8 21.454l3.032-.892A9.96 9.96 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>),
+  Wine: () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-6 h-6 md:w-8 md:h-8"
+  >
+    {/* bowl */}
+    <path d="M6 3h12v5a6 6 0 01-12 0V3z" />
+    {/* stem */}
+    <path d="M12 14v5" />
+    {/* base */}
+    <path d="M8 21h8" />
+  </svg>
+)
 };
 
 const DoodleHeart = ({ size = 24, color = C.blue, filled = false, className = "" }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} className={className}>
     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill={filled ? color : "none"} stroke={color} strokeWidth="2"/>
-  </svg>
-);
-
-const DoodleRings = ({ size = 24, color = C.blue, className = "" }) => (
-  <svg viewBox="0 0 24 24" width={size} height={size} className={className}>
-    <circle cx="9" cy="12" r="5" fill="none" stroke={color} strokeWidth="2"/>
-    <circle cx="15" cy="12" r="5" fill="none" stroke={color} strokeWidth="2"/>
-    <path d="M15 7l2-3 2 3" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const DoodleRose = ({ size = 24, color = C.blue, className = "" }) => (
-  <svg viewBox="0 0 24 24" width={size} height={size} className={className}>
-    <path d="M12 22c0-4 0-8 0-10" stroke={color} strokeWidth="2" strokeLinecap="round"/>
-    <path d="M8 18c-2-1-3-3-2-5 1 1 3 1 4 0" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
-    <path d="M16 18c2-1 3-3 2-5-1 1-3 1-4 0" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
-    <ellipse cx="12" cy="8" rx="4" ry="5" fill="none" stroke={color} strokeWidth="2"/>
-    <path d="M10 6c0 2 1 3 2 3s2-1 2-3" fill="none" stroke={color} strokeWidth="1.5"/>
-    <path d="M9 8c1 1 2 1 3 0" fill="none" stroke={color} strokeWidth="1"/>
   </svg>
 );
 
@@ -168,22 +205,16 @@ const DoodleLeaf = ({ size = 24, color = C.blue, className = "", flip = false })
   </svg>
 );
 
-const DoodleBow = ({ size = 24, color = C.blue, className = "" }) => (
+const DoodleStar = ({ size = 18, color = C.blue, className = "" }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} className={className}>
-    <path d="M12 12c-3-2-6-2-6 1s3 4 6 3" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"/>
-    <path d="M12 12c3-2 6-2 6 1s-3 4-6 3" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"/>
-    <path d="M10 16c1 2 1 4 0 6" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
-    <path d="M14 16c-1 2-1 4 0 6" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
-);
-
-const DoodleChampagne = ({ size = 24, color = C.blue, className = "" }) => (
-  <svg viewBox="0 0 24 24" width={size} height={size} className={className}>
-    <path d="M9 2h6l-1 10H10L9 2z" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M12 12v6" stroke={color} strokeWidth="2" strokeLinecap="round"/>
-    <path d="M8 22h8" stroke={color} strokeWidth="2" strokeLinecap="round"/>
-    <path d="M12 18h0" stroke={color} strokeWidth="3" strokeLinecap="round"/>
-    <path d="M7 4l-2-2M17 4l2-2M6 7l-2 0M18 7l2 0" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+    <path
+      d="M12 2.8l2.5 6.1 6.6.5-5 4.1 1.6 6.4L12 16.7 6.3 19.9l1.6-6.4-5-4.1 6.6-.5L12 2.8z"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
@@ -193,81 +224,47 @@ const Img = ({ src, alt, className = "", style = {}, position = "center" }) => {
   return <img src={`/images/${src}`} alt={alt} className={`object-cover ${className}`} style={{ objectPosition: position, ...style }} onError={() => setError(true)} />;
 };
 
-const SideDoodles = ({ stroke = 'rgba(96,121,141,0.38)' }) => {
-  const [scene, setScene] = React.useState(0);
-  const scenesCount = 7;
-  React.useEffect(() => {
-    let raf = null;
-    const onScroll = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = null; const vh = Math.max(window.innerHeight || 0, 1); setScene(Math.floor(window.scrollY / (vh * 2)) % scenesCount); }); };
-    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf); };
-  }, []);
-  const VinePath = ({ variant = 0, dx = 0, opacity = 1, width = 2.2 }) => {
-    const vines = [`M85 20 C58 100, 110 170, 70 245 C40 320, 116 400, 74 470 C44 545, 115 620, 72 700 C38 785, 110 860, 76 940 C52 1015, 106 1090, 72 1160`,`M82 20 C54 95, 118 165, 72 240 C36 315, 112 395, 78 470 C44 550, 120 625, 74 705 C38 790, 110 860, 80 945 C56 1020, 110 1095, 74 1160`,`M88 20 C60 105, 112 175, 74 250 C38 328, 120 402, 70 480 C42 555, 116 630, 78 710 C44 790, 110 862, 74 940 C48 1018, 112 1092, 78 1160`,`M84 20 C56 95, 112 165, 68 240 C36 312, 118 390, 72 470 C44 546, 112 622, 76 705 C44 785, 112 862, 70 940 C48 1016, 110 1092, 74 1160`];
-    return <path d={vines[variant % vines.length]} transform={`translate(${dx} 0)`} stroke={stroke} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={opacity} />;
-  };
-  const Leaves = () => (<g fill="none" stroke={stroke} strokeWidth="1.9" opacity="0.9" strokeLinecap="round" strokeLinejoin="round">{[{ x: 58, y: 150, flip: 1 }, { x: 92, y: 260, flip: -1 }, { x: 60, y: 420, flip: 1 }, { x: 94, y: 560, flip: -1 }, { x: 62, y: 720, flip: 1 }, { x: 94, y: 860, flip: -1 }, { x: 64, y: 1020, flip: 1 }].map((p, i) => (<path key={i} d="M0 0 C6 -10, 22 -10, 28 -2 C18 10, 8 12, 0 0 Z" transform={`translate(${p.x} ${p.y}) scale(${p.flip} 1) rotate(${p.flip === 1 ? -8 : 10})`} />))}</g>);
-  const DoodleSvg = ({ mirrored = false }) => (<svg viewBox="0 0 160 1200" className={`h-full w-full ${mirrored ? 'scale-x-[-1]' : ''}`}><VinePath variant={scene} dx={-12} opacity={0.55} width={2.0} /><VinePath variant={scene + 1} dx={0} opacity={0.92} width={2.4} /><VinePath variant={scene + 2} dx={12} opacity={0.55} width={2.0} /><Leaves /></svg>);
-  return (<><div className="hidden lg:block fixed inset-y-0 left-0 w-28 xl:w-32 pointer-events-none z-20 opacity-95"><DoodleSvg /></div><div className="hidden lg:block fixed inset-y-0 right-0 w-28 xl:w-32 pointer-events-none z-20 opacity-95"><DoodleSvg mirrored /></div></>);
-};
+const watercolorMaskSvg = encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" preserveAspectRatio="none">
+  <defs>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
 
-const FloatingDoodles = () => {
-  const doodles = [
-    { type: 'heart', x: '2%', y: '5%', size: 32, rotate: -15, opacity: 0.7 },
-    { type: 'rings', x: '5%', y: '18%', size: 30, rotate: 10, opacity: 0.6 },
-    { type: 'rose', x: '3%', y: '32%', size: 34, rotate: -8, opacity: 0.7 },
-    { type: 'sparkle', x: '6%', y: '48%', size: 26, rotate: 15, opacity: 0.65 },
-    { type: 'leaf', x: '2%', y: '62%', size: 30, rotate: -12, opacity: 0.7 },
-    { type: 'bow', x: '5%', y: '78%', size: 28, rotate: 8, opacity: 0.6 },
-    { type: 'champagne', x: '3%', y: '92%', size: 30, rotate: -5, opacity: 0.7 },
-    { type: 'rings', x: '92%', y: '8%', size: 30, rotate: 18, opacity: 0.7 },
-    { type: 'heart', x: '94%', y: '22%', size: 28, rotate: -10, opacity: 0.6 },
-    { type: 'champagne', x: '91%', y: '38%', size: 32, rotate: 5, opacity: 0.7 },
-    { type: 'rose', x: '95%', y: '52%', size: 30, rotate: -15, opacity: 0.65 },
-    { type: 'bow', x: '92%', y: '68%', size: 28, rotate: 8, opacity: 0.7 },
-    { type: 'sparkle', x: '94%', y: '82%', size: 26, rotate: -12, opacity: 0.6 },
-    { type: 'heart', x: '91%', y: '95%', size: 32, rotate: 15, opacity: 0.7 },
-    { type: 'sparkle', x: '12%', y: '12%', size: 20, rotate: 25, opacity: 0.5 },
-    { type: 'leaf', x: '85%', y: '15%', size: 22, rotate: -20, opacity: 0.5, flip: true },
-    { type: 'heart', x: '15%', y: '42%', size: 22, rotate: -30, opacity: 0.5 },
-    { type: 'rings', x: '82%', y: '45%', size: 24, rotate: 22, opacity: 0.5 },
-    { type: 'rose', x: '13%', y: '72%', size: 24, rotate: 35, opacity: 0.5 },
-    { type: 'bow', x: '84%', y: '75%', size: 22, rotate: -25, opacity: 0.5 },
-  ];
+  <!-- Solid visible region -->
+  <path fill="white"
+    d="M55,130
+       C85,55 175,30 260,55
+       C340,18 430,35 510,65
+       C610,30 715,45 790,95
+       C905,78 968,155 945,235
+       C988,320 955,395 905,445
+       C912,520 820,575 725,552
+       C650,602 540,585 470,545
+       C380,585 275,575 210,535
+       C110,545 45,475 70,395
+       C25,320 25,250 55,130 Z"/>
 
-  const renderDoodle = (d, i) => {
-    const style = { left: d.x, top: d.y, transform: `rotate(${d.rotate}deg)`, opacity: d.opacity };
-    const props = { size: d.size, color: C.blue, className: "absolute", key: i };
-    switch (d.type) {
-      case 'heart': return <div style={style} className="absolute" key={i}><DoodleHeart {...props} /></div>;
-      case 'rings': return <div style={style} className="absolute" key={i}><DoodleRings {...props} /></div>;
-      case 'rose': return <div style={style} className="absolute" key={i}><DoodleRose {...props} /></div>;
-      case 'sparkle': return <div style={style} className="absolute" key={i}><DoodleSparkle {...props} /></div>;
-      case 'leaf': return <div style={style} className="absolute" key={i}><DoodleLeaf {...props} flip={d.flip} /></div>;
-      case 'bow': return <div style={style} className="absolute" key={i}><DoodleBow {...props} /></div>;
-      case 'champagne': return <div style={style} className="absolute" key={i}><DoodleChampagne {...props} /></div>;
-      default: return null;
-    }
-  };
+  <!-- Feathered bleed (blurred, partial opacity) -->
+  <g filter="url(#blur)" opacity="0.55">
+    <ellipse cx="155" cy="125" rx="95" ry="65" fill="white"/>
+    <ellipse cx="430" cy="85" rx="150" ry="70" fill="white"/>
+    <ellipse cx="780" cy="120" rx="140" ry="75" fill="white"/>
+    <ellipse cx="925" cy="305" rx="85" ry="120" fill="white"/>
+    <ellipse cx="720" cy="520" rx="150" ry="85" fill="white"/>
+    <ellipse cx="330" cy="520" rx="170" ry="90" fill="white"/>
+    <ellipse cx="95" cy="385" rx="95" ry="120" fill="white"/>
+  </g>
+</svg>
+`);
 
-  return (
-    <div className="absolute inset-0 overflow-visible pointer-events-none" style={{ zIndex: 0 }}>
-      {doodles.map(renderDoodle)}
-    </div>
-  );
-};
+const watercolorMaskUrl = `url("data:image/svg+xml,${watercolorMaskSvg}")`;
+
 
 const StoryTimeline = ({ items, intro, title, subtitle }) => {
-  const itemDoodles = [
-    { top: DoodleSparkle, bottom: DoodleLeaf },
-    { top: DoodleRings, bottom: DoodleHeart },
-    { top: DoodleRose, bottom: DoodleBow },
-    { top: DoodleChampagne, bottom: DoodleSparkle },
-  ];
-
   return (
     <div className="relative">
-      <FloatingDoodles />
       <div className="max-w-4xl mx-auto relative z-10">
         <h2 className="text-2xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{title}</h2>
         <p className="text-center text-xs md:text-sm mb-3 md:mb-4" style={{ color: C.blueLight }}>{subtitle}</p>
@@ -278,9 +275,6 @@ const StoryTimeline = ({ items, intro, title, subtitle }) => {
           <div className="absolute left-8 top-0 bottom-0 w-0.5 md:hidden" style={{ background: `linear-gradient(180deg, transparent 0%, ${C.bluePale} 5%, ${C.bluePale} 95%, transparent 100%)` }}/>
 
           {items.map((item, i) => {
-            const doodle = itemDoodles[i % itemDoodles.length];
-            const TopDoodle = doodle.top;
-            const BottomDoodle = doodle.bottom;
             
             return (
             <div key={i} className="relative mb-12 md:mb-20">
@@ -293,13 +287,9 @@ const StoryTimeline = ({ items, intro, title, subtitle }) => {
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: C.cream, boxShadow: `0 0 0 4px ${C.blue}30, 0 0 20px rgba(96,121,141,0.2)`, border: `2px solid ${C.blue}` }}>
                     <span className="text-xs md:text-sm font-medium text-center leading-tight px-1" style={{ color: C.blue }}>{item.year}</span>
                   </div>
-                  <TopDoodle size={14} className="absolute -top-2 -right-1 opacity-70" color={C.blue}/>
-                  <BottomDoodle size={12} className="absolute -bottom-1 -left-2 opacity-60" color={C.blue}/>
                 </div>
                 <div className="w-5/12 relative">
                   <div className="relative group">
-                    <TopDoodle size={20} className={`absolute -top-3 ${i % 2 === 0 ? '-left-3' : '-right-3'} opacity-70 z-10`} color={C.blue}/>
-                    <BottomDoodle size={16} className={`absolute -bottom-2 ${i % 2 === 0 ? '-right-2' : '-left-2'} opacity-60 z-10`} color={C.blue}/>
                     <Img src={item.img} alt={item.title} className="w-full h-48 md:h-56 rounded-2xl shadow-lg transition-transform group-hover:scale-[1.02]" style={{ border: `3px solid ${C.cream}` }}/>
                   </div>
                 </div>
@@ -315,25 +305,12 @@ const StoryTimeline = ({ items, intro, title, subtitle }) => {
                   <h3 className="text-lg mb-1" style={{ color: C.blue, fontStyle: 'italic' }}>{item.title}</h3>
                   <p className="text-xs leading-relaxed mb-3" style={{ color: C.blueLight }}>{item.text}</p>
                   <div className="relative">
-                    <TopDoodle size={16} className="absolute -top-2 -right-1 opacity-70 z-10" color={C.blue}/>
                     <Img src={item.img} alt={item.title} className="w-full h-36 rounded-xl" style={{ border: `2px solid ${C.cream}` }}/>
                   </div>
                 </div>
               </div>
             </div>
           )})}
-
-          <div className="flex justify-center mt-8">
-            <div className="flex items-center gap-4">
-              <DoodleLeaf size={20} color={C.blue} className="opacity-60"/>
-              <DoodleRose size={22} color={C.blue} className="opacity-70"/>
-              <DoodleRings size={28} color={C.blue}/>
-              <DoodleHeart size={24} color={C.blue} filled={true}/>
-              <DoodleRings size={28} color={C.blue}/>
-              <DoodleRose size={22} color={C.blue} className="opacity-70"/>
-              <DoodleLeaf size={20} color={C.blue} className="opacity-60" flip={true}/>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -356,7 +333,7 @@ const content = {
     },
     itinerary: { title: "Itinerario", subtitle: "Celebra con nosotros", days: [
       { day: "Miércoles", date: "30", month: "Sep", events: [
-        { title: "Rompe Hielo", time: "20:00", venue: "Por confirmar", dress: "Smart Casual", desc: "Una noche de tapas, vino y reencuentros.", tbd: true, icon: "sunset" }
+        { title: "Rompe Hielo", time: "20:00", venue: "Por confirmar", dress: "Smart Casual", desc: "Una noche de tapas, vino y reencuentros.", tbd: true, icon: "wine" }
       ]},
       { day: "Jueves", date: "1", month: "Oct", events: [
         { title: "La Ceremonia", time: "16:00", venue: "Por confirmar", dress: "Formal", desc: "Nos damos el 'Sí, quiero' rodeados de historia y amor.", tbd: true, icon: "church" },
@@ -385,7 +362,7 @@ const content = {
     dress: { title: "Vestimenta", subtitle: "Qué Ponerse", note: "Octubre en Córdoba: 68-77°F de día, noches frescas.", codes: [{ event: "Rompe Hielo", code: "Smart Casual", desc: "Casual elegante. Lino, vestidos de verano.", icon: "Sunset", colors: ["Tonos tierra", "Pasteles"] },{ event: "Ceremonia", code: "Formal", desc: "Trajes, vestidos de cóctel.", icon: "Church", colors: ["Evitar blanco"] },{ event: "Celebración", code: "Etiqueta", desc: "Vestidos largos, trajes oscuros.", icon: "Sparkles", colors: ["Elegancia"] }] },
     travel: { title: "Cómo Llegar", subtitle: "Tu guía de viaje", sections: [{ icon: "Plane", title: "Por Avión", text: "Sevilla (SVQ) 1.5h, Málaga (AGP) 2h.", tips: ["Vuelos desde Europa", "Reserva temprano"] },{ icon: "Train", title: "Por Tren", text: "AVE: Madrid 1h 45min, Sevilla 45min.", tips: ["Reserva en renfe.com", "Muy cómodo"] },{ icon: "Car", title: "Por Coche", text: "Sevilla 1.5h, Madrid 4h, Málaga 2h.", tips: ["Parking difícil en centro", "GPS recomendado"] }] },
     gifts: { title: "Regalos", subtitle: "Vuestra presencia es el mejor regalo", msg: "Si deseáis hacernos un regalo, una contribución para nuestra luna de miel sería muy apreciada.", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
-    faq: { title: "Preguntas Frecuentes", items: [{ q: "¿Cómo será el clima?", a: "68-77°F de día, noches frescas. Trae chaqueta ligera." },{ q: "¿Puedo traer a mis hijos?", a: "Esta celebración es solo para adultos (18+)." },{ q: "¿Puedo llevar acompañante?", a: "Consulta tu invitación para detalles." },{ q: "¿Hay parking?", a: "Sí, y servicio de shuttle desde hoteles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Sevilla (1.5h) o Málaga (2h)." },{ q: "¿Necesito visa?", a: "UE, EEUU, México: no necesitan visa hasta 90 días." },{ q: "¿Opciones vegetarianas?", a: "¡Sí! Indica restricciones en el formulario." }] },
+    faq: { title: "Informacion Importante", items: [{ q: "¿Cómo será el clima?", a: "68-77°F de día, noches frescas. Trae chaqueta ligera." },{ q: "¿Puedo traer a mis hijos?", a: "Esta celebración es solo para adultos (18+)." },{ q: "¿Puedo llevar acompañante?", a: "Consulta tu invitación para detalles." },{ q: "¿Hay parking?", a: "Sí, y servicio de shuttle desde hoteles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Sevilla (1.5h) o Málaga (2h)." },{ q: "¿Necesito visa?", a: "UE, EEUU, México: no necesitan visa hasta 90 días." },{ q: "¿Opciones vegetarianas?", a: "¡Sí! Indica restricciones en el formulario." }] },
     contact: { title: "¿Preguntas?", subtitle: "Estamos aquí para ayudaros", msg: "Cualquier duda, no dudéis en contactarnos.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
     rsvp: { title: "Confirma tu Asistencia", subtitle: "Esperamos contar contigo", deadline: "Confirma antes del 1 Ago 2026", fields: { name: "Nombre completo *", email: "Email (opcional)", attending: "¿Asistirás?", yes: "Sí, asistiré", no: "No podré", guests: "Número de invitados", allergies: "Alergias", allergyOpts: ["Frutos secos", "Mariscos", "Gluten", "Lácteos", "Vegetariano", "Vegano"], other: "Otras restricciones", msg: "Mensaje (opcional)", submit: "Enviar" }, thanks: { title: "¡Gracias!", subtitle: "Confirmación recibida", msg: "Estamos emocionados de celebrar contigo." } },
     footer: { made: "Hecho con amor", hash: "#MJC2026" },
@@ -449,6 +426,7 @@ const ItineraryIcon = ({ type, className = "", style = {} }) => {
     sunset: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className} style={style}><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" /><path d="M12 8a4 4 0 100 8 4 4 0 000-8z" /><path d="M4 19h16" /></svg>),
     church: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className} style={style}><path d="M12 2v4m0 0l3 2v3H9V8l3-2z" /><path d="M6 11h12v10H6z" /><path d="M10 21v-4h4v4" /><path d="M12 6V2M10 4h4" /></svg>),
     sparkles: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className} style={style}><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" /><path d="M5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1z" /></svg>),
+    wine: (<Icons.Wine className={className} style={style} />),
   };
   return icons[type] || null;
 };
@@ -538,6 +516,43 @@ const WigglyPostcard = ({ children, className = "", style = {} }) => (
   </div>
 );
 
+const FAQWiggleCard = ({ children, className = "" }) => (
+  <div className={`relative ${className}`}>
+    {/* The outline lives INSIDE the box, so no negative inset needed */}
+    <svg
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="
+          M 6,10
+          Q 20,4 34,8
+          T 68,7
+          T 94,12
+          Q 98,26 95,40
+          T 95,60
+          Q 98,74 94,88
+          Q 74,96 60,93
+          T 30,94
+          Q 10,92 6,84
+          Q 3,70 5,58
+          T 5,40
+          Q 3,24 6,10
+          Z
+        "
+        fill="none"
+        stroke={C.blue}
+        strokeWidth="2.2"
+        vectorEffect="non-scaling-stroke"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+
+    <div className="relative z-10">{children}</div>
+  </div>
+);
 
 const CalendarCard = ({ date, month, day }) => (
   <div className="flex-shrink-0 w-20 md:w-24 relative">
@@ -932,7 +947,7 @@ export default function Wedding() {
           }}
         >
           <img
-            src="/images/mjc_doodle_dancing.png"
+            src="/images/mjc_doodle_dancing_dark_blue.png"
             data-dance="true"
             alt="Loading"
             draggable={false}
@@ -1027,7 +1042,7 @@ export default function Wedding() {
   if (page === 'gifts') {
     const experiences = GIFT_EXPERIENCES[lang];
     return (
-      <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: "'Nothing You Could Do', cursive" }}>
+      <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
         <nav className="fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
           <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
             <button onClick={goHome} className="flex items-center gap-1.5 md:gap-2 hover:opacity-70">
@@ -1181,7 +1196,7 @@ export default function Wedding() {
   // RSVP PAGE
   if (page === 'rsvp') {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: "'Nothing You Could Do', cursive" }}>
+      <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
         <nav className="fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
           <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
             <button onClick={goHome} className="flex items-center gap-1.5 md:gap-2 hover:opacity-70">
@@ -1209,7 +1224,7 @@ export default function Wedding() {
                   }
                 </p>
                 <p className="text-xs md:text-sm mb-6 md:mb-8" style={{ color: C.blueLight }}>{t.rsvp.thanks.msg}</p>
-                <Img src="mjc_doodle_dancing.png" alt="Celebration" className="w-32 h-28 md:w-40 md:h-32 rounded-xl mx-auto opacity-60" />
+                <Img src="mjc_doodle_dancing_dark_blue.png" alt="Celebration" className="w-32 h-28 md:w-40 md:h-32 rounded-xl mx-auto opacity-60" />
                 <button onClick={goHome} className="mt-6 px-6 py-2 rounded-full text-sm" style={{ border: `1px solid ${C.blue}`, color: C.blue }}>
                   {lang === 'es' ? 'Volver al inicio' : 'Back to home'}
                 </button>
@@ -1427,30 +1442,74 @@ export default function Wedding() {
         transition: "opacity 0.8s ease",
       }}
     >
-      <div
-        className="min-h-screen"
-        style={{ backgroundColor: C.cream, fontFamily: "'Nothing You Could Do', cursive" }}
-      >
-      <SideDoodles />
+      <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
+
       
       <nav className="fixed top-0 left-0 right-0 z-50 md:backdrop-blur-md" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
         <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden flex items-center gap-2">
-            <div className="relative">
-              <Img src="mjc_doodle_dancing.png" alt="Menu" className="w-12 h-10 rounded" />
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: C.blue }}>
-                <span className="text-white text-[10px]">{mobileMenuOpen ? '×' : '≡'}</span>
-              </div>
-            </div>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 rounded-xl"
+            aria-label="Open menu"
+            style={{ color: C.blue }}
+          >
+            {mobileMenuOpen ? (
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <path d="M6 6l12 12" />
+                <path d="M18 6L6 18" />
+              </svg>
+            ) : (
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <path d="M4 7h16" />
+                <path d="M4 12h16" />
+                <path d="M4 17h16" />
+              </svg>
+            )}
           </button>
-          <div className="hidden md:flex items-center gap-1.5 md:gap-2">
-            <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-12 h-10 rounded" />
+
+          <div className="hidden lg:flex items-center gap-1.5 md:gap-2">
+            <Img src="mjc_doodle_dancing_dark_blue.png" alt="Dancing" className="w-12 h-10 rounded" />
           </div>
           <div className="flex items-center gap-1.5 md:gap-4 text-xs md:text-sm leading-snug">
-            {t.nav.slice(0, 5).map((n, i) => <a key={i} href={`#s${i}`} className="hidden md:block px-2 py-1 hover:opacity-70" style={{ color: i === 0 ? C.blue : C.blueLight }}>{n}</a>)}
-            <a href="#s0" className="md:hidden px-2.5 py-1 rounded-full text-white text-xs" style={{ backgroundColor: C.blue }}>RSVP</a>
-            <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')} className="px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm" style={{ border: `1px solid ${C.blue}`, color: C.blue }}>{t.lang}</button>
-          </div>
+           {NAV_TARGETS[lang].map((item, i) =>
+    item.action === "gifts" ? (
+      <button
+        key={i}
+        onClick={goToGifts}
+        className="hidden lg:block px-2 py-1 hover:opacity-70"
+        style={{ color: C.blueLight }}
+      >
+        {item.label}
+      </button>
+    ) : (
+      <a
+        key={i}
+        href={item.href}
+        className="hidden lg:block px-2 py-1 hover:opacity-70"
+        style={{ color: item.href === "#s0" ? C.blue : C.blueLight }}
+      >
+        {item.label}
+      </a>
+    )
+  )}
+
+  <a
+    href="#s0"
+    className="lg:hidden px-2.5 py-1 rounded-full text-white text-xs"
+    style={{ backgroundColor: C.blue }}
+    onClick={goToRsvp("yes")}
+  >
+    RSVP
+  </a>
+
+  <button
+    onClick={() => setLang(lang === "es" ? "en" : "es")}
+    className="px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm"
+    style={{ border: `1px solid ${C.blue}`, color: C.blue }}
+  >
+    {t.lang}
+  </button>
+</div>
         </div>
         
         {/* Mobile Menu */}
@@ -1458,14 +1517,14 @@ export default function Wedding() {
           <>
             {/* Backdrop - click to close */}
             <div 
-              className="md:hidden fixed inset-0 top-[52px] z-40" 
+              className="lg:hidden fixed inset-0 top-[52px] z-40" 
               onClick={() => setMobileMenuOpen(false)}
               style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
             />
-            <div className="md:hidden absolute top-full left-0 right-0 shadow-lg z-50" style={{ backgroundColor: C.cream, borderTop: `1px solid ${C.bluePale}` }}>
+            <div className="lg:hidden absolute top-full left-0 right-0 shadow-lg z-50" style={{ backgroundColor: C.cream, borderTop: `1px solid ${C.bluePale}` }}>
               <div className="px-4 py-3 space-y-1">
                 {[
-                  { label: lang === 'es' ? 'Confirmar Asistencia' : 'RSVP', action: () => { setMobileMenuOpen(false); goToRsvp('yes')({ preventDefault: () => {} }); } },
+                  { label: lang === 'es' ? 'RSVP' : 'RSVP', action: () => { setMobileMenuOpen(false); goToRsvp('yes')({ preventDefault: () => {} }); } },
                   { label: lang === 'es' ? 'Itinerario' : 'Itinerary', href: '#s1' },
                   { label: lang === 'es' ? 'Hospedaje' : 'Stay', href: '#s2' },
                   { label: lang === 'es' ? 'Vestimenta' : 'Dress Code', href: '#s3' },
@@ -1506,14 +1565,17 @@ export default function Wedding() {
         <div className="relative z-10 flex flex-col items-center mt-4 md:mt-0">
           <p className="text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-2 md:mb-6 uppercase" style={{ color: C.blueLight }}>{t.hero.subtitle}</p>
           <div className="w-screen overflow-visible flex justify-center">
-            <CoupleWordmark className="w-[180vw] md:w-[800px] mb-6 md:mb-8" scale={1.8} />
+            <CoupleWordmark
+              className="w-[320px] md:w-[520px] mb-6 md:mb-8"
+              scale={3.0}
+            />
           </div>
           <p className="text-lg md:text-2xl mb-1" style={{ color: C.blue }}>{t.date.full}</p>
           <p className="text-sm md:text-base mb-6 md:mb-8" style={{ color: C.blueLight, fontStyle: 'italic' }}>{t.hero.location}</p>
           <div className="flex gap-3 md:gap-8 mb-6 md:mb-8">
             {[{ v: countdown.d, l: lang === 'es' ? 'días' : 'days', path: "M 50,2 C 75,-2 92,8 97,25 C 103,45 95,70 92,85 C 82,100 65,102 45,98 C 22,95 5,85 3,65 C 0,45 8,20 20,8 C 32,-2 42,4 50,2 Z" }, { v: countdown.h, l: lang === 'es' ? 'horas' : 'hours', path: "M 55,3 C 78,0 95,15 98,35 C 102,55 98,78 88,92 C 72,105 48,102 30,95 C 8,85 -2,65 2,42 C 6,20 25,5 55,3 Z" }, { v: countdown.m, l: 'min', path: "M 48,2 C 72,0 90,10 96,30 C 104,52 100,75 90,90 C 75,103 52,100 32,95 C 10,88 0,68 3,45 C 7,18 28,3 48,2 Z" }].map((x, i) => (
               <div key={i} className="relative text-center px-6 md:px-10 py-5 md:py-6" style={{ transform: `rotate(${i === 0 ? -2 : i === 1 ? 1 : -1}deg)` }}>
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path d={x.path} fill="rgba(91,123,141,0.08)" stroke={C.bluePale} strokeWidth="1.5" /></svg>
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path d={x.path} fill={C.cream} stroke={C.bluePale} strokeWidth="1.5" /></svg>
                 <div className="relative z-10"><div className="text-2xl md:text-4xl font-light" style={{ color: C.blue }}>{x.v}</div><div className="text-xs md:text-sm tracking-wider" style={{ color: C.blueLight }}>{x.l}</div></div>
               </div>
             ))}
@@ -1551,7 +1613,7 @@ export default function Wedding() {
                     <HandDrawnCard key={ei} className="p-4 md:p-6">
                       <div className="flex items-start justify-between gap-3 mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center relative" style={{ backgroundColor: C.blue + '15' }}>
+                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center relative" style={{ backgroundColor: C.cream }}>
                             <ItineraryIcon type={e.icon} className="w-5 h-5 md:w-6 md:h-6" style={{ color: C.blue }} />
                             <DoodleSparkle size={10} color={C.gold} className="absolute -top-1 -right-1 opacity-80" />
                           </div>
@@ -1567,7 +1629,6 @@ export default function Wedding() {
                       <div className="flex flex-wrap gap-2">
                         <span className="px-3 py-1 rounded-full text-xs md:text-sm text-white relative overflow-hidden" style={{ backgroundColor: C.blue }}>{e.dress}</span>
                         <span className="px-3 py-1 rounded-full text-xs md:text-sm flex items-center gap-1" style={{ backgroundColor: 'rgba(91,123,148,0.1)', color: C.blueLight }}><Icons.Location /> {e.venue}</span>
-                        {e.tbd && (<span className="px-3 py-1 rounded-full text-xs md:text-sm" style={{ backgroundColor: C.gold, color: '#5C4D3C' }}>{lang === 'es' ? 'Pronto' : 'Soon'}</span>)}
                       </div>
                     </HandDrawnCard>
                   ))}
@@ -1579,81 +1640,138 @@ export default function Wedding() {
         </div>
       </section>
 
-      <section className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.cream }}>
-        <div className="max-w-5xl mx-auto flex justify-center">
-          <img
-            src="/images/cordoba_watercolor.png"
-            alt="Córdoba"
-            className="w-full max-w-5xl"
+     <section className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.cream }}>
+      <div className="max-w-5xl mx-auto">
+        <div className="relative mx-auto">
+          {/* soft wash behind */}
+          <div
+            className="absolute inset-0 pointer-events-none"
             style={{
-              height: 'auto',
-              display: 'block',
-              // shows top of image already baked into the asset
+              background:
+                "radial-gradient(90% 70% at 35% 30%, rgba(50,70,110,0.14), transparent 65%)," +
+                "radial-gradient(80% 70% at 70% 65%, rgba(0,0,0,0.10), transparent 60%)",
+              filter: "blur(16px)",
+              opacity: 0.9,
             }}
-            draggable={false}
           />
-        </div>
-      </section>
 
+          <div className="relative">
+            <img
+              src="/images/cordoba_pencil_sketch.png"
+              alt="Córdoba"
+              draggable={false}
+              className="w-full h-[260px] md:h-[420px] object-cover object-top"
+              style={{
+                // watercolor mask (this is the key)
+                WebkitMaskImage: watercolorMaskUrl,
+                maskImage: watercolorMaskUrl,
+                WebkitMaskSize: "100% 100%",
+                maskSize: "100% 100%",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
 
+                // watercolor feel
+                mixBlendMode: "multiply",
+                opacity: 0.9,
+                filter: "contrast(1.03) saturate(0.78) blur(0.35px)",
+              }}
+            />
 
-      <section id="s2" className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.creamDark }}>
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.hotels.title}</h2>
-          <p className="text-center text-xs md:text-sm mb-2" style={{ color: C.blueLight }}>{t.hotels.subtitle}</p>
-          <p className="text-center text-xs md:text-sm mb-3 md:mb-4" style={{ color: C.blueLight }}>{t.hotels.intro}</p>
-          <p className="text-center text-xs md:text-sm mb-6 md:mb-10 px-3 md:px-4 py-1.5 md:py-2 rounded-full mx-auto" style={{ backgroundColor: C.gold, color: '#5C4D3C', display: 'table' }}>{t.hotels.bookBy}</p>
-          
-          <div className="grid grid-cols-2 gap-4 md:gap-6">
-            {t.hotels.list.map((h, i) => {
-              const rotations = ['-0.4deg', '0.5deg', '-0.6deg', '0.4deg'];
-              const cardPaths = [
-                "M 2,4 Q 25,1 50,3 Q 75,1 98,4 Q 101,25 99,50 Q 101,75 98,96 Q 75,99 50,97 Q 25,99 2,96 Q -1,75 1,50 Q -1,25 2,4 Z",
-                "M 3,3 Q 30,0 55,4 Q 80,1 97,3 Q 100,30 98,55 Q 101,80 97,97 Q 70,100 45,96 Q 20,100 3,97 Q 0,70 2,45 Q -1,20 3,3 Z",
-                "M 4,2 Q 28,0 52,3 Q 76,0 96,2 Q 100,28 98,52 Q 101,76 96,98 Q 72,101 48,97 Q 24,101 4,98 Q 0,72 2,48 Q -1,24 4,2 Z",
-                "M 2,3 Q 26,0 50,2 Q 74,0 98,3 Q 101,26 99,50 Q 102,74 98,97 Q 74,100 50,98 Q 26,101 2,97 Q -1,74 1,50 Q -2,26 2,3 Z"
-              ];
-              
-              return (
-              <a key={i} href={h.url} target="_blank" rel="noopener noreferrer" className="group relative block" style={{ transform: `rotate(${rotations[i]})` }}>
-                <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)]" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <path d={cardPaths[i]} fill={C.cream} stroke={h.top ? C.gold : C.bluePale} strokeWidth={h.top ? "2.5" : "1.5"} vectorEffect="non-scaling-stroke"/>
-                </svg>
-                
-                <div className="relative z-10 p-4 md:p-5">
-                  <div className="relative mb-3 overflow-hidden rounded-xl">
-                    <Img src={h.img} alt={h.name} className="w-full h-32 md:h-44 group-hover:scale-105 transition-transform duration-300" position="center" />
-                    {h.top && (
-                      <div className="absolute top-2 right-2">
-                        <DoodleSparkle size={18} color={C.gold} />
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="text-center">
-                    <h3 className="text-sm md:text-base font-medium leading-tight mb-1" style={{ color: C.blue }}>{h.name}</h3>
-                    <p className="text-xs md:text-sm mb-1" style={{ color: C.blueLight }}>{h.dist} · {h.price}</p>
-                    <p className="text-xs md:text-sm leading-snug" style={{ color: C.text }}>{h.note}</p>
-                  </div>
-                  
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: C.blue, color: 'white' }}>{lang === 'es' ? 'Reservar' : 'Book'}</span>
-                  </div>
-                </div>
-              </a>
-            )})}
+            {/* paper grain overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: "radial-gradient(rgba(0,0,0,0.07) 1px, transparent 1px)",
+                backgroundSize: "3px 3px",
+                opacity: 0.10,
+                mixBlendMode: "soft-light",
+              }}
+            />
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="s2" className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.creamDark }}>
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-2xl md:text-4xl text-center mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>{t.hotels.title}</h2>
+        <p className="text-center text-xs md:text-sm mb-2" style={{ color: C.blueLight }}>{t.hotels.subtitle}</p>
+        <p className="text-center text-xs md:text-sm mb-3 md:mb-4" style={{ color: C.blueLight }}>{t.hotels.intro}</p>
+        <p className="text-center text-xs md:text-sm mb-6 md:mb-10 px-3 md:px-4 py-1.5 md:py-2 rounded-full mx-auto" style={{ backgroundColor: C.blue, color: C.cream, display: 'table' }}>{t.hotels.bookBy}</p>
+        
+        <div className="grid grid-cols-2 gap-4 md:gap-6">
+          {t.hotels.list.map((h, i) => {
+            const rotations = ['-0.4deg', '0.5deg', '-0.6deg', '0.4deg'];
+            const cardPaths = [
+              "M 2,4 Q 25,1 50,3 Q 75,1 98,4 Q 101,25 99,50 Q 101,75 98,96 Q 75,99 50,97 Q 25,99 2,96 Q -1,75 1,50 Q -1,25 2,4 Z",
+              "M 3,3 Q 30,0 55,4 Q 80,1 97,3 Q 100,30 98,55 Q 101,80 97,97 Q 70,100 45,96 Q 20,100 3,97 Q 0,70 2,45 Q -1,20 3,3 Z",
+              "M 4,2 Q 28,0 52,3 Q 76,0 96,2 Q 100,28 98,52 Q 101,76 96,98 Q 72,101 48,97 Q 24,101 4,98 Q 0,72 2,48 Q -1,24 4,2 Z",
+              "M 2,3 Q 26,0 50,2 Q 74,0 98,3 Q 101,26 99,50 Q 102,74 98,97 Q 74,100 50,98 Q 26,101 2,97 Q -1,74 1,50 Q -2,26 2,3 Z"
+            ];
+            
+            return (
+            <a key={i} href={h.url} target="_blank" rel="noopener noreferrer" className="group relative block" style={{ transform: `rotate(${rotations[i]})` }}>
+              <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)]" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d={cardPaths[i]} fill={C.cream} stroke={C.bluePale} strokeWidth={h.top ? "2.5" : "1.5"} vectorEffect="non-scaling-stroke"/>
+              </svg>
+              
+              <div className="relative z-10 p-4 md:p-5">
+                <div className="relative mb-3 overflow-hidden rounded-xl">
+                  <Img src={h.img} alt={h.name} className="w-full h-32 md:h-44 group-hover:scale-105 transition-transform duration-300" position="center" />
+                  {h.top && (
+                    <div className="absolute top-2 right-2">
+                      <DoodleSparkle size={18} color={C.gold} />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-sm md:text-base font-medium leading-tight mb-1" style={{ color: C.blue }}>{h.name}</h3>
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <p className="text-xs md:text-sm" style={{ color: C.blueLight }}>{h.dist}</p>
+
+                    {/* Stars derived from the number of € in the existing data */}
+                    <div className="flex items-center gap-0.5 opacity-80" aria-label="Hotel rating">
+                      {Array.from({ length: Math.min(5, (h.price || "").length || 0) }).map((_, si) => (
+                        <DoodleStar key={si} size={14} color={C.blue} />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-xs md:text-sm leading-snug" style={{ color: C.text }}>{h.note}</p>
+                </div>
+                
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: C.blue, color: 'white' }}>{lang === 'es' ? 'Reservar' : 'Book'}</span>
+                </div>
+              </div>
+            </a>
+          )})}
+        </div>
+      </div>
       </section>
 
-      <section className="relative h-48 md:h-80"><Img src="mjc_ring_bw.jpg" alt="Ring" className="w-full h-full" /><div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(91,123,148,0.4)' }}><p className="text-white text-xl md:text-4xl flex items-center gap-2" style={{ fontStyle: 'italic' }}>Sí, quiero</p></div></section>
-
-      <section id="transport" className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.blue }}>
+      <section
+        id="transport"
+        className="relative py-12 md:py-20 px-4 md:px-6 overflow-hidden"
+      >
+        {/* Background doodle */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "url('/images/monclova_doodle.png')",
+            backgroundRepeat: "repeat",
+            backgroundSize: "420px auto",
+            backgroundPosition: "center",
+            opacity: 0.3,
+            filter: "contrast(1.05)",
+          }}
+        />
+        
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-4xl text-center mb-2 text-white" style={{ fontStyle: 'italic' }}>
+          <h2 className="text-2xl md:text-4xl text-center mb-2 text-white" style={{color: C.blue}}>
             {t.transport.title}
           </h2>
-          <p className="text-center text-xs md:text-sm mb-8 md:mb-10 text-white/70">
+          <p className="text-center text-xs md:text-sm mb-8 md:mb-10 text-white/70" style={{color: C.blue}}>
             {t.transport.subtitle}
           </p>
 
@@ -1831,141 +1949,143 @@ export default function Wedding() {
         </div>
       </section>
 
-      <section className="py-12 md:py-20 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: C.blue }}>
-        {/* floating doodles (light) */}
-        <div className="absolute inset-0 pointer-events-none opacity-15">
-          <div className="absolute -top-10 left-6 rotate-[-12deg]">
-            <DoodleSparkle size={52} color={C.gold} />
-          </div>
-          <div className="absolute top-24 right-8 rotate-[10deg]">
-            <DoodleLeaf size={64} color={C.goldLight} />
-          </div>
-          <div className="absolute bottom-10 left-10 rotate-[8deg]">
-            <DoodleHeart size={46} color={C.gold} filled />
-          </div>
-        </div>
+  <section
+    className="py-12 md:py-20 px-4 md:px-6 relative overflow-hidden"
+    style={{ backgroundColor: C.blue }}
+  >
+    {/* Background doodle */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url('/images/kyoto.jpg')",
+              backgroundRepeat: "repeat",
+              backgroundSize: "420px auto",
+              backgroundPosition: "center",
+              opacity: 0.3,
+              filter: "contrast(1.05)",
+            }}
+          />
+      {/* soft vignette so text stays readable */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            `radial-gradient(70% 60% at 50% 40%, rgba(0,0,0,0.15), rgba(0,0,0,0.45))`,
+          opacity: 0.55,
+        }}
+      />
 
-        <div className="max-w-4xl mx-auto relative">
-          <WigglyPostcard className="mx-auto max-w-3xl">
-            <div
-              className="px-6 py-7 md:px-10 md:py-10 text-center relative"
-              style={{
-                backgroundColor: "transparent",
-                boxShadow: "0 20px 60px rgba(0,0,0,0.20)"
-              }}
-            >
-              {/* top airmail stripes */}
+
+          <div className="max-w-4xl mx-auto relative">
+            <WigglyPostcard className="mx-auto max-w-3xl">
               <div
-                className="absolute left-0 right-0 top-0 h-3 rounded-t-2xl"
+                className="px-6 py-7 md:px-10 md:py-10 text-center relative"
                 style={{
-                  background: `repeating-linear-gradient(
-                    90deg,
-                    ${C.blue} 0px,
-                    ${C.blue} 12px,
-                    ${C.gold} 12px,
-                    ${C.gold} 24px,
-                    ${C.creamDark} 24px,
-                    ${C.creamDark} 36px
-                  )`
+                  backgroundColor: "transparent",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.20)"
                 }}
-              />
+              >
+                
 
-              {/* bottom airmail stripes */}
-              <div
-                className="absolute left-0 right-0 bottom-0 h-3 rounded-b-2xl"
-                style={{
-                  background: `repeating-linear-gradient(
-                    90deg,
-                    ${C.blue} 0px,
-                    ${C.blue} 12px,
-                    ${C.gold} 12px,
-                    ${C.gold} 24px,
-                    ${C.creamDark} 24px,
-                    ${C.creamDark} 36px
-                  )`
-                }}
-              />
+                <div className="relative z-10">
+                  <h2 className="text-2xl md:text-4xl mb-2" style={{ color: C.blue, fontStyle: "italic" }}>
+                    {t.gifts.title}
+                  </h2>
 
-              {/* stamp cluster */}
-              <div className="absolute -top-5 right-6 md:right-10 flex gap-2">
-                <div
-                  className="px-3 py-2 rounded-xl"
-                  style={{
-                    backgroundColor: C.blue,
-                    color: "white",
-                    border: `2px dashed ${C.goldLight}`,
-                    transform: "rotate(8deg)"
-                  }}
-                >
-                  <div className="text-[10px] tracking-widest uppercase opacity-80">JP</div>
-                  <div className="text-lg leading-none">🇯🇵</div>
-                </div>
+                  <p className="text-xs md:text-sm mb-4" style={{ color: C.blueLight, fontStyle: "italic" }}>
+                    {t.gifts.subtitle}
+                  </p>
 
-                <div
-                  className="px-3 py-2 rounded-xl"
-                  style={{
-                    backgroundColor: C.goldLight,
-                    color: C.blue,
-                    border: `2px dashed ${C.bluePale}`,
-                    transform: "rotate(-6deg)"
-                  }}
-                >
-                  <div className="text-[10px] tracking-widest uppercase opacity-80">
-                    {lang === "es" ? "LUNA" : "HONEY"}
-                  </div>
-                  <div className="text-lg leading-none">✈️</div>
-                </div>
-              </div>
+                  <p className="text-xs md:text-sm mb-7 md:mb-8" style={{ color: C.text }}>
+                    {lang === "es"
+                      ? "Regaladnos experiencias para nuestra luna de miel en Japón."
+                      : "Gift us experiences for our honeymoon in Japan."}
+                  </p>
 
-              <div className="relative z-10">
-                <p className="text-4xl md:text-6xl mb-3">🇯🇵</p>
-
-                <h2 className="text-2xl md:text-4xl mb-2" style={{ color: C.blue, fontStyle: "italic" }}>
-                  {t.gifts.title}
-                </h2>
-
-                <p className="text-xs md:text-sm mb-4" style={{ color: C.blueLight, fontStyle: "italic" }}>
-                  {t.gifts.subtitle}
-                </p>
-
-                <p className="text-xs md:text-sm mb-7 md:mb-8" style={{ color: C.text }}>
-                  {lang === "es"
-                    ? "Regaladnos experiencias para nuestra luna de miel en Japón."
-                    : "Gift us experiences for our honeymoon in Japan."}
-                </p>
-
-                <button
-                  onClick={goToGifts}
-                  className="px-8 md:px-10 py-3 md:py-4 rounded-full text-sm md:text-base hover:scale-105 transition-transform"
-                  style={{
-                    backgroundColor: C.blue,
-                    color: "white",
-                    boxShadow: "0 10px 30px rgba(91,123,148,0.35)"
-                  }}
-                >
-                  {lang === "es" ? "Ver experiencias" : "View experiences"}
-                </button>
-
-                <div className="mt-6 flex justify-center opacity-70">
-                  <span
-                    className="px-4 py-1 rounded-full text-[10px] md:text-xs tracking-widest uppercase"
-                    style={{ border: `1px dashed ${C.bluePale}`, color: C.blueLight }}
+                  <button
+                    onClick={goToGifts}
+                    className="px-8 md:px-10 py-3 md:py-4 rounded-full text-sm md:text-base hover:scale-105 transition-transform"
+                    style={{
+                      backgroundColor: C.blue,
+                      color: "white",
+                      boxShadow: "0 10px 30px rgba(91,123,148,0.35)"
+                    }}
                   >
-                    {lang === "es" ? "Desde Córdoba → Japón" : "From Córdoba → Japan"}
-                  </span>
+                    {lang === "es" ? "Ver experiencias" : "View experiences"}
+                  </button>
+
+                  <div className="mt-6 flex justify-center opacity-70">
+                  </div>
                 </div>
               </div>
-            </div>
-          </WigglyPostcard>
+            </WigglyPostcard>
+          </div>
+      </section>
+
+      <section
+        id="faq"
+        className="py-12 md:py-20 px-4 md:px-6"
+        style={{ backgroundColor: C.cream }}
+      >
+        <div className="max-w-2xl mx-auto">
+          <h2
+            className="text-2xl md:text-4xl text-center mb-6 md:mb-10"
+            style={{ color: C.blue, fontStyle: "italic" }}
+          >
+            {t.faq.title}
+          </h2>
+
+          {t.faq.items.map((f, i) => (
+            <FAQWiggleCard
+              key={i}
+              className="mb-3 md:mb-4 rounded-2xl overflow-hidden"
+            >
+              {/* tiny stroke clearance */}
+              <div className="p-1.5 md:p-2">
+                {/* asymmetric safe zone + anchor for icon */}
+                <div className="relative pl-9 pr-7 md:pl-11 md:pr-9 py-4 md:py-5">
+                  {/* Plus / Minus — pinned to top-right of the card */}
+                  <span
+                    className="absolute top-2.5 md:top-0 right-6 md:right-8 text-lg md:text-xl cursor-pointer select-none"
+                    style={{ color: C.blue }}
+                    onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
+                    aria-hidden="true"
+                  >
+                    {expandedFaq === i ? "−" : "+"}
+                  </span>
+
+                  {/* Question */}
+                  <button
+                    onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
+                    className="w-full text-left hover:opacity-90"
+                  >
+                    <span
+                      className="block text-sm md:text-base pr-10 md:pr-12 leading-snug break-words"
+                      style={{ color: C.blue }}
+                    >
+                      {f.q}
+                    </span>
+                  </button>
+
+                  {/* Answer */}
+                  {expandedFaq === i && (
+                    <div
+                      className="pt-3 text-sm md:text-base leading-relaxed break-words"
+                      style={{ color: C.blueLight }}
+                    >
+                      {f.a}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </FAQWiggleCard>
+          ))}
         </div>
       </section>
 
-      <section id="faq" className="py-12 md:py-20 px-4 md:px-6" style={{ backgroundColor: C.creamDark }}>
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl md:text-4xl text-center mb-6 md:mb-10" style={{ color: C.blue, fontStyle: 'italic' }}>{t.faq.title}</h2>
-          {t.faq.items.map((f, i) => (<div key={i} className="mb-2 md:mb-3 rounded-2xl overflow-hidden" style={{ backgroundColor: C.cream }}><button onClick={() => setExpandedFaq(expandedFaq === i ? null : i)} className="w-full px-4 md:px-6 py-4 md:py-5 flex justify-between items-center text-left hover:opacity-90"><span className="text-sm md:text-base pr-3 md:pr-4" style={{ color: C.blue }}>{f.q}</span><span className="text-lg md:text-xl shrink-0" style={{ color: C.blueLight }}>{expandedFaq === i ? '−' : '+'}</span></button>{expandedFaq === i && <div className="px-4 md:px-6 pb-4 md:pb-5 text-sm md:text-base" style={{ color: C.blueLight }}>{f.a}</div>}</div>))}
-        </div>
-      </section>
+
+      
+      <section className="relative h-48 md:h-80"><Img src="mjc_ring_bw.jpg" alt="Ring" className="w-full h-full" /><div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(91,123,148,0.4)' }}><p className="text-white text-xl md:text-4xl flex items-center gap-2" style={{ fontStyle: 'italic' }}>Sí, quiero</p></div></section>
 
       <section id="s4" className="py-12 md:py-20 px-4 md:px-6 relative overflow-visible" style={{ backgroundColor: C.creamDark }}>
         <StoryTimeline items={t.story.items} intro={t.story.intro} title={t.story.title} subtitle={t.story.subtitle} />
@@ -1974,8 +2094,8 @@ export default function Wedding() {
       <footer className="relative py-10 md:py-16 text-center overflow-hidden" style={{ backgroundColor: C.blue }}>
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard.jpg" alt="Footer" className="w-full h-full" /></div>
         <div className="relative z-10">
-          <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-28 h-24 md:w-48 md:h-40 rounded-xl mx-auto mb-3 md:mb-4 opacity-70" style={{ filter: 'brightness(0) invert(1)' }}/>
-          <CoupleWordmark className="w-[220px] md:w-[320px] mx-auto mb-2 md:mb-4" scale={1.2} style={{ filter: 'brightness(0) invert(1)' }} />
+          <Img src="mjc_doodle_dancing_dark_blue.png" alt="Dancing" className="w-28 h-24 md:w-48 md:h-40 rounded-xl mx-auto mb-3 md:mb-4 opacity-70" style={{ filter: 'brightness(0) invert(1)' }}/>
+          <CoupleWordmark className="w-[220px] md:w-[320px] mx-auto mb-2 md:mb-4" scale={3.0} style={{ filter: 'brightness(0) invert(1)' }} />
           <p className="text-white/60 text-xs md:text-sm">{t.date.full} · {t.hero.location}</p>
           <p className="text-white/80 text-base md:text-lg mt-3 md:mt-4">{t.footer.hash}</p>
           
