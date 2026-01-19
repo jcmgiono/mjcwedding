@@ -1032,7 +1032,6 @@ export default function Wedding() {
           <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
             <button onClick={goHome} className="flex items-center gap-1.5 md:gap-2 hover:opacity-70">
               <span className="text-lg" style={{ color: C.blue }}>←</span>
-              <span className="text-base md:text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
             </button>
             <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')} className="px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm" style={{ border: `1px solid ${C.blue}`, color: C.blue }}>{t.lang}</button>
           </div>
@@ -1187,7 +1186,6 @@ export default function Wedding() {
           <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
             <button onClick={goHome} className="flex items-center gap-1.5 md:gap-2 hover:opacity-70">
               <span className="text-lg" style={{ color: C.blue }}>←</span>
-              <span className="text-base md:text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
             </button>
             <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')} className="px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm" style={{ border: `1px solid ${C.blue}`, color: C.blue }}>{t.lang}</button>
           </div>
@@ -1444,11 +1442,9 @@ export default function Wedding() {
                 <span className="text-white text-[10px]">{mobileMenuOpen ? '×' : '≡'}</span>
               </div>
             </div>
-            <span className="text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
           </button>
           <div className="hidden md:flex items-center gap-1.5 md:gap-2">
             <Img src="mjc_doodle_dancing.png" alt="Dancing" className="w-12 h-10 rounded" />
-            <span className="text-lg" style={{ color: C.blue, fontStyle: 'italic' }}>MJC</span>
           </div>
           <div className="flex items-center gap-1.5 md:gap-4 text-xs md:text-sm leading-snug">
             {t.nav.slice(0, 5).map((n, i) => <a key={i} href={`#s${i}`} className="hidden md:block px-2 py-1 hover:opacity-70" style={{ color: i === 0 ? C.blue : C.blueLight }}>{n}</a>)}
