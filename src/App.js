@@ -139,8 +139,8 @@ const CoupleWordmark = ({
   const width =
     variant === "footer"
       ? `clamp(${260 * scale}px, ${78 * scale}vw, ${560 * scale}px)`
-      : `clamp(${340 * scale}px, ${120 * scale}vw, ${980 * scale}px)`;
-
+      : `clamp(${380 * scale}px, ${174 * scale}vw, ${980 * scale}px)`;
+      
   return (
     <div
       className={className}
