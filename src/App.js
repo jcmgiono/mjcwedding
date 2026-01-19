@@ -15,6 +15,74 @@ const C = {
 
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw9FlMDDga_k0BdFeJxR3Y_HQGWsWcCIT5h3Q1s5-0veZKeLPhEwqaBPeFnaQXcrY_V/exec';
 
+const MIN_INTRO_MS = 3000; // try 700–1200
+
+// --- Preload helpers ---
+const collectImageUrls = () => {
+  const urls = new Set();
+
+  // Always include these:
+  const always = [
+    "/images/mjc_doodle_dancing.png",
+    "/images/mjc_doodle_names.png",
+    "/images/cordoba_watercolor.png",
+    "/images/mjc_couple_vineyard_bw.jpg",
+    "/images/mjc_couple_portrait.jpg",
+    "/images/mjc_ring_bw.jpg",
+    "/images/mjc_cordoba_mezquita.jpg",
+    "/images/mjc_couple_vineyard.jpg",
+  ];
+  always.forEach((u) => urls.add(u));
+
+  // Pull any `img` fields from your content objects (story, hotels, gifts, etc.)
+  const walk = (obj) => {
+    if (!obj) return;
+    if (Array.isArray(obj)) return obj.forEach(walk);
+    if (typeof obj === "object") {
+      for (const [k, v] of Object.entries(obj)) {
+        if (k === "img" && typeof v === "string") {
+          urls.add(`/images/${v}`);
+        } else {
+          walk(v);
+        }
+      }
+    }
+  };
+
+  walk(content); // uses your existing `content` constant
+
+  return Array.from(urls);
+};
+
+const preloadImages = (urls, onProgress) => {
+  let loaded = 0;
+  const total = urls.length;
+
+  const update = () => {
+    loaded += 1;
+    onProgress?.(Math.round((loaded / total) * 100));
+  };
+
+  return Promise.all(
+    urls.map(
+      (src) =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            update();
+            resolve(true);
+          };
+          img.onerror = () => {
+            // Don't block the whole load if one image fails
+            update();
+            resolve(false);
+          };
+          img.src = src;
+        })
+    )
+  );
+};
+
 const CoupleWordmark = ({ className = "", style = {}, scale = 1 }) => {
   return (
     <div
@@ -622,6 +690,9 @@ export default function Wedding() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [zelleCopied, setZelleCopied] = useState(false);
+  const introStartRef = React.useRef(Date.now());
+  const [introLeaving, setIntroLeaving] = useState(false);
+  const [showSite, setShowSite] = useState(false);
   const t = content[lang];
 
   // Check if this code was already submitted (client-side backup)
@@ -645,10 +716,68 @@ export default function Wedding() {
   };
    
   useEffect(() => {
-    setTimeout(() => setLoaded(true), 300);
-    const tick = () => { const diff = new Date('2026-10-01T16:00:00') - new Date(); if (diff > 0) setCountdown({ d: Math.floor(diff / 86400000), h: Math.floor((diff / 3600000) % 24), m: Math.floor((diff / 60000) % 60) }); };
-    tick(); const timer = setInterval(tick, 60000); return () => clearInterval(timer);
+    let cancelled = false;
+
+    introStartRef.current = Date.now();
+
+    const fadeTimer = setTimeout(() => {
+      if (!cancelled) setLoaded(true);
+    }, 120);
+
+    const urls = collectImageUrls();
+
+    const finishIntro = async () => {
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const elapsed = Date.now() - introStartRef.current;
+      const remaining = Math.max(0, MIN_INTRO_MS - elapsed);
+
+      setTimeout(() => {
+        if (cancelled) return;
+        
+        window.scrollTo(0, 0); 
+        // Start cross-fade
+        setShowSite(true);
+        setIntroLeaving(true);
+
+        // After animation completes, unmount intro
+        setTimeout(() => {
+          if (!cancelled) setShowIntro(false);
+        }, 700); // must match CSS duration below
+      }, remaining);
+    };
+
+    preloadImages(urls)
+    .then(() => {
+      if (!cancelled) finishIntro();
+    })
+    .catch(() => {
+      if (!cancelled) finishIntro();
+    });
+
+
+    // countdown timer (your existing logic)
+    const tick = () => {
+      const diff = new Date("2026-10-01T16:00:00") - new Date();
+      if (diff > 0) {
+        setCountdown({
+          d: Math.floor(diff / 86400000),
+          h: Math.floor((diff / 3600000) % 24),
+          m: Math.floor((diff / 60000) % 60),
+        });
+      }
+    };
+    tick();
+    const timer = setInterval(tick, 60000);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(fadeTimer);
+      clearInterval(timer);
+    };
   }, []);
+
+
   
   const goToRsvp = (attending) => (e) => { 
     e.preventDefault(); 
@@ -773,13 +902,67 @@ export default function Wedding() {
 
   if (showIntro) {
     return (
-      <div className={`fixed inset-0 flex items-center justify-center ${loaded ? 'opacity-100' : 'opacity-0'}`} style={{ backgroundColor: C.cream, transition: 'opacity 0.8s' }}>
-        <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')} className="absolute top-3 right-3 md:top-4 md:right-4 z-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm tracking-wider" style={{ color: C.blue, border: `1px solid ${C.blue}` }}>{t.lang}</button>
-        <video autoPlay muted playsInline onEnded={() => setShowIntro(false)} className="w-full h-auto max-h-[100vh] object-contain"><source src="/images/mjc_doodle_dancing.mp4" type="video/mp4" /></video>
-        <button onClick={() => setShowIntro(false)} className="absolute bottom-4 right-4 md:bottom-8 md:right-8 px-4 py-2 md:px-6 rounded-full text-xs md:text-sm tracking-wider hover:opacity-80 transition-opacity" style={{ backgroundColor: 'rgba(96,121,141,0.2)', color: C.blue, backdropFilter: 'blur(4px)' }}>{lang === 'es' ? 'Saltar' : 'Skip'}</button>
+      <div
+        className="fixed inset-0 flex items-center justify-center"
+        style={{
+          backgroundColor: C.cream,
+          transition: "opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease",
+          opacity: introLeaving ? 0 : (loaded ? 1 : 0),
+          transform: introLeaving ? "translateY(-8px) scale(0.99)" : "translateY(0) scale(1)",
+          filter: introLeaving ? "blur(2px)" : "blur(0px)",
+          overflow: "hidden",
+          zIndex: 50,
+          pointerEvents: introLeaving ? "none" : "auto",
+        }}
+      >
+        {/* language toggle still works */}
+        <button
+          onClick={() => setLang(lang === "es" ? "en" : "es")}
+          className="absolute top-3 right-3 md:top-4 md:right-4 z-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm tracking-wider"
+          style={{ color: C.blue, border: `1px solid ${C.blue}` }}
+        >
+          {t.lang}
+        </button>
+
+       {/* Dancing image */}
+        <div
+          className="relative flex items-center justify-center"
+          style={{
+            width: "min(880px, 98vw)",
+          }}
+        >
+          <img
+            src="/images/mjc_doodle_dancing.png"
+            data-dance="true"
+            alt="Loading"
+            draggable={false}
+            style={{
+              width: "100%",
+              height: "auto",
+              filter: "drop-shadow(0 18px 34px rgba(91,123,148,0.18))",
+              transformOrigin: "center bottom",
+              animation: "mjcDance 1.15s ease-in-out infinite",
+              position: "relative",
+              zIndex: 2,
+            }}
+          />
+        </div>
+
+        <style>{`
+          @keyframes mjcDance {
+            0%   { transform: translateY(0) rotate(-1.2deg) scale(1); }
+            50%  { transform: translateY(-6px) rotate(1.2deg) scale(1.02); }
+            100% { transform: translateY(0) rotate(-1.2deg) scale(1); }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            img[data-dance="true"] { animation: none !important; }
+          }
+        `}</style>
       </div>
     );
   }
+
 
   const submitRSVP = async () => { 
     setFormError('');
@@ -1237,8 +1420,19 @@ export default function Wedding() {
     );
   }
 
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: "'Nothing You Could Do', cursive" }}>
+  <div className="relative">
+    <div
+      style={{
+        opacity: showSite ? 1 : 0,
+        transition: "opacity 0.8s ease",
+      }}
+    >
+      <div
+        className="min-h-screen"
+        style={{ backgroundColor: C.cream, fontFamily: "'Nothing You Could Do', cursive" }}
+      >
       <SideDoodles />
       
       <nav className="fixed top-0 left-0 right-0 z-50 md:backdrop-blur-md" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
@@ -1805,6 +1999,8 @@ export default function Wedding() {
           <p className="text-white/40 text-xs md:text-sm mt-6 md:mt-8 flex items-center justify-center gap-1">{t.footer.made} <Icons.Heart /></p>
         </div>
       </footer>
+    </div>
+    </div>
     </div>
   );
 }
