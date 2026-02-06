@@ -1,5 +1,40 @@
 import React, { useState, useEffect } from 'react';
 
+// Parse CSV and group by partyId
+const parseGuestsCSV = (csvText) => {
+  const lines = csvText.trim().split('\n');
+  const headers = lines[0].split(',');
+  const rows = lines.slice(1).map(line => {
+    const values = line.split(',');
+    return headers.reduce((obj, header, i) => {
+      obj[header.trim()] = values[i]?.trim() || '';
+      return obj;
+    }, {});
+  });
+
+  // Group by partyId (skip empty rows)
+  const partiesMap = {};
+  rows.forEach(row => {
+    if (!row.partyId || !row.partyId.trim()) return; // Skip empty rows
+    if (!partiesMap[row.partyId]) {
+      partiesMap[row.partyId] = {
+        partyId: row.partyId,
+        household: row.household,
+        members: [],
+        maxGuests: parseInt(row.maxGuests) || 1,
+        lang: row.lang || 'es'
+      };
+    }
+    partiesMap[row.partyId].members.push({
+      name: row.name,
+      phone: row.phone,
+      lang: row.lang || 'es'
+    });
+  });
+
+  return Object.values(partiesMap);
+};
+
 const C = {
   // Friendlier primary blue (softer + slightly warmer than #073D61)
   blue: '#05111A',
@@ -26,9 +61,91 @@ const FONTS = {
   body: "'Edu SA Hand', cursive",
 };
 
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw9FlMDDga_k0BdFeJxR3Y_HQGWsWcCIT5h3Q1s5-0veZKeLPhEwqaBPeFnaQXcrY_V/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby1ZC5-iwuYizex1MeOoKATXLBLbPqN06t3XThz0O8u_g46niWQ_Fl-L2ePFxHA4VxE/exec';
 
 const MIN_INTRO_MS = 1500; // try 700–1200
+
+const COUNTRY_CODES = [
+  { code: '+1', label: 'US/CA +1' },
+  { code: '+52', label: 'MX +52' },
+  { code: '+34', label: 'ES +34' },
+  { code: '+44', label: 'UK +44' },
+  { code: '+33', label: 'FR +33' },
+  { code: '+49', label: 'DE +49' },
+  { code: '+39', label: 'IT +39' },
+  { code: '+55', label: 'BR +55' },
+  { code: '+57', label: 'CO +57' },
+  { code: '+54', label: 'AR +54' },
+  { code: '+56', label: 'CL +56' },
+  { code: '+51', label: 'PE +51' },
+  { code: '+505', label: 'NI +505' },
+  { code: '+46', label: 'SE +46' },
+];
+
+const norm = (s) =>
+  (s || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // remove accents
+    .replace(/\s+/g, " ");
+
+const normPhone = (s) => (s || "").replace(/\D/g, ""); // strip non-digits
+
+// Check if names are similar enough (fuzzy match)
+const namesMatch = (inputName, memberName) => {
+  const input = norm(inputName);
+  const member = norm(memberName);
+
+  // Exact match
+  if (input === member) return true;
+
+  // Input contains member name or vice versa
+  if (input.includes(member) || member.includes(input)) return true;
+
+  // Check if first or last name matches
+  const inputParts = input.split(' ').filter(p => p.length > 1);
+  const memberParts = member.split(' ').filter(p => p.length > 1);
+
+  // At least one significant word matches
+  const hasMatchingPart = inputParts.some(ip =>
+    memberParts.some(mp => ip === mp || ip.includes(mp) || mp.includes(ip))
+  );
+
+  return hasMatchingPart;
+};
+
+const findPartyByNameAndPhone = (parties, fullName, countryCode, phone) => {
+  const fullPhone = normPhone(countryCode + phone);
+
+  // First, find by phone number (primary match)
+  const partyByPhone = parties.find(party =>
+    party.members.some(member => normPhone(member.phone) === fullPhone)
+  );
+
+  if (partyByPhone) {
+    // Check if name is close enough to any member
+    const matchingMember = partyByPhone.members.find(member =>
+      normPhone(member.phone) === fullPhone && namesMatch(fullName, member.name)
+    );
+    if (matchingMember) {
+      return { party: partyByPhone, matchedMember: matchingMember };
+    }
+  }
+
+  // Fallback: exact name match for any guest
+  const normalizedInput = norm(fullName);
+  for (const party of parties) {
+    const matchingMember = party.members.find(member =>
+      norm(member.name) === normalizedInput
+    );
+    if (matchingMember) {
+      return { party, matchedMember: matchingMember };
+    }
+  }
+
+  return null;
+};
 
 const NAV_TARGETS = {
   es: [
@@ -338,12 +455,12 @@ const content = {
     date: { full: "1 de Octubre, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, España", scroll: "Desliza para descubrir" },
     nav: ["RSVP", "Itinerario", "Hospedaje", "Transporte", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
-    story: { title: "Nuestra Historia", subtitle: "6 años de amor", intro: "Algo en todos estos años dejó macerar la forma de amor que sentimos por el otro... lo que nos permite elegirnos día a día de forma libre y poder mirarnos y acompañarnos con más amor, aceptación, paciencia, apañe y ternura.",
+    story: { title: "Nuestra Historia", subtitle: "6 años de amor", intro: "Nos conocimos y, desde el primer momento, nos fue imposible mantenernos alejados. Primero fuimos amigos y, en poco tiempo, fuimos cultivando nuestra amistad hasta convertirla en algo más. Nos gusta pensar que nos encontramos en el momento exacto de nuestras vidas. Dios, en su infinita sabiduría, se encargó de unirnos cuando nuestros corazones estaban preparados.",
       items: [
-        { year: "2019", title: "Nos Conocimos", text: "El destino nos cruzó hace 6 años. Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "mjc_couple_portrait.jpg" },
-        { year: "8 Feb 2020", title: "Empezamos a Salir", text: "Justo antes de que el mundo cambiara, nosotros empezamos nuestra aventura juntos.", img: "mjc_couple_vineyard.jpg" },
-        { year: "21 Feb 2025", title: "La Propuesta", text: "En Napa Valley, entre viñedos y bajo el cielo de California, Juanca se arrodilló y le pidió a Marijo que fuera su compañera de vida.", img: "mjc_ring_closeup.jpg" },
-        { year: "1 Oct 2026", title: "Para Siempre", text: "Celebramos nuestro amor en la hermosa Córdoba, rodeados de quienes más queremos.", img: "mjc_cordoba_mezquita.jpg" }
+        { year: "2019", title: "Nos Conocimos", text: "El destino nos cruzó hace 6 años. Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "conocimos.jpg" },
+        { year: "8 Feb 2020", title: "Empezamos a Salir", text: "Justo antes de que el mundo cambiara, nosotros empezamos nuestra aventura juntos.", img: "kiss.jpg" },
+        { year: "21 Feb 2025", title: "La Pedida", text: "En Napa Valley, rodeados de viñedos y el amor de nuestra familia, Juanca se arrodilló y le pidió a Marijo que fuera su compañera para toda la vida.", img: "mjc_ring_closeup.jpg" },
+        { year: "1 Oct 2026", title: "Nuestro Matrimonio", text: "Esperamos con mucha ilusión poder celebrar nuestro amor en la hermosa ciudad de Córdoba, rodeados de las personas que más queremos.", img: "mjc_cordoba_mezquita.jpg" }
       ]
     },
     itinerary: { title: "Itinerario", subtitle: "Celebra con nosotros", days: [
@@ -352,12 +469,12 @@ const content = {
       ]},
       { day: "Jueves", date: "1", month: "Oct", events: [
         { title: "La Ceremonia Religiosa", time: "16:00", venue: "Mezquita-Catedral de Córdoba", address: "C. Cardenal Herrero, 1, 14003 Córdoba", tbd: false, icon: "church" },
-        { title: "La Celebración", time: "20:00", venue: "Castillo de Monclova", address: "Autovía E5, 4, km 475, 41430 Fuentes de Andalucía, Spain", tbd: false, icon: "sparkles" }
+        { title: "La Celebración", time: "18:00", venue: "Castillo de Monclova", address: "Autovía E5, 4, km 475, 41430 Fuentes de Andalucía, Spain", tbd: false, icon: "sparkles" }
       ]}
     ]},
     hotels: { title: "Hospedaje", subtitle: "", bookBy: "", intro: "Hoteles seleccionados por su ubicación y encanto.", disclaimer: "Estos hoteles estaran cerca del punto de regreso de la ceremonia.", list: [
       { name: "NH Collection Palacio de Córdoba", price: "€€€€€", note: "Plaza de Maimónides, 3, 14004 Córdoba", top: true, images: ["nh_collection1.avif", "nh_collection2.webp", "nh_collection3.avif"], url: "https://www.nh-collection.com/en/hotel/nh-collection-palacio-de-cordoba" },
-      { name: "H10 Palacio Colomera", price: "€€€€", note: "Plaza de las Tendillas, 3, 14002 Córdoba", top: false, images: ["h10palacio1.jpg", "h10palacio2.jpg", "H10Palacio3.jpg"], url: "https://www.h10hotels.com/en/cordova-hotels/h10-palacio-colomera" },
+      { name: "H10 Palacio Colomera", price: "€€€€", note: "Plaza de las Tendillas, 3, 14002 Córdoba", top: false, images: ["h10palacio1.jpg", "h10palacio2.jpg", "H10Palacio3.jpg"], url: "https://www.h10hotels.com/en/cordova-hotels/h10-palacio-colomera", discountCode: "BODAMYJO26" },
       { name: "Eurostars Conquistador", price: "€€€€", note: "C/ Magistral González Francés, 15-17, 14003 Córdoba", top: false, images: ["eurostarcon1.jpg", "eurostarcon2.jpg", "eurostarcon3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-conquistador.html" },
       { name: "Eurostars Palace", price: "€€€€€", note: "Paseo de la Victoria, s/n, 14004 Córdoba", top: false, images: ["eurostarpal1.jpg", "eurostarpal2.jpg", "eurostarpal3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-palace.html" },
       { name: "NH Córdoba Califa", price: "€€€€", note: "Lope de Hoces, 14, 14003 Córdoba", top: false, images: ["nhcalifa1.jpg", "nhcalifa2.jpg", "nhcalifa3.jpg"], url: "https://www.nh-hotels.com/en/hotel/nh-cordoba-califa" },
@@ -368,25 +485,25 @@ const content = {
       subtitle: 'Cómo movernos',
       cards: [
         {
-          title: 'Shuttle',
-          text: 'Habrá transporte de la ceremonia religiosa a la celebración, y de regreso.'
+          title: 'Shuttle (día de la boda)',
+          text: 'Habrá transporte desde la ceremonia religiosa hasta la celebración y de regreso. Recomendamos hospedarse en los hoteles sugeridos o en lugares cercanos, para estar cerca del punto de llegada al regresar de la celebración.'
         },
         {
           title: 'Taxi / Uber',
-          text: 'Taxis locales funcionan muy bien en el centro.'
+          text: 'Recomendamos utilizar taxis en lugar de Uber, ya que las calles son estrechas y hay zonas a las que solo tienen acceso los taxis.'
         },
         {
-          title: 'Parking',
-          text: 'El centro tiene calles estrechas; recomendamos parkings públicos o ir caminando.'
+          title: 'Caminar',
+          text: 'Si se hospedan en los hoteles recomendados o en zonas cercanas, podrán llegar caminando a la ceremonia religiosa, ya que está ubicada en el corazón de la ciudad y todo queda a poca distancia. La ciudad está hecha para caminar, así que disfruten y traigan sus zapatos más cómodos.'
         }
       ]
     },
-    dress: { title: "Vestimenta", subtitle: "", note: "Octubre en Córdoba: 68-77°F de día, noches frescas.", codes: [{ event: "Rompe Hielo", code: "Smart Casual", desc: "Casual elegante. Lino, vestidos de verano.", icon: "Sunset", colors: ["Tonos tierra", "Pasteles"] },{ event: "Boda", code: "Etiqueta", desc: "Vestidos largos, trajes oscuros.", icon: "Sparkles", colors: ["Evitar blanco"] }] },
-    travel: { title: "Cómo Llegar", subtitle: "", sections: [{ icon: "Plane", title: "Por Avión", text: "Recomendamos volar a Madrid y tomar el tren AVE a Córdoba.", tips: ["Sevilla (SVQ) 1.5h, Málaga (AGP) 2h"] },{ icon: "Train", title: "Por Tren", text: "AVE: Madrid 1h 45min, Sevilla 45min.", tips: ["Muy cómodo"], url: "https://www.renfe.com", urlText: "Reserva en Renfe" },{ icon: "Car", title: "Por Coche", text: "Sevilla 1.5h, Madrid 4h, Málaga 2h.", tips: ["Parking difícil en centro", "GPS recomendado"] }] },
-    gifts: { title: "Regalos", subtitle: "Vuestra presencia es el mejor regalo", msg: "Si deseáis hacernos un regalo, una contribución para nuestra luna de miel sería muy apreciada.", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
-    faq: { title: "Informacion Importante", items: [{ q: "¿Cómo será el clima?", a: "68-77°F de día, noches frescas. Trae chaqueta ligera." },{ q: "¿Puedo traer a mis hijos?", a: "Esta celebración es solo para adultos (18+)." },{ q: "¿Puedo llevar acompañante?", a: "Consulta tu invitación para detalles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Madrid (1h 45min en tren), Sevilla (1.5h) o Málaga (2h)." },{ q: "¿Necesito visa?", a: "UE, EEUU, México, Colombia: no necesitan visa hasta 90 días." },{ q: "¿Opciones vegetarianas?", a: "¡Sí! Indica restricciones en el formulario." }] },
+    dress: { title: "Vestimenta", subtitle: "", note: "Octubre en Córdoba: 68-77°F de día, noches frescas.", codes: [{ event: "Rompehielos", code: "Cocktail Attire", desc: "", icon: "Sunset", inspo: "rompehielo.jpg" },{ event: "Boda", code: "Black Tie / Formal", desc: "", icon: "Sparkles", inspo: ["dresses.jpg", "suits.jpg"] }] },
+    travel: { title: "Cómo Llegar", subtitle: "", sections: [{ icon: "Plane", title: "Por Avión", text: "Recomendamos volar a Madrid y tomar el tren AVE a Córdoba.", tips: ["También se puede volar a Sevilla o Málaga"] },{ icon: "Train", title: "Por Tren", text: "", tips: ["Madrid 1h 45min", "Sevilla 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Reserva en Renfe" },{ icon: "Car", title: "Por Coche", text: "", tips: ["Madrid 4h", "Sevilla 1.5h", "Málaga 2h"] }] },
+    gifts: { title: "Regalos", subtitle: "Su presencia es el mejor regalo, si desean darnos algún detalle, sepan que lo agradecemos profundamente.", msg: "", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
+    faq: { title: "Información Importante", items: [{ q: "¿Cómo será el clima?", a: "68-77°F (20-25°C) y noches frescas." },{ q: "¿Puedo traer a mis hijos?", a: "Con cariño, les informamos que la celebración será solo para adultos." },{ q: "¿Puedo llevar acompañante?", a: "Con mucho cariño, les pedimos respetar el número de personas indicado en la invitación. Te invitamos a consultar tu invitación para más detalles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Madrid (1h 45min en tren), Sevilla (1.5h en tren) o Málaga (2h en tren)." },{ q: "¿Necesito visa?", a: "EEUU, México, Colombia: no necesitan visa para estancias de hasta 90 días." },{ q: "¿Restricciones de comida?", a: "Indica restricciones en el formulario." }] },
     contact: { title: "¿Preguntas?", subtitle: "Estamos aquí para ayudaros", msg: "Cualquier duda, no dudéis en contactarnos.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
-    rsvp: { title: "Confirma tu Asistencia", subtitle: "Esperamos contar contigo", deadline: "Confirma antes del 1 Ago 2026", fields: { name: "Nombre completo *", email: "Email (opcional)", attending: "¿Asistirás?", yes: "Sí, asistiré", no: "No podré", guests: "Número de invitados", allergies: "Alergias", allergyOpts: ["Frutos secos", "Mariscos", "Gluten", "Lácteos", "Vegetariano", "Vegano"], other: "Otras restricciones", msg: "Mensaje (opcional)", submit: "Enviar" }, thanks: { title: "¡Gracias!", subtitle: "Confirmación recibida", msg: "Estamos emocionados de celebrar contigo." } },
+    rsvp: { title: "Confirma tu Asistencia", subtitle: "Esperamos contar contigo", deadline: "Confirma antes del 1 Ago 2026", fields: { name: "Nombre completo *", email: "Email (opcional)", attending: "¿Asistirás?", yes: "Sí, asistiré", no: "No podré", guests: "Número de invitados", allergies: "Alergias", allergyOpts: ["Frutos secos", "Mariscos", "Gluten", "Lácteos", "Vegetariano", "Vegano"], other: "Otras restricciones", msg: "Mensaje (opcional)", submit: "Enviar" }, thanks: { title: "¡Gracias!", subtitle: "Confirmación recibida", msg: "Estamos muy emocionados de celebrar contigo." } },
     footer: { made: "Hecho con amor", hash: "#MJC2026" },
     lang: "EN"
   },
@@ -395,12 +512,12 @@ const content = {
     date: { full: "October 1, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, Spain", scroll: "Scroll to discover" },
     nav: ["RSVP", "Itinerary", "Stay", "Transportation", "Dress Code", "Story", "Gifts", "FAQ", "Contact"],
-    story: { title: "Our Story", subtitle: "6 years of love", intro: "Something in all these years allowed our love to mature... what allows us to choose each other day by day, freely, and to look at and accompany each other with more love, acceptance, patience, support and tenderness.",
+    story: { title: "Our Story", subtitle: "6 years of love", intro: "We met and, from the very first moment, it was impossible for us to stay apart. First we were friends, and in a short time, we cultivated our friendship into something more. We like to think we found each other at the exact right moment in our lives. God, in His infinite wisdom, brought us together when our hearts were ready.",
       items: [
-        { year: "2019", title: "We Met", text: "Destiny brought us together 6 years ago. One look, one smile, and we knew something special was beginning.", img: "mjc_couple_portrait.jpg" },
-        { year: "Feb 8, 2020", title: "Started Dating", text: "Right before the world changed, we started our adventure together.", img: "mjc_couple_vineyard.jpg" },
-        { year: "Feb 21, 2025", title: "The Proposal", text: "In Napa Valley, among vineyards and under California skies, Juanca got on one knee.", img: "mjc_ring_closeup.jpg" },
-        { year: "Oct 1, 2026", title: "Forever", text: "We celebrate our love in beautiful Córdoba, surrounded by those we love most.", img: "mjc_cordoba_mezquita.jpg" }
+        { year: "2019", title: "We Met", text: "Destiny brought us together 6 years ago. One look, one smile, and we knew something special was beginning.", img: "conocimos.jpg" },
+        { year: "Feb 8, 2020", title: "Started Dating", text: "Right before the world changed, we started our adventure together.", img: "kiss.jpg" },
+        { year: "Feb 21, 2025", title: "The Proposal", text: "In Napa Valley, surrounded by vineyards and the love of our family, Juanca got on one knee and asked Marijo to be his partner for life.", img: "mjc_ring_closeup.jpg" },
+        { year: "Oct 1, 2026", title: "Our Wedding", text: "We look forward with great excitement to celebrating our love in the beautiful city of Córdoba, surrounded by the people we love most.", img: "mjc_cordoba_mezquita.jpg" }
       ]
     },
     itinerary: { title: "Itinerary", subtitle: "Celebrate with us", days: [
@@ -414,7 +531,7 @@ const content = {
     ]},
     hotels: { title: "Where to Stay", subtitle: "", bookBy: "", intro: "Hotels selected for location and charm.", disclaimer: "These hotels will be near the drop-off point for transportation returning from the ceremony.", list: [
       { name: "NH Collection Palacio de Córdoba", price: "€€€€€", note: "Plaza de Maimónides, 3, 14004 Córdoba", top: true, images: ["nh_collection1.avif", "nh_collection2.webp", "nh_collection3.avif"], url: "https://www.nh-collection.com/en/hotel/nh-collection-palacio-de-cordoba" },
-      { name: "H10 Palacio Colomera", price: "€€€€", note: "Plaza de las Tendillas, 3, 14002 Córdoba", top: false, images: ["h10palacio1.jpg", "h10palacio2.jpg", "H10Palacio3.jpg"], url: "https://www.h10hotels.com/en/cordova-hotels/h10-palacio-colomera" },
+      { name: "H10 Palacio Colomera", price: "€€€€", note: "Plaza de las Tendillas, 3, 14002 Córdoba", top: false, images: ["h10palacio1.jpg", "h10palacio2.jpg", "H10Palacio3.jpg"], url: "https://www.h10hotels.com/en/cordova-hotels/h10-palacio-colomera", discountCode: "BODAMYJO26" },
       { name: "Eurostars Conquistador", price: "€€€€", note: "C/ Magistral González Francés, 15-17, 14003 Córdoba", top: false, images: ["eurostarcon1.jpg", "eurostarcon2.jpg", "eurostarcon3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-conquistador.html" },
       { name: "Eurostars Palace", price: "€€€€€", note: "Paseo de la Victoria, s/n, 14004 Córdoba", top: false, images: ["eurostarpal1.jpg", "eurostarpal2.jpg", "eurostarpal3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-palace.html" },
       { name: "NH Córdoba Califa", price: "€€€€", note: "Lope de Hoces, 14, 14003 Córdoba", top: false, images: ["nhcalifa1.jpg", "nhcalifa2.jpg", "nhcalifa3.jpg"], url: "https://www.nh-hotels.com/en/hotel/nh-cordoba-califa" },
@@ -425,23 +542,23 @@ const content = {
       subtitle: 'Getting around',
       cards: [
         {
-          title: 'Shuttle',
-          text: 'There will be transportation from the religious ceremony to the celebration, and back.'
+          title: 'Shuttle (wedding day)',
+          text: 'There will be transportation from the religious ceremony to the celebration and back. We recommend staying at the suggested hotels or nearby, so you are close to the drop-off point when returning from the celebration.'
         },
         {
-          title: 'Taxi / Rideshare',
-          text: 'Local taxis work great around the historic center.'
+          title: 'Taxi / Uber',
+          text: 'We recommend using taxis instead of Uber, as the streets are narrow and some areas are only accessible by taxi.'
         },
         {
-          title: 'Parking',
-          text: 'Historic center streets are tight; public garages or walking are easiest.'
+          title: 'Walking',
+          text: 'If you stay at the recommended hotels or nearby areas, you can walk to the religious ceremony, as it is located in the heart of the city and everything is within walking distance. The city is made for walking, so enjoy and bring your most comfortable shoes.'
         }
       ]
     },
-    dress: { title: "Dress Code", subtitle: "", note: "October in Córdoba: 68-77°F days, cool evenings.", codes: [{ event: "Ice Breaker", code: "Smart Casual", desc: "Elevated casual. Linen, sundresses.", icon: "Sunset", colors: ["Earth tones", "Pastels"] },{ event: "Wedding", code: "Black Tie", desc: "Gowns, dark suits.", icon: "Sparkles", colors: ["Avoid white"] }] },
-    travel: { title: "Getting There", subtitle: "", sections: [{ icon: "Plane", title: "By Air", text: "We recommend flying to Madrid and taking the AVE train to Córdoba.", tips: ["Seville (SVQ) 1.5h, Málaga (AGP) 2h"] },{ icon: "Train", title: "By Train", text: "AVE: Madrid 1h 45min, Seville 45min.", tips: ["Very comfortable"], url: "https://www.renfe.com", urlText: "Book on Renfe" },{ icon: "Car", title: "By Car", text: "Seville 1.5h, Madrid 4h, Málaga 2h.", tips: ["Downtown parking tricky", "GPS recommended"] }] },
-    gifts: { title: "Gifts", subtitle: "Your presence is our greatest gift", msg: "If you'd like to give a gift, a honeymoon contribution would be appreciated.", bank: { title: "Bank Details", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "View bank details", note: "Venmo and PayPal also accepted" },
-    faq: { title: "FAQ", items: [{ q: "What's the weather like?", a: "68-77°F days, cool evenings. Bring a light jacket." },{ q: "Can I bring children?", a: "This celebration is adults only (18+)." },{ q: "Can I bring a plus one?", a: "Check your invitation for details." },{ q: "What language is the ceremony?", a: "Bilingual: Spanish and English." },{ q: "Nearest airport?", a: "Madrid (1h 45min by train), Seville (1.5h) or Málaga (2h)." },{ q: "Do I need a visa?", a: "EU, US, Mexico, Colombia: no visa needed up to 90 days." },{ q: "Vegetarian options?", a: "Yes! Note restrictions in the RSVP form." }] },
+    dress: { title: "Dress Code", subtitle: "", note: "October in Córdoba: 68-77°F days, cool evenings.", codes: [{ event: "Ice Breaker", code: "Cocktail", desc: "Cocktail Attire", icon: "Sunset", inspo: "rompehielo.jpg" },{ event: "Wedding", code: "Black Tie / Formal", desc: "", icon: "Sparkles", inspo: ["dresses.jpg", "suits.jpg"] }] },
+    travel: { title: "Getting There", subtitle: "", sections: [{ icon: "Plane", title: "By Plane", text: "We recommend flying to Madrid and taking the AVE train to Córdoba.", tips: ["You can also fly to Seville or Málaga"] },{ icon: "Train", title: "By Train", text: "", tips: ["Madrid 1h 45min", "Seville 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Book on Renfe" },{ icon: "Car", title: "By Car", text: "", tips: ["Madrid 4h", "Seville 1.5h", "Málaga 2h"] }] },
+    gifts: { title: "Gifts", subtitle: "Your presence is the best gift, if you'd like to give us a gift, know that we deeply appreciate it.", msg: "", bank: { title: "Bank Details", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "View bank details", note: "Venmo and PayPal also accepted" },
+    faq: { title: "Important Information", items: [{ q: "What's the weather like?", a: "68-77°F (20-25°C) and cool evenings." },{ q: "Can I bring children?", a: "With love, we inform you that the celebration will be adults only." },{ q: "Can I bring a plus one?", a: "With love, we ask you to respect the number of people indicated on your invitation. Please check your invitation for details." },{ q: "What language is the ceremony?", a: "Bilingual: Spanish and English." },{ q: "Nearest airport?", a: "Madrid (1h 45min by train), Seville (1.5h by train) or Málaga (2h by train)." },{ q: "Do I need a visa?", a: "US, Mexico, Colombia: no visa needed for stays up to 90 days." },{ q: "Dietary restrictions?", a: "Note restrictions in the RSVP form." }] },
     contact: { title: "Questions?", subtitle: "We're here to help", msg: "Any questions, don't hesitate to reach out.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
     rsvp: { title: "RSVP", subtitle: "We hope to celebrate with you", deadline: "Confirm by Aug 1, 2026", fields: { name: "Full name *", email: "Email (optional)", attending: "Will you attend?", yes: "Yes, I'll be there", no: "Can't make it", guests: "Number of guests", allergies: "Allergies", allergyOpts: ["Tree nuts", "Shellfish", "Gluten", "Dairy", "Vegetarian", "Vegan"], other: "Other restrictions", msg: "Message (optional)", submit: "Send" }, thanks: { title: "Thank You!", subtitle: "RSVP received", msg: "We're excited to celebrate with you." } },
     footer: { made: "Made with love", hash: "#MJC2026" },
@@ -545,8 +662,8 @@ const WigglyPostcard = ({ children, className = "", style = {} }) => (
   </div>
 );
 
-const FAQWiggleCard = ({ children, className = "" }) => (
-  <div className={`relative ${className}`}>
+const FAQWiggleCard = ({ children, className = "", onClick }) => (
+  <div className={`relative ${className}`} onClick={onClick}>
     {/* The outline lives INSIDE the box, so no negative inset needed */}
     <svg
       className="absolute inset-0 w-full h-full pointer-events-none"
@@ -648,18 +765,7 @@ const MonthCalendar = ({ lang }) => {
   );
 };
 
-const getDressIcon = (n) => { const m = { Sunset: Icons.Sunset, Church: Icons.Church, Sparkles: Icons.Sparkles, Sun: Icons.Sun }; const I = m[n]; return I ? <I /> : null; };
 const getTravelIcon = (n) => { const m = { Plane: Icons.Plane, Train: Icons.Train, Car: Icons.Car }; const I = m[n]; return I ? <I /> : null; };
-
-// Guest codes - maps code to max allowed guests
-const GUEST_CODES = {
-  'FAMILIA2026': 4,
-  'AMIGOS2026': 2,
-  'PAREJA2026': 2,
-  'SOLO2026': 1,
-  'VIP2026': 6,
-  // Add more codes as needed
-};
 
 // Payment info
 const PAYMENT_INFO = {
@@ -704,7 +810,7 @@ export default function Wedding() {
     token: '',
     name: '',
     email: '',
-    attending: 'yes',
+    attending: '',
     guests: 1,
     allergies: [],
     other: '',
@@ -714,9 +820,9 @@ export default function Wedding() {
   const [countdown, setCountdown] = useState({ d: 0, h: 0, m: 0 });
   const [page, setPage] = useState('home'); // 'home', 'gifts', 'rsvp'
   const [maxGuests, setMaxGuests] = useState(null);
-  const [codeError, setCodeError] = useState(false);
   const [formError, setFormError] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [zelleCopied, setZelleCopied] = useState(false);
   const [hotelImageIndex, setHotelImageIndex] = useState(0);
@@ -725,17 +831,18 @@ export default function Wedding() {
   const [showSite, setShowSite] = useState(false);
   const [invite, setInvite] = useState(null);
   const [inviteError, setInviteError] = useState('');
+  const [lookupPhone, setLookupPhone] = useState('');
+  const [lookupCountryCode, setLookupCountryCode] = useState('+1');
+  const [parties, setParties] = useState([]);
   const t = content[lang];
 
-  // Check if this code was already submitted (client-side backup)
-  const checkPreviousSubmission = (code) => {
-    try {
-      const submitted = JSON.parse(localStorage.getItem('mjc_rsvp_submitted') || '{}');
-      return submitted[code.toUpperCase()] || null;
-    } catch {
-      return null;
-    }
-  };
+  // Load guest list from CSV
+  useEffect(() => {
+    fetch('/guests.csv')
+      .then(res => res.text())
+      .then(csv => setParties(parseGuestsCSV(csv)))
+      .catch(err => console.error('Failed to load guests:', err));
+  }, []);
 
   const markAsSubmitted = (code, name) => {
     try {
@@ -891,67 +998,15 @@ export default function Wedding() {
     setFormError('');
     setRsvpDone(false);
     setMaxGuests(null);
-    setCodeError(false);
     setIsUpdating(false);
     setMobileMenuOpen(false);
-    setForm({ name: '', email: '', attending: 'yes', guests: 1, allergies: [], other: '', msg: '', code: '', additionalGuests: [] });
+    setInvite(null);
+    setInviteError('');
+    setLookupPhone('');
+    setForm({ name: '', email: '', attending: '', guests: 1, allergies: [], other: '', msg: '', code: '', additionalGuests: [] });
     window.scrollTo(0, 0);
   };
 
-  const validateCode = (code) => {
-    const upperCode = code.toUpperCase();
-    if (GUEST_CODES[upperCode] !== undefined) {
-      const max = GUEST_CODES[upperCode];
-      setMaxGuests(max);
-      
-      // Check if already submitted
-      const previous = checkPreviousSubmission(upperCode);
-      if (previous) {
-        setIsUpdating(true);
-        setForm(f => ({ 
-          ...f, 
-          code: upperCode, 
-          guests: 1,
-          additionalGuests: []
-        }));
-      } else {
-        setIsUpdating(false);
-        setForm(f => ({ 
-          ...f, 
-          code: upperCode, 
-          guests: 1,
-          additionalGuests: []
-        }));
-      }
-      
-      setCodeError(false);
-      return true;
-    } else {
-      setCodeError(true);
-      setMaxGuests(null);
-      setIsUpdating(false);
-      return false;
-    }
-  };
-
-  const updateGuestCount = (newCount) => {
-    const count = Math.max(1, Math.min(maxGuests || 1, newCount));
-    const additionalCount = count - 1;
-    
-    // Create or trim additional guests array
-    let newAdditionalGuests = [...form.additionalGuests];
-    if (additionalCount > newAdditionalGuests.length) {
-      // Add new empty guest entries
-      for (let i = newAdditionalGuests.length; i < additionalCount; i++) {
-        newAdditionalGuests.push({ name: '', allergies: [], other: '' });
-      }
-    } else {
-      // Trim excess guests
-      newAdditionalGuests = newAdditionalGuests.slice(0, additionalCount);
-    }
-    
-    setForm({ ...form, guests: count, additionalGuests: newAdditionalGuests });
-  };
 
   const updateAdditionalGuest = (index, field, value) => {
     const newAdditionalGuests = [...form.additionalGuests];
@@ -1041,7 +1096,6 @@ export default function Wedding() {
             50%  { transform: translateY(-6px) rotate(1.2deg) scale(1.02); }
             100% { transform: translateY(0) rotate(-1.2deg) scale(1); }
           }
-
           @media (prefers-reduced-motion: reduce) {
             img[data-dance="true"] { animation: none !important; }
           }
@@ -1058,6 +1112,8 @@ export default function Wedding() {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const payload = {
         token: form.token,
@@ -1069,6 +1125,7 @@ export default function Wedding() {
         other: form.other,
         additionalGuests: JSON.stringify(form.additionalGuests.map(g => ({
           name: g.name,
+          email: g.email || '',
           allergies: (g.allergies || []).join(', '),
           other: g.other || ''
         }))),
@@ -1089,6 +1146,8 @@ export default function Wedding() {
       // optional: still mark submitted
       markAsSubmitted(form.token, form.name);
       setRsvpDone(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -1111,13 +1170,13 @@ export default function Wedding() {
         <div className="pt-20 pb-12 px-4 md:px-6">
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8 md:mb-10">
-              <h1 className="text-2xl md:text-4xl mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>
+              <h1 className="text-2xl md:text-4xl mb-4 md:mb-6" style={{ color: C.blue, fontStyle: 'italic' }}>
                 {lang === 'es' ? 'Regalos' : 'Gifts'}
               </h1>
               <p className="text-sm md:text-base max-w-md mx-auto" style={{ color: C.blueLight }}>
                 {lang === 'es'
-                  ? 'Vuestra presencia es el mejor regalo. Si deseáis contribuir a nuestra luna de miel, aquí están las opciones.'
-                  : 'Your presence is the best gift. If you\'d like to contribute to our honeymoon, here are your options.'}
+                  ? 'Significa el mundo para nosotros que hagan este viaje para estar con nosotros. Su presencia es el mejor regalo. Y si desean darnos algún detalle, sepan que lo agradecemos profundamente.'
+                  : 'It truly means the world that you\'re making the journey to celebrate with us. Your presence is the greatest gift we could ask for. If you do wish to give a gift, please know how deeply grateful we are.'}
               </p>
             </div>
 
@@ -1153,7 +1212,7 @@ export default function Wedding() {
             <div className="flex items-center my-8">
               <div className="flex-1 h-px" style={{ backgroundColor: C.gold }}></div>
               <span className="px-4 text-sm" style={{ color: C.blueLight, opacity: 0.7 }}>
-                {lang === 'es' ? 'o contribuye directamente' : 'or contribute directly'}
+                {lang === 'es' ? 'o contribuye directamente (preferido)' : 'or contribute directly (preferred)'}
               </span>
               <div className="flex-1 h-px" style={{ backgroundColor: C.gold }}></div>
             </div>
@@ -1243,6 +1302,13 @@ export default function Wedding() {
   if (page === 'rsvp') {
     return (
       <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
+        <style>{`
+          @keyframes mjcDance {
+            0%   { transform: translateY(0) rotate(-1.2deg) scale(1); }
+            50%  { transform: translateY(-6px) rotate(1.2deg) scale(1.02); }
+            100% { transform: translateY(0) rotate(-1.2deg) scale(1); }
+          }
+        `}</style>
         <nav className="fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
           <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
             <button onClick={goHome} className="flex items-center gap-1.5 md:gap-2 hover:opacity-70">
@@ -1252,26 +1318,37 @@ export default function Wedding() {
           </div>
         </nav>
 
-        <div className="pt-20 pb-12 px-4 md:px-6">
-          <div className="max-w-md mx-auto">
+        <div className="pt-20 pb-12 px-4 md:px-6 relative min-h-screen overflow-hidden">
+          <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard_bw.jpg" alt="Background" className="w-full h-full" position="center 40%" /></div>
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${C.cream} 0%, transparent 30%, transparent 70%, ${C.cream} 100%)` }} />
+          <div className="max-w-md mx-auto relative z-10">
             {rsvpDone ? (
-              <div className="text-center py-8 md:py-10">
-                <div className="flex justify-center" style={{ color: C.gold }}><Icons.Celebration /></div>
-                <h2 className="text-2xl md:text-3xl mt-4 mb-2" style={{ color: C.blue, fontStyle: 'italic' }}>
-                  {isUpdating 
+              <div className="flex flex-col items-center justify-center min-h-[70vh] text-center py-8 md:py-10">
+                <h2 className="text-3xl md:text-4xl mb-3" style={{ color: C.blue, fontStyle: 'italic' }}>
+                  {isUpdating
                     ? (lang === 'es' ? '¡Actualizado!' : 'Updated!')
                     : t.rsvp.thanks.title
                   }
                 </h2>
-                <p className="text-xs md:text-sm mb-3 md:mb-4" style={{ color: C.blueLight }}>
+                <p className="text-sm md:text-base mb-4 md:mb-5" style={{ color: C.blueLight }}>
                   {isUpdating
                     ? (lang === 'es' ? 'Tu RSVP ha sido actualizado' : 'Your RSVP has been updated')
                     : t.rsvp.thanks.subtitle
                   }
                 </p>
-                <p className="text-xs md:text-sm mb-6 md:mb-8" style={{ color: C.blueLight }}>{t.rsvp.thanks.msg}</p>
-                <Img src="mjc_doodle_dancing_dark_blue.png" alt="Celebration" className="w-32 h-28 md:w-40 md:h-32 rounded-xl mx-auto opacity-60" />
-                <button onClick={goHome} className="mt-6 px-6 py-2 rounded-full text-sm" style={{ border: `1px solid ${C.blue}`, color: C.blue }}>
+                {form.attending === 'yes' && (
+                  <p className="text-sm md:text-base mb-8 md:mb-10" style={{ color: C.blueLight }}>{t.rsvp.thanks.msg}</p>
+                )}
+                <img
+                  src="/images/mjc_doodle_dancing_dark_blue.png"
+                  alt="Celebration"
+                  className="w-40 h-36 md:w-48 md:h-40 rounded-xl mx-auto opacity-70"
+                  style={{
+                    transformOrigin: 'center bottom',
+                    animation: 'mjcDance 1.15s ease-in-out infinite'
+                  }}
+                />
+                <button onClick={goHome} className="mt-8 px-8 py-3 rounded-full text-base font-medium hover:scale-105 transition-transform" style={{ backgroundColor: C.blue, color: 'white', boxShadow: '0 4px 20px rgba(91,123,148,0.3)' }}>
                   {lang === 'es' ? 'Volver al inicio' : 'Back to home'}
                 </button>
               </div>
@@ -1283,15 +1360,17 @@ export default function Wedding() {
                 
                 <div className="space-y-4 md:space-y-5">
                   {inviteError && (
-                  <div
-                    className="mb-4 px-3 py-2 rounded-lg text-xs md:text-sm text-center"
-                    style={{ backgroundColor: '#fee2e2', color: '#991b1b' }}
-                  >
-                    {lang === 'es'
-                      ? 'Este enlace no es válido. Por favor revisa tu invitación.'
-                      : 'This invitation link is not valid. Please check your invitation.'}
-                  </div>
-                )}
+                    <div
+                      className="mb-4 px-3 py-2 rounded-lg text-xs md:text-sm text-center"
+                      style={{ backgroundColor: '#fee2e2', color: '#991b1b' }}
+                    >
+                      {inviteError}
+                      <br />
+                      {lang === 'es'
+                        ? 'Por favor revisa tu invitación o contáctanos.'
+                        : 'Please check your invitation or contact us.'}
+                    </div>
+                  )}
                   {/* Invitation context (token vs manual) */}
                   {invite ? (
                     <p
@@ -1299,191 +1378,460 @@ export default function Wedding() {
                       style={{ backgroundColor: C.creamDark, color: C.blue }}
                     >
                       {lang === 'es'
-                        ? `Invitación para ${invite.household} — hasta ${maxGuests} invitados`
-                        : `Invitation for ${invite.household} — up to ${maxGuests} guests`}
+                        ? `Invitación para ${invite.household}`
+                        : `Invitation for ${invite.household}`}
                     </p>
                   ) : (
-                    <div>
-                      <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>
-                        {lang === 'es' ? 'Código de invitación *' : 'Invitation code *'}
-                      </label>
-                      <input
-                        type="text"
-                        value={form.code || ''}
-                        onChange={e => {
-                          setForm({ ...form, code: e.target.value.toUpperCase() });
-                          setCodeError(false);
-                        }}
-                        onBlur={e => e.target.value && validateCode(e.target.value)}
-                        placeholder={lang === 'es' ? 'Ej: FAMILIA2026' : 'Ex: FAMILIA2026'}
-                        className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base uppercase"
-                        style={{ borderColor: codeError ? '#ef4444' : '#E8E4DF' }}
-                      />
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>
+                          {lang === 'es' ? 'Nombre completo *' : 'Full name *'}
+                        </label>
+                        <input
+                          type="text"
+                          value={form.name}
+                          onChange={(e) => {
+                            setForm({ ...form, name: e.target.value });
+                            setInviteError("");
+                          }}
+                          className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base"
+                          style={{ borderColor: inviteError ? '#ef4444' : '#E8E4DF' }}
+                        />
+                      </div>
 
-                      {codeError && (
-                        <p className="text-xs mt-1 text-red-500">
-                          {lang === 'es'
-                            ? 'Código no válido. Revisa tu invitación.'
-                            : 'Invalid code. Check your invitation.'}
-                        </p>
-                      )}
+                      <div>
+                        <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>
+                          {lang === 'es' ? 'Teléfono *' : 'Phone number *'}
+                        </label>
+                        <div className="flex gap-2">
+                          <select
+                            value={lookupCountryCode}
+                            onChange={(e) => {
+                              setLookupCountryCode(e.target.value);
+                              setInviteError("");
+                            }}
+                            className="px-2 md:px-3 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base"
+                            style={{ borderColor: inviteError ? '#ef4444' : '#E8E4DF' }}
+                          >
+                            {COUNTRY_CODES.map(cc => (
+                              <option key={cc.code} value={cc.code}>{cc.label}</option>
+                            ))}
+                          </select>
+                          <input
+                            type="tel"
+                            value={lookupPhone}
+                            onChange={(e) => {
+                              setLookupPhone(e.target.value);
+                              setInviteError("");
+                            }}
+                            placeholder="xxx-xxx-xxxx"
+                            className="flex-1 px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base"
+                            style={{ borderColor: inviteError ? '#ef4444' : '#E8E4DF' }}
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const result = findPartyByNameAndPhone(parties, form.name, lookupCountryCode, lookupPhone);
+
+                          if (!result) {
+                            setInviteError(
+                              lang === "es"
+                                ? "No encontramos tu invitación. Revisa el nombre y teléfono."
+                                : "We couldn't find your invitation. Please check your name and phone number."
+                            );
+                            setInvite(null);
+                            setMaxGuests(null);
+                            return;
+                          }
+
+                          const { party, matchedMember } = result;
+
+                          setInvite({
+                            household: party.household,
+                            token: party.partyId,
+                            max_guests: party.maxGuests,
+                            primary_name: matchedMember.name,
+                            lang: party.lang,
+                          });
+
+                          setMaxGuests(party.maxGuests);
+                          if (matchedMember.lang) setLang(matchedMember.lang);
+
+                          // Use the actual matched member's name to filter others
+                          const others = party.members.filter(m => m.name !== matchedMember.name);
+
+                          setForm(f => ({
+                            ...f,
+                            name: matchedMember.name, // Update to the correct full name
+                            token: party.partyId,
+                            attending: '',
+                            guests: Math.min(party.maxGuests, Math.max(1, party.members.length)),
+                            additionalGuests: others.map(m => ({
+                              name: m.name,
+                              email: '',
+                              allergies: [],
+                              other: ""
+                            })),
+                          }));
+                        }}
+                        className="w-full py-2.5 md:py-3 rounded-xl text-sm md:text-base font-medium transition-all hover:opacity-90"
+                        style={{ backgroundColor: C.blue, color: 'white' }}
+                      >
+                        {lang === 'es' ? 'Buscar invitación' : 'Find invitation'}
+                      </button>
                     </div>
                   )}
 
 
-                  <div>
-                    <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.name}</label>
-                    <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base focus:ring-2 focus:outline-none" style={{ borderColor: '#E8E4DF' }} />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.email}</label>
-                    <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base" style={{ borderColor: '#E8E4DF' }} />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs md:text-sm mb-1.5 md:mb-2" style={{ color: C.blue }}>{t.rsvp.fields.attending}</label>
-                    <div className="flex gap-4">
-                      {[{ v: 'yes', l: t.rsvp.fields.yes }, { v: 'no', l: t.rsvp.fields.no }].map(x => (
-                        <label key={x.v} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" checked={form.attending === x.v} onChange={() => setForm({ ...form, attending: x.v })} className="w-4 h-4" style={{ accentColor: C.blue }} />
-                          <span className="text-xs md:text-sm" style={{ color: form.attending === x.v ? C.blue : C.blueLight }}>{x.l}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {form.attending === 'yes' && (
+                  {invite && (
                     <>
-                      {/* Only show guest count if allowed more than 1 */}
-                      {maxGuests && maxGuests > 1 && (
+                      {maxGuests === 1 && (
                         <div>
-                          <label className="block text-xs md:text-sm mb-1.5 md:mb-2" style={{ color: C.blue }}>
-                            {lang === 'es' ? '¿Cuántos asistirán?' : 'How many will attend?'}
-                          </label>
-                          <div className="flex items-center gap-3 md:gap-4">
-                            <button 
-                              type="button" 
-                              onClick={() => updateGuestCount(form.guests - 1)} 
-                              className="w-10 h-10 md:w-11 md:h-11 rounded-full border text-lg md:text-xl hover:opacity-90" 
-                              style={{ borderColor: C.blue, color: C.blue }}
-                            >−</button>
-                            <span className="text-xl md:text-2xl w-8 md:w-10 text-center" style={{ color: C.blue }}>{form.guests}</span>
-                            <button 
-                              type="button" 
-                              onClick={() => updateGuestCount(form.guests + 1)} 
-                              disabled={!maxGuests || form.guests >= maxGuests}
-                              className="w-10 h-10 md:w-11 md:h-11 rounded-full border text-lg md:text-xl hover:opacity-90 disabled:opacity-40" 
-                              style={{ borderColor: C.blue, color: C.blue }}
-                            >+</button>
-                          </div>
-                          <p className="text-xs mt-1" style={{ color: C.blueLight }}>
-                            {lang === 'es' ? `Máximo: ${maxGuests}` : `Maximum: ${maxGuests}`}
-                          </p>
+                          <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.name}</label>
+                          <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base focus:ring-2 focus:outline-none" style={{ borderColor: '#E8E4DF' }} />
                         </div>
                       )}
-                      
-                      {/* Primary guest allergies */}
-                      <div>
-                        <label className="block text-xs md:text-sm mb-1.5 md:mb-2" style={{ color: C.blue }}>
-                          {form.guests > 1 
-                            ? (lang === 'es' ? 'Tus alergias' : 'Your allergies')
-                            : t.rsvp.fields.allergies
-                          }
-                        </label>
-                        <div className="flex flex-wrap gap-1.5 md:gap-2">
-                          {t.rsvp.fields.allergyOpts.map(a => (
-                            <button 
-                              key={a} 
-                              type="button" 
-                              onClick={() => toggleAllergy(a)} 
-                              className="px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm transition-all" 
-                              style={{ border: '1px solid', borderColor: form.allergies.includes(a) ? C.blue : '#E8E4DF', backgroundColor: form.allergies.includes(a) ? C.blue : 'white', color: form.allergies.includes(a) ? 'white' : C.blueLight }}
-                            >{a}</button>
-                          ))}
+
+                      <div className="text-center pt-6 md:pt-8 pb-6 md:pb-8">
+                        <label className="block text-xl md:text-2xl font-medium mb-4 md:mb-6" style={{ color: C.blue }}>{t.rsvp.fields.attending}</label>
+                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                          <label
+                            className="flex items-center gap-3 px-6 md:px-10 py-4 md:py-5 rounded-2xl cursor-pointer transition-all hover:scale-105"
+                            style={{
+                              backgroundColor: form.attending === 'yes' ? C.blue : 'white',
+                              color: form.attending === 'yes' ? 'white' : C.blue,
+                              border: `2px solid ${C.blue}`,
+                              boxShadow: form.attending === 'yes' ? '0 8px 25px rgba(91,123,148,0.4)' : '0 2px 8px rgba(0,0,0,0.08)'
+                            }}
+                          >
+                            <div
+                              className="w-6 h-6 md:w-7 md:h-7 rounded-md border-2 flex items-center justify-center transition-all"
+                              style={{
+                                borderColor: form.attending === 'yes' ? 'white' : C.blue,
+                                backgroundColor: form.attending === 'yes' ? 'white' : 'transparent'
+                              }}
+                            >
+                              {form.attending === 'yes' && <span style={{ color: C.blue, fontSize: '18px', fontWeight: 'bold' }}>✓</span>}
+                            </div>
+                            <input type="checkbox" checked={form.attending === 'yes'} onChange={() => setForm({ ...form, attending: form.attending === 'yes' ? '' : 'yes' })} className="sr-only" />
+                            <span className="text-base md:text-lg font-medium">{t.rsvp.fields.yes}</span>
+                          </label>
+                          <label
+                            className="flex items-center gap-3 px-6 md:px-10 py-4 md:py-5 rounded-2xl cursor-pointer transition-all hover:scale-105"
+                            style={{
+                              backgroundColor: form.attending === 'no' ? C.blue : 'white',
+                              color: form.attending === 'no' ? 'white' : C.blue,
+                              border: `2px solid ${C.blue}`,
+                              boxShadow: form.attending === 'no' ? '0 8px 25px rgba(91,123,148,0.4)' : '0 2px 8px rgba(0,0,0,0.08)'
+                            }}
+                          >
+                            <div
+                              className="w-6 h-6 md:w-7 md:h-7 rounded-md border-2 flex items-center justify-center transition-all"
+                              style={{
+                                borderColor: form.attending === 'no' ? 'white' : C.blue,
+                                backgroundColor: form.attending === 'no' ? 'white' : 'transparent'
+                              }}
+                            >
+                              {form.attending === 'no' && <span style={{ color: C.blue, fontSize: '18px', fontWeight: 'bold' }}>✓</span>}
+                            </div>
+                            <input type="checkbox" checked={form.attending === 'no'} onChange={() => setForm({ ...form, attending: form.attending === 'no' ? '' : 'no' })} className="sr-only" />
+                            <span className="text-base md:text-lg font-medium">{t.rsvp.fields.no}</span>
+                          </label>
                         </div>
                       </div>
-                      
-                      <div>
-                        <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>
-                          {form.guests > 1 
-                            ? (lang === 'es' ? 'Tus otras restricciones' : 'Your other restrictions')
-                            : t.rsvp.fields.other
-                          }
-                        </label>
-                        <input type="text" value={form.other} onChange={e => setForm({ ...form, other: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base" style={{ borderColor: '#E8E4DF' }} />
-                      </div>
 
-                      {/* Additional guests */}
-                      {form.additionalGuests.map((guest, index) => (
-                        <div key={index} className="p-4 rounded-xl" style={{ backgroundColor: C.creamDark }}>
+                      {/* Who will attend - only show for multi-guest parties when attending */}
+                      {form.attending === 'yes' && maxGuests && maxGuests > 1 && (
+                        <div className="p-4 rounded-xl" style={{ backgroundColor: C.creamDark }}>
                           <p className="text-sm font-medium mb-3" style={{ color: C.blue }}>
-                            {lang === 'es' ? `Invitado ${index + 2}` : `Guest ${index + 2}`}
+                            {lang === 'es' ? 'Selecciona quiénes asistirán:' : 'Select who will attend:'}
                           </p>
-                          
                           <div className="space-y-3">
-                            <div>
-                              <label className="block text-xs mb-1" style={{ color: C.blue }}>
-                                {lang === 'es' ? 'Nombre completo *' : 'Full name *'}
+                            {/* Primary guest - always attending if they selected yes */}
+                            <div className="flex items-center gap-4 p-3 rounded-lg bg-white">
+                              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: C.blue, boxShadow: '0 2px 8px rgba(91,123,148,0.3)' }}>
+                                <span className="text-white text-lg font-bold">✓</span>
+                              </div>
+                              <span className="text-base font-medium" style={{ color: C.blue }}>{form.name}</span>
+                              <span className="text-xs ml-auto px-2 py-1 rounded-full" style={{ color: C.blueLight, backgroundColor: 'rgba(91,123,148,0.1)' }}>({lang === 'es' ? 'tú' : 'you'})</span>
+                            </div>
+                            {/* Additional guests */}
+                            {form.additionalGuests.map((guest, index) => (
+                              <label key={index} className="flex items-center gap-4 p-3 rounded-lg bg-white cursor-pointer hover:shadow-md transition-all">
+                                <div
+                                  className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                  style={{
+                                    border: `3px solid ${C.blue}`,
+                                    backgroundColor: guest.attending !== false ? C.blue : 'white',
+                                    boxShadow: guest.attending !== false ? '0 2px 8px rgba(91,123,148,0.3)' : 'none'
+                                  }}
+                                >
+                                  {guest.attending !== false && <span className="text-white text-lg font-bold">✓</span>}
+                                </div>
+                                <input
+                                  type="checkbox"
+                                  checked={guest.attending !== false}
+                                  onChange={(e) => {
+                                    const newGuests = [...form.additionalGuests];
+                                    newGuests[index] = { ...newGuests[index], attending: e.target.checked };
+                                    setForm({ ...form, additionalGuests: newGuests, guests: 1 + newGuests.filter(g => g.attending !== false).length });
+                                  }}
+                                  className="sr-only"
+                                />
+                                <span className="text-base font-medium" style={{ color: guest.attending !== false ? C.blue : C.blueLight }}>
+                                  {guest.name}
+                                </span>
+                                {guest.attending === false && (
+                                  <span className="text-xs ml-auto" style={{ color: C.blueLight }}>
+                                    {lang === 'es' ? 'Click para añadir' : 'Click to add'}
+                                  </span>
+                                )}
                               </label>
-                              <input 
-                                type="text" 
-                                value={guest.name} 
-                                onChange={e => updateAdditionalGuest(index, 'name', e.target.value)} 
-                                className="w-full px-3 py-2 rounded-lg border bg-white text-sm" 
-                                style={{ borderColor: '#E8E4DF' }} 
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Primary guest section - for multi-guest parties */}
+                      {form.attending === 'yes' && maxGuests && maxGuests > 1 && (
+                        <div className="p-4 rounded-xl border-t-4" style={{ backgroundColor: C.creamDark, borderTopColor: C.gold }}>
+                          <p className="text-base font-medium mb-3" style={{ color: C.blue }}>
+                            1. {form.name}
+                          </p>
+
+                          <div className="mb-3">
+                            <label className="block text-xs mb-1" style={{ color: C.blue }}>
+                              {lang === 'es' ? 'Correo electrónico (opcional)' : 'Email (optional)'}
+                            </label>
+                            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 rounded-lg border bg-white text-sm" style={{ borderColor: '#E8E4DF' }} />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs mb-1" style={{ color: C.blue }}>
+                              {lang === 'es' ? 'Alergias o restricciones' : 'Allergies or restrictions'}
+                            </label>
+                            <div className="flex flex-wrap gap-1.5">
+                              {t.rsvp.fields.allergyOpts.map(a => (
+                                <button
+                                  key={a}
+                                  type="button"
+                                  onClick={() => toggleAllergy(a)}
+                                  className="px-3 py-1.5 rounded-full text-xs transition-all"
+                                  style={{ border: '1px solid', borderColor: form.allergies.includes(a) ? C.blue : '#E8E4DF', backgroundColor: form.allergies.includes(a) ? C.blue : 'white', color: form.allergies.includes(a) ? 'white' : C.blueLight }}
+                                >{a}</button>
+                              ))}
+                              <button
+                                type="button"
+                                onClick={() => toggleAllergy('Otra')}
+                                className="px-3 py-1.5 rounded-full text-xs transition-all"
+                                style={{ border: '1px solid', borderColor: form.allergies.includes('Otra') ? C.blue : '#E8E4DF', backgroundColor: form.allergies.includes('Otra') ? C.blue : 'white', color: form.allergies.includes('Otra') ? 'white' : C.blueLight }}
+                              >{lang === 'es' ? 'Otra' : 'Other'}</button>
+                            </div>
+                            {form.allergies.includes('Otra') && (
+                              <input
+                                type="text"
+                                value={form.other}
+                                onChange={e => setForm({ ...form, other: e.target.value })}
+                                placeholder={lang === 'es' ? 'Especifica tu restricción...' : 'Specify your restriction...'}
+                                className="w-full mt-2 px-3 py-2 rounded-lg border bg-white text-sm"
+                                style={{ borderColor: '#E8E4DF' }}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Single guest - show email and allergies without numbered header */}
+                      {form.attending === 'yes' && (!maxGuests || maxGuests === 1) && (
+                        <>
+                          <div className="">
+                            <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.email}</label>
+                            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base" style={{ borderColor: '#E8E4DF' }} />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs md:text-sm mb-1.5 md:mb-2" style={{ color: C.blue }}>
+                              {lang === 'es' ? 'Alergias o restricciones' : 'Allergies or restrictions'}
+                            </label>
+                            <div className="flex flex-wrap gap-1.5 md:gap-2">
+                              {t.rsvp.fields.allergyOpts.map(a => (
+                                <button
+                                  key={a}
+                                  type="button"
+                                  onClick={() => toggleAllergy(a)}
+                                  className="px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm transition-all"
+                                  style={{ border: '1px solid', borderColor: form.allergies.includes(a) ? C.blue : '#E8E4DF', backgroundColor: form.allergies.includes(a) ? C.blue : 'white', color: form.allergies.includes(a) ? 'white' : C.blueLight }}
+                                >{a}</button>
+                              ))}
+                              <button
+                                type="button"
+                                onClick={() => toggleAllergy('Otra')}
+                                className="px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm transition-all"
+                                style={{ border: '1px solid', borderColor: form.allergies.includes('Otra') ? C.blue : '#E8E4DF', backgroundColor: form.allergies.includes('Otra') ? C.blue : 'white', color: form.allergies.includes('Otra') ? 'white' : C.blueLight }}
+                              >{lang === 'es' ? 'Otra' : 'Other'}</button>
+                            </div>
+                            {form.allergies.includes('Otra') && (
+                              <input
+                                type="text"
+                                value={form.other}
+                                onChange={e => setForm({ ...form, other: e.target.value })}
+                                placeholder={lang === 'es' ? 'Especifica tu restricción...' : 'Specify your restriction...'}
+                                className="w-full mt-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base"
+                                style={{ borderColor: '#E8E4DF' }}
+                              />
+                            )}
+                          </div>
+                        </>
+                      )}
+
+                      {/* Additional guests - only show those who are attending */}
+                      {form.attending === 'yes' && form.additionalGuests.filter(g => g.attending !== false).map((guest, index) => {
+                        const originalIndex = form.additionalGuests.findIndex(g => g.name === guest.name);
+                        return (
+                          <div key={originalIndex} className="p-4 rounded-xl border-t-4" style={{ backgroundColor: C.creamDark, borderTopColor: C.gold }}>
+                            <p className="text-base font-medium mb-3" style={{ color: C.blue }}>
+                              {index + 2}. {guest.name}
+                            </p>
+
+                            <div className="mb-3">
+                              <label className="block text-xs mb-1" style={{ color: C.blue }}>
+                                {lang === 'es' ? 'Correo electrónico (opcional)' : 'Email (optional)'}
+                              </label>
+                              <input
+                                type="email"
+                                value={guest.email || ''}
+                                onChange={e => updateAdditionalGuest(originalIndex, 'email', e.target.value)}
+                                className="w-full px-3 py-2 rounded-lg border bg-white text-sm"
+                                style={{ borderColor: '#E8E4DF' }}
                               />
                             </div>
-                            
+
                             <div>
                               <label className="block text-xs mb-1" style={{ color: C.blue }}>
-                                {lang === 'es' ? 'Alergias' : 'Allergies'}
+                                {lang === 'es' ? 'Alergias o restricciones' : 'Allergies or restrictions'}
                               </label>
-                              <div className="flex flex-wrap gap-1">
+                              <div className="flex flex-wrap gap-1.5">
                                 {t.rsvp.fields.allergyOpts.map(a => (
-                                  <button 
-                                    key={a} 
-                                    type="button" 
-                                    onClick={() => toggleAdditionalGuestAllergy(index, a)} 
-                                    className="px-2 py-1 rounded-full text-xs transition-all" 
+                                  <button
+                                    key={a}
+                                    type="button"
+                                    onClick={() => toggleAdditionalGuestAllergy(originalIndex, a)}
+                                    className="px-3 py-1.5 rounded-full text-xs transition-all"
                                     style={{ border: '1px solid', borderColor: guest.allergies.includes(a) ? C.blue : '#E8E4DF', backgroundColor: guest.allergies.includes(a) ? C.blue : 'white', color: guest.allergies.includes(a) ? 'white' : C.blueLight }}
                                   >{a}</button>
                                 ))}
+                                <button
+                                  type="button"
+                                  onClick={() => toggleAdditionalGuestAllergy(originalIndex, 'Otra')}
+                                  className="px-3 py-1.5 rounded-full text-xs transition-all"
+                                  style={{ border: '1px solid', borderColor: guest.allergies.includes('Otra') ? C.blue : '#E8E4DF', backgroundColor: guest.allergies.includes('Otra') ? C.blue : 'white', color: guest.allergies.includes('Otra') ? 'white' : C.blueLight }}
+                                >{lang === 'es' ? 'Otra' : 'Other'}</button>
                               </div>
-                            </div>
-                            
-                            <div>
-                              <label className="block text-xs mb-1" style={{ color: C.blue }}>
-                                {lang === 'es' ? 'Otras restricciones' : 'Other restrictions'}
-                              </label>
-                              <input 
-                                type="text" 
-                                value={guest.other} 
-                                onChange={e => updateAdditionalGuest(index, 'other', e.target.value)} 
-                                className="w-full px-3 py-2 rounded-lg border bg-white text-sm" 
-                                style={{ borderColor: '#E8E4DF' }} 
-                              />
+                              {guest.allergies.includes('Otra') && (
+                                <input
+                                  type="text"
+                                  value={guest.other}
+                                  onChange={e => updateAdditionalGuest(originalIndex, 'other', e.target.value)}
+                                  placeholder={lang === 'es' ? 'Especifica la restricción...' : 'Specify the restriction...'}
+                                  className="w-full mt-2 px-3 py-2 rounded-lg border bg-white text-sm"
+                                  style={{ borderColor: '#E8E4DF' }}
+                                />
+                              )}
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
+
+                      {form.attending === 'yes' && (
+                        <>
+                          <div>
+                            <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.msg}</label>
+                            <textarea value={form.msg} onChange={e => setForm({ ...form, msg: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base resize-none" style={{ borderColor: '#E8E4DF' }} rows={3} />
+                          </div>
+
+                          <button
+                            onClick={submitRSVP}
+                            disabled={isSubmitting}
+                            className="w-full py-3 md:py-4 rounded-full text-white flex items-center justify-center gap-2 text-xs md:text-sm tracking-wider transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                            style={{
+                              backgroundColor: C.blue,
+                              boxShadow: isSubmitting ? 'none' : '0 4px 20px rgba(91,123,148,0.3)',
+                              transform: isSubmitting ? 'scale(0.98)' : 'scale(1)'
+                            }}
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {lang === 'es' ? 'Enviando...' : 'Sending...'}
+                              </>
+                            ) : (
+                              <>
+                                <Icons.Send /> {isUpdating
+                                  ? (lang === 'es' ? 'Actualizar RSVP' : 'Update RSVP')
+                                  : t.rsvp.fields.submit
+                                }
+                              </>
+                            )}
+                          </button>
+
+                          {formError && (
+                            <p className="text-center text-sm text-red-500 mt-2">{formError}</p>
+                          )}
+                        </>
+                      )}
+
+                      {form.attending === 'no' && (
+                        <>
+                          <div className="">
+                            <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.email}</label>
+                            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base" style={{ borderColor: '#E8E4DF' }} />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.msg}</label>
+                            <textarea value={form.msg} onChange={e => setForm({ ...form, msg: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base resize-none" style={{ borderColor: '#E8E4DF' }} rows={3} />
+                          </div>
+
+                          <button
+                            onClick={submitRSVP}
+                            disabled={isSubmitting}
+                            className="w-full py-3 md:py-4 rounded-full text-white flex items-center justify-center gap-2 text-xs md:text-sm tracking-wider transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                            style={{
+                              backgroundColor: C.blue,
+                              boxShadow: isSubmitting ? 'none' : '0 4px 20px rgba(91,123,148,0.3)',
+                              transform: isSubmitting ? 'scale(0.98)' : 'scale(1)'
+                            }}
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {lang === 'es' ? 'Enviando...' : 'Sending...'}
+                              </>
+                            ) : (
+                              <>
+                                <Icons.Send /> {isUpdating
+                                  ? (lang === 'es' ? 'Actualizar RSVP' : 'Update RSVP')
+                                  : t.rsvp.fields.submit
+                                }
+                              </>
+                            )}
+                          </button>
+
+                          {formError && (
+                            <p className="text-center text-sm text-red-500 mt-2">{formError}</p>
+                          )}
+                        </>
+                      )}
                     </>
-                  )}
-                  
-                  <div>
-                    <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.msg}</label>
-                    <textarea value={form.msg} onChange={e => setForm({ ...form, msg: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base resize-none" style={{ borderColor: '#E8E4DF' }} rows={3} />
-                  </div>
-                  
-                  <button onClick={submitRSVP} className="w-full py-3 md:py-4 rounded-full text-white flex items-center justify-center gap-2 text-xs md:text-sm tracking-wider hover:scale-[1.02] transition-transform" style={{ backgroundColor: C.blue, boxShadow: '0 4px 20px rgba(91,123,148,0.3)' }}>
-                    <Icons.Send /> {isUpdating 
-                      ? (lang === 'es' ? 'Actualizar RSVP' : 'Update RSVP')
-                      : t.rsvp.fields.submit
-                    }
-                  </button>
-                  
-                  {formError && (
-                    <p className="text-center text-sm text-red-500 mt-2">{formError}</p>
                   )}
                 </div>
               </>
@@ -1497,6 +1845,17 @@ export default function Wedding() {
 
   return (
   <div className="relative">
+    {/* Global animation styles */}
+    <style>{`
+      @keyframes mjcDance {
+        0%   { transform: translateY(0) rotate(-1.2deg) scale(1); }
+        50%  { transform: translateY(-6px) rotate(1.2deg) scale(1.02); }
+        100% { transform: translateY(0) rotate(-1.2deg) scale(1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        img[data-dance="true"] { animation: none !important; }
+      }
+    `}</style>
     <div
       style={{
         opacity: showSite ? 1 : 0,
@@ -1692,7 +2051,7 @@ export default function Wedding() {
                           </div>
                           <div>
                             <h3 className="text-lg md:text-xl font-medium" style={{ color: C.blue }}>{e.title}</h3>
-                            <p className="text-sm md:text-base" style={{ color: C.blueLight }}>{e.time}</p>
+                            {!e.tbd && <p className="text-sm md:text-base" style={{ color: C.blueLight }}>{e.time}</p>}
                           </div>
                         </div>
                       </div>
@@ -1707,6 +2066,16 @@ export default function Wedding() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Final details note */}
+          <div
+            className="mt-6 md:mt-8 text-center text-xs md:text-sm"
+            style={{ color: C.blueLight, fontStyle: "italic" }}
+          >
+            {lang === "es"
+              ? "Compartiremos horarios y detalles finales más cerca de la fecha."
+              : "We'll share final schedules and details closer to the date."}
           </div>
         </div>
       </section>
@@ -1835,9 +2204,14 @@ export default function Wedding() {
                     </div>
                   </div>
                   <p className="text-xs md:text-sm leading-snug" style={{ color: C.text }}>{h.note}</p>
+                  {h.discountCode && (
+                    <p className="mt-2 text-xs font-medium px-2 py-1 rounded" style={{ backgroundColor: C.creamDark, color: C.blue }}>
+                      {lang === 'es' ? 'Código: ' : 'Code: '}<span className="font-bold">{h.discountCode}</span>
+                    </p>
+                  )}
                 </div>
 
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                   <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: C.blue, color: 'white' }}>{lang === 'es' ? 'Reservar' : 'Book'}</span>
                 </div>
               </div>
@@ -1913,15 +2287,6 @@ export default function Wedding() {
                 ))}
               </div>
 
-              {/* optional small footer note */}
-              <div
-                className="mt-6 md:mt-8 text-center text-xs md:text-sm"
-                style={{ color: C.blueLight, fontStyle: "italic" }}
-              >
-                {lang === "es"
-                  ? "Compartiremos horarios y detalles finales más cerca de la fecha."
-                  : "We’ll share final schedules and details closer to the date."}
-              </div>
             </div>
           </div>
         </div>
@@ -1934,14 +2299,45 @@ export default function Wedding() {
           <p className="text-center text-xs md:text-sm mb-2" style={{ color: C.blueLight }}>{t.dress.subtitle}</p>
           <p className="text-center text-xs md:text-sm mb-6 md:mb-10" style={{ color: C.blue }}>{t.dress.note}</p>
           <div className="grid grid-cols-2 gap-3 md:gap-4 w-full max-w-lg mx-auto">
-            {t.dress.codes.map((d, i) => (
-              <HandDrawnCard key={i} className="p-4 md:p-6 text-center">
-                <div className="flex justify-center" style={{ color: C.blue }}>{getDressIcon(d.icon)}</div>
-                <h3 className="text-base md:text-xl mt-2 md:mt-3 mb-1" style={{ color: C.blue }}>{d.event}</h3>
-                <p className="text-xs md:text-sm font-medium mb-1 md:mb-2" style={{ color: C.blue }}>{d.code}</p>
-                <p className="text-xs md:text-sm" style={{ color: C.blueLight }}>{d.desc}</p>
-              </HandDrawnCard>
-            ))}
+            {t.dress.codes.map((d, i) => {
+              const images = d.inspo ? (Array.isArray(d.inspo) ? d.inspo : [d.inspo]) : [];
+              return (
+                <HandDrawnCard key={i} className="px-5 md:px-7 pt-8 md:pt-10 pb-5 md:pb-7 text-center">
+                  <h3 className="text-base md:text-xl mb-2" style={{ color: C.blue }}>{d.event}</h3>
+                  <p className="text-xs md:text-sm font-medium mb-4" style={{ color: C.blue }}>{d.code}</p>
+                  {images.length > 0 && (
+                    <div className="relative mb-3 rounded-xl" style={{ backgroundColor: C.creamDark }}>
+                      {images.map((img, imgIdx) => (
+                        <img
+                          key={imgIdx}
+                          src={`/images/${img}`}
+                          alt={`${d.event} inspo ${imgIdx + 1}`}
+                          className="w-full h-auto rounded-xl transition-opacity duration-700"
+                          style={{
+                            opacity: imgIdx === hotelImageIndex % images.length ? 1 : 0,
+                            display: imgIdx === hotelImageIndex % images.length ? 'block' : 'none'
+                          }}
+                        />
+                      ))}
+                      {images.length > 1 && (
+                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                          {images.map((_, dotIdx) => (
+                            <div
+                              key={dotIdx}
+                              className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+                              style={{
+                                backgroundColor: dotIdx === hotelImageIndex % images.length ? 'white' : 'rgba(255,255,255,0.4)',
+                                transform: dotIdx === hotelImageIndex % images.length ? 'scale(1.2)' : 'scale(1)'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </HandDrawnCard>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -2067,18 +2463,12 @@ export default function Wedding() {
                 
 
                 <div className="relative z-10">
-                  <h2 className="text-2xl md:text-4xl mb-2" style={{ color: C.blue, fontStyle: "italic" }}>
+                  <h2 className="text-2xl md:text-4xl mb-4 md:mb-6" style={{ color: C.blue, fontStyle: "italic" }}>
                     {t.gifts.title}
                   </h2>
 
                   <p className="text-xs md:text-sm mb-4" style={{ color: C.blueLight, fontStyle: "italic" }}>
                     {t.gifts.subtitle}
-                  </p>
-
-                  <p className="text-xs md:text-sm mb-4 md:mb-5" style={{ color: C.text }}>
-                    {lang === "es"
-                      ? "Contribuye a nuestra luna de miel."
-                      : "Contribute to our honeymoon."}
                   </p>
 
                   <button
@@ -2117,7 +2507,8 @@ export default function Wedding() {
           {t.faq.items.map((f, i) => (
             <FAQWiggleCard
               key={i}
-              className="mb-3 md:mb-4 rounded-2xl overflow-hidden"
+              className="mb-3 md:mb-4 rounded-2xl overflow-hidden cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
             >
               {/* tiny stroke clearance */}
               <div className="p-1.5 md:p-2">
@@ -2125,26 +2516,22 @@ export default function Wedding() {
                 <div className="relative pl-9 pr-7 md:pl-11 md:pr-9 py-4 md:py-5">
                   {/* Plus / Minus — pinned to top-right of the card */}
                   <span
-                    className="absolute top-2.5 md:top-0 right-6 md:right-8 text-lg md:text-xl cursor-pointer select-none"
+                    className="absolute top-2.5 md:top-0 right-6 md:right-8 text-lg md:text-xl select-none"
                     style={{ color: C.blue }}
-                    onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
                     aria-hidden="true"
                   >
                     {expandedFaq === i ? "−" : "+"}
                   </span>
 
                   {/* Question */}
-                  <button
-                    onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
-                    className="w-full text-left hover:opacity-90"
-                  >
+                  <div className="w-full text-left">
                     <span
                       className="block text-sm md:text-base pr-10 md:pr-12 leading-snug break-words"
                       style={{ color: C.blue }}
                     >
                       {f.q}
                     </span>
-                  </button>
+                  </div>
 
                   {/* Answer */}
                   {expandedFaq === i && (
