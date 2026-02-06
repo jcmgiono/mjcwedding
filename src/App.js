@@ -155,7 +155,7 @@ const NAV_TARGETS = {
     { label: "Transporte", href: "#transport" },
     { label: "Vestimenta", href: "#s3" },
     { label: "Historia", href: "#s4" },
-    { label: "Regalos", action: "gifts" }, // page route
+    { label: "Regalos", href: "#gifts" },
     { label: "FAQ", href: "#faq" },
   ],
   en: [
@@ -165,7 +165,7 @@ const NAV_TARGETS = {
     { label: "Transportation", href: "#transport" },
     { label: "Dress Code", href: "#s3" },
     { label: "Story", href: "#s4" },
-    { label: "Gifts", action: "gifts" },
+    { label: "Gifts", href: "#gifts" },
     { label: "FAQ", href: "#faq" },
   ],
 };
@@ -455,9 +455,9 @@ const content = {
     date: { full: "1 de Octubre, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, España", scroll: "Desliza para descubrir" },
     nav: ["RSVP", "Itinerario", "Hospedaje", "Transporte", "Vestimenta", "Historia", "Regalos", "FAQ", "Contacto"],
-    story: { title: "Nuestra Historia", subtitle: "6 años de amor", intro: "Nos conocimos y, desde el primer momento, nos fue imposible mantenernos alejados. Primero fuimos amigos y, en poco tiempo, fuimos cultivando nuestra amistad hasta convertirla en algo más. Nos gusta pensar que nos encontramos en el momento exacto de nuestras vidas. Dios, en su infinita sabiduría, se encargó de unirnos cuando nuestros corazones estaban preparados.",
+    story: { title: "Nuestra Historia", subtitle: "", intro: "Nos conocimos y, desde el primer momento, nos fue imposible mantenernos alejados. Primero fuimos amigos y, en poco tiempo, fuimos cultivando nuestra amistad hasta convertirla en algo más. Nos gusta pensar que nos encontramos en el momento exacto de nuestras vidas. Dios, en su infinita sabiduría, se encargó de unirnos cuando nuestros corazones estaban preparados.",
       items: [
-        { year: "2019", title: "Nos Conocimos", text: "El destino nos cruzó hace 6 años. Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "conocimos.jpg" },
+        { year: "2019", title: "Nos Conocimos", text: "Una mirada, una sonrisa, y supimos que algo especial estaba comenzando.", img: "conocimos.jpg" },
         { year: "8 Feb 2020", title: "Empezamos a Salir", text: "Justo antes de que el mundo cambiara, nosotros empezamos nuestra aventura juntos.", img: "kiss.jpg" },
         { year: "21 Feb 2025", title: "La Pedida", text: "En Napa Valley, rodeados de viñedos y el amor de nuestra familia, Juanca se arrodilló y le pidió a Marijo que fuera su compañera para toda la vida.", img: "mjc_ring_closeup.jpg" },
         { year: "1 Oct 2026", title: "Nuestro Matrimonio", text: "Esperamos con mucha ilusión poder celebrar nuestro amor en la hermosa ciudad de Córdoba, rodeados de las personas que más queremos.", img: "mjc_cordoba_mezquita.jpg" }
@@ -503,8 +503,8 @@ const content = {
     gifts: { title: "Regalos", subtitle: "Su presencia es el mejor regalo, si desean darnos algún detalle, sepan que lo agradecemos profundamente.", msg: "", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
     faq: { title: "Información Importante", items: [{ q: "¿Cómo será el clima?", a: "68-77°F (20-25°C) y noches frescas." },{ q: "¿Puedo traer a mis hijos?", a: "Con cariño, les informamos que la celebración será solo para adultos." },{ q: "¿Puedo llevar acompañante?", a: "Con mucho cariño, les pedimos respetar el número de personas indicado en la invitación. Te invitamos a consultar tu invitación para más detalles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Madrid (1h 45min en tren), Sevilla (1.5h en tren) o Málaga (2h en tren)." },{ q: "¿Necesito visa?", a: "EEUU, México, Colombia: no necesitan visa para estancias de hasta 90 días." },{ q: "¿Restricciones de comida?", a: "Indica restricciones en el formulario." }] },
     contact: { title: "¿Preguntas?", subtitle: "Estamos aquí para ayudaros", msg: "Cualquier duda, no dudéis en contactarnos.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
-    rsvp: { title: "Confirma tu Asistencia", subtitle: "Esperamos contar contigo", deadline: "Confirma antes del 1 Ago 2026", fields: { name: "Nombre completo *", email: "Email (opcional)", attending: "¿Asistirás?", yes: "Sí, asistiré", no: "No podré", guests: "Número de invitados", allergies: "Alergias", allergyOpts: ["Frutos secos", "Mariscos", "Gluten", "Lácteos", "Vegetariano", "Vegano"], other: "Otras restricciones", msg: "Mensaje (opcional)", submit: "Enviar" }, thanks: { title: "¡Gracias!", subtitle: "Confirmación recibida", msg: "Estamos muy emocionados de celebrar contigo." } },
-    footer: { made: "Hecho con amor", hash: "#MJC2026" },
+    rsvp: { title: "Confirma tu Asistencia", subtitle: "Esperamos contar contigo", deadline: "Confirma antes del 1 Ago 2026", fields: { name: "Nombre completo *", email: "Email (opcional)", attending: "¿Asistirás?", yes: "Sí, asistiré", no: "No asistiré", guests: "Número de invitados", allergies: "Alergias", allergyOpts: ["Frutos secos", "Mariscos", "Gluten", "Lácteos", "Vegetariano", "Vegano"], other: "Otras restricciones", msg: "Mensaje (opcional)", submit: "Enviar" }, thanks: { title: "¡Gracias!", subtitle: "Confirmación recibida", msg: "Estamos muy emocionados de celebrar contigo." } },
+    footer: { made: "Hecho con amor", hash: "#MJCBODA" },
     lang: "EN"
   },
   en: {
@@ -512,7 +512,7 @@ const content = {
     date: { full: "October 1, 2026", short: "01.10.26" },
     hero: { location: "Córdoba, Spain", scroll: "Scroll to discover" },
     nav: ["RSVP", "Itinerary", "Stay", "Transportation", "Dress Code", "Story", "Gifts", "FAQ", "Contact"],
-    story: { title: "Our Story", subtitle: "6 years of love", intro: "We met and, from the very first moment, it was impossible for us to stay apart. First we were friends, and in a short time, we cultivated our friendship into something more. We like to think we found each other at the exact right moment in our lives. God, in His infinite wisdom, brought us together when our hearts were ready.",
+    story: { title: "Our Story", subtitle: "", intro: "We met and, from the very first moment, it was impossible for us to stay apart. First we were friends, and in a short time, we cultivated our friendship into something more. We like to think we found each other at the exact right moment in our lives. God, in His infinite wisdom, brought us together when our hearts were ready.",
       items: [
         { year: "2019", title: "We Met", text: "Destiny brought us together 6 years ago. One look, one smile, and we knew something special was beginning.", img: "conocimos.jpg" },
         { year: "Feb 8, 2020", title: "Started Dating", text: "Right before the world changed, we started our adventure together.", img: "kiss.jpg" },
@@ -561,7 +561,7 @@ const content = {
     faq: { title: "Important Information", items: [{ q: "What's the weather like?", a: "68-77°F (20-25°C) and cool evenings." },{ q: "Can I bring children?", a: "With love, we inform you that the celebration will be adults only." },{ q: "Can I bring a plus one?", a: "With love, we ask you to respect the number of people indicated on your invitation. Please check your invitation for details." },{ q: "What language is the ceremony?", a: "Bilingual: Spanish and English." },{ q: "Nearest airport?", a: "Madrid (1h 45min by train), Seville (1.5h by train) or Málaga (2h by train)." },{ q: "Do I need a visa?", a: "US, Mexico, Colombia: no visa needed for stays up to 90 days." },{ q: "Dietary restrictions?", a: "Note restrictions in the RSVP form." }] },
     contact: { title: "Questions?", subtitle: "We're here to help", msg: "Any questions, don't hesitate to reach out.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
     rsvp: { title: "RSVP", subtitle: "We hope to celebrate with you", deadline: "Confirm by Aug 1, 2026", fields: { name: "Full name *", email: "Email (optional)", attending: "Will you attend?", yes: "Yes, I'll be there", no: "Can't make it", guests: "Number of guests", allergies: "Allergies", allergyOpts: ["Tree nuts", "Shellfish", "Gluten", "Dairy", "Vegetarian", "Vegan"], other: "Other restrictions", msg: "Message (optional)", submit: "Send" }, thanks: { title: "Thank You!", subtitle: "RSVP received", msg: "We're excited to celebrate with you." } },
-    footer: { made: "Made with love", hash: "#MJC2026" },
+    footer: { made: "Made with love", hash: "#MJCBODA" },
     lang: "ES"
   }
 };
@@ -1115,38 +1115,59 @@ export default function Wedding() {
     setIsSubmitting(true);
 
     try {
-      const payload = {
+      const timestamp = new Date().toISOString();
+
+      // Primary guest row - 1 if attending, 0 if not
+      const primaryPayload = {
         token: form.token,
         name: form.name,
         email: form.email,
         attending: form.attending,
-        guests: form.guests,
+        guests: form.attending === 'yes' ? 1 : 0,
         allergies: form.allergies.join(', '),
         other: form.other,
-        additionalGuests: JSON.stringify(form.additionalGuests.map(g => ({
-          name: g.name,
-          attending: g.attending !== false,
-          email: g.email || '',
-          allergies: (g.allergies || []).join(', '),
-          other: g.other || ''
-        }))),
         msg: form.msg,
+        submittedBy: form.name,
         lang,
-        timestamp: new Date().toISOString()
+        timestamp
       };
 
-      const body = new URLSearchParams(payload);
+      // Send primary guest first
+      const primaryResponse = await fetch(SHEETS_URL, { method: 'POST', body: new URLSearchParams(primaryPayload) });
+      const primaryResult = await primaryResponse.json().catch(() => ({ success: true })); // fallback if no JSON
+      if (primaryResult.success === false) throw new Error(primaryResult.error || 'Failed to save primary guest');
 
-      await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', body });
+      // Small delay then send additional guests sequentially
+      for (const guest of form.additionalGuests) {
+        await new Promise(r => setTimeout(r, 100)); // 100ms delay between requests
+        const guestPayload = {
+          token: form.token,
+          name: guest.name,
+          email: guest.email || '',
+          attending: guest.attending !== false ? 'yes' : 'no',
+          guests: guest.attending !== false ? 1 : 0,
+          allergies: (guest.allergies || []).join(', '),
+          other: guest.other || '',
+          msg: '',
+          submittedBy: form.name,
+          lang,
+          timestamp
+        };
+        const guestResponse = await fetch(SHEETS_URL, { method: 'POST', body: new URLSearchParams(guestPayload) });
+        const guestResult = await guestResponse.json().catch(() => ({ success: true }));
+        if (guestResult.success === false) throw new Error(guestResult.error || `Failed to save ${guest.name}`);
+      }
 
       // ✅ for token mode, use token not code
       markAsSubmitted(form.token, form.name);
       setRsvpDone(true);
     } catch (e) {
-      console.error(e);
-      // optional: still mark submitted
-      markAsSubmitted(form.token, form.name);
-      setRsvpDone(true);
+      console.error('RSVP submission error:', e);
+      setFormError(
+        lang === 'es'
+          ? 'Hubo un problema al enviar. Por favor intenta de nuevo. Si el problema persiste, contáctanos.'
+          : 'There was a problem submitting. Please try again. If the problem persists, contact us.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -1158,7 +1179,7 @@ export default function Wedding() {
   // GIFTS PAGE
   if (page === 'gifts') {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
+      <div style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
         <nav className="fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: C.cream, borderBottom: '1px solid rgba(91,123,148,0.1)' }}>
           <div className="max-w-5xl mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
             <button onClick={goHome} className="flex items-center gap-1.5 md:gap-2 hover:opacity-70">
@@ -1302,7 +1323,7 @@ export default function Wedding() {
   // RSVP PAGE
   if (page === 'rsvp') {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
+      <div style={{ backgroundColor: C.cream, fontFamily: FONTS.body }}>
         <style>{`
           @keyframes mjcDance {
             0%   { transform: translateY(0) rotate(-1.2deg) scale(1); }
@@ -1362,14 +1383,24 @@ export default function Wedding() {
                 <div className="space-y-4 md:space-y-5">
                   {inviteError && (
                     <div
-                      className="mb-4 px-3 py-2 rounded-lg text-xs md:text-sm text-center"
-                      style={{ backgroundColor: '#fee2e2', color: '#991b1b' }}
+                      className="mb-4 p-4 rounded-xl text-center"
+                      style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}
                     >
-                      {inviteError}
-                      <br />
-                      {lang === 'es'
-                        ? 'Por favor revisa tu invitación o contáctanos.'
-                        : 'Please check your invitation or contact us.'}
+                      <p className="text-sm text-red-500 mb-1">{inviteError}</p>
+                      <p className="text-xs text-red-500 mb-3">
+                        {lang === 'es'
+                          ? 'Por favor revisa tu invitación o contáctanos.'
+                          : 'Please check your invitation or contact us.'}
+                      </p>
+                      <div className="flex flex-row gap-4 justify-center items-center">
+                        {[t.contact.marijo, t.contact.juanca].map((c, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <span className="text-xs" style={{ color: C.blue }}>{c.name}:</span>
+                            <button onClick={() => window.open(`https://wa.me/${c.wa}`, '_blank')} className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer" style={{ backgroundColor: C.blue, color: 'white' }}><Icons.Whatsapp /></button>
+                            <button onClick={() => window.open(`sms:${c.phone}`, '_self')} className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer" style={{ backgroundColor: C.blue, color: 'white' }}><Icons.Imessage /></button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                   {/* Invitation context (token vs manual) */}
@@ -1490,9 +1521,8 @@ export default function Wedding() {
                   {invite && (
                     <>
                       {maxGuests === 1 && (
-                        <div>
-                          <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.name}</label>
-                          <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base focus:ring-2 focus:outline-none" style={{ borderColor: '#E8E4DF' }} />
+                        <div className="text-center">
+                          <p className="text-lg md:text-xl font-medium" style={{ color: C.blue }}>{form.name}</p>
                         </div>
                       )}
 
@@ -1517,7 +1547,7 @@ export default function Wedding() {
                             >
                               {form.attending === 'yes' && <span style={{ color: C.blue, fontSize: '18px', fontWeight: 'bold' }}>✓</span>}
                             </div>
-                            <input type="checkbox" checked={form.attending === 'yes'} onChange={() => setForm({ ...form, attending: form.attending === 'yes' ? '' : 'yes' })} className="sr-only" />
+                            <input type="checkbox" checked={form.attending === 'yes'} onChange={() => setForm({ ...form, attending: form.attending === 'yes' ? '' : 'yes', additionalGuests: form.additionalGuests.map(g => ({ ...g, attending: true })), guests: 1 + form.additionalGuests.length })} className="sr-only" />
                             <span className="text-base md:text-lg font-medium">{t.rsvp.fields.yes}</span>
                           </label>
                           <label
@@ -1538,7 +1568,7 @@ export default function Wedding() {
                             >
                               {form.attending === 'no' && <span style={{ color: C.blue, fontSize: '18px', fontWeight: 'bold' }}>✓</span>}
                             </div>
-                            <input type="checkbox" checked={form.attending === 'no'} onChange={() => setForm({ ...form, attending: form.attending === 'no' ? '' : 'no' })} className="sr-only" />
+                            <input type="checkbox" checked={form.attending === 'no'} onChange={() => setForm({ ...form, attending: form.attending === 'no' ? '' : 'no', additionalGuests: form.additionalGuests.map(g => ({ ...g, attending: false })), guests: 0 })} className="sr-only" />
                             <span className="text-base md:text-lg font-medium">{t.rsvp.fields.no}</span>
                           </label>
                         </div>
@@ -1782,19 +1812,139 @@ export default function Wedding() {
                           </button>
 
                           {formError && (
-                            <p className="text-center text-sm text-red-500 mt-2">{formError}</p>
+                            <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
+                              <p className="text-center text-sm text-red-500 mb-3">{formError}</p>
+                              <div className="flex flex-row gap-4 justify-center items-center">
+                                {[t.contact.marijo, t.contact.juanca].map((c, i) => (
+                                  <div key={i} className="flex items-center gap-2">
+                                    <span className="text-xs" style={{ color: C.blue }}>{c.name}:</span>
+                                    <button onClick={() => window.open(`https://wa.me/${c.wa}`, '_blank')} className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer" style={{ backgroundColor: C.blue, color: 'white' }}><Icons.Whatsapp /></button>
+                                    <button onClick={() => window.open(`sms:${c.phone}`, '_self')} className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer" style={{ backgroundColor: C.blue, color: 'white' }}><Icons.Imessage /></button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           )}
                         </>
                       )}
 
                       {form.attending === 'no' && (
                         <>
-                          <div className="">
-                            <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.email}</label>
-                            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base" style={{ borderColor: '#E8E4DF' }} />
-                          </div>
+                          {/* Who won't attend - only show for multi-guest parties */}
+                          {maxGuests && maxGuests > 1 && (
+                            <div className="p-4 rounded-xl" style={{ backgroundColor: C.creamDark }}>
+                              <p className="text-sm font-medium mb-3" style={{ color: C.blue }}>
+                                {lang === 'es' ? '¿Alguien más de tu grupo asistirá?' : 'Will anyone else from your group attend?'}
+                              </p>
+                              <div className="space-y-3">
+                                {/* Primary guest - not attending since they selected no */}
+                                <div className="flex items-center gap-4 p-3 rounded-lg bg-white opacity-70">
+                                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ border: `3px solid #ccc`, backgroundColor: 'white' }}>
+                                  </div>
+                                  <span className="text-base font-medium line-through" style={{ color: '#999' }}>{form.name}</span>
+                                  <span className="text-xs ml-auto px-2 py-1 rounded-full" style={{ color: '#999', backgroundColor: 'rgba(0,0,0,0.05)' }}>({lang === 'es' ? 'tú' : 'you'})</span>
+                                </div>
+                                {/* Additional guests */}
+                                {form.additionalGuests.map((guest, index) => (
+                                  <label key={index} className="flex items-center gap-4 p-3 rounded-lg bg-white cursor-pointer hover:shadow-md transition-all">
+                                    <div
+                                      className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                      style={{
+                                        border: `3px solid ${guest.attending !== false ? C.blue : '#ccc'}`,
+                                        backgroundColor: guest.attending !== false ? C.blue : 'white',
+                                        boxShadow: guest.attending !== false ? '0 2px 8px rgba(91,123,148,0.3)' : 'none'
+                                      }}
+                                    >
+                                      {guest.attending !== false && <span className="text-white text-lg font-bold">✓</span>}
+                                    </div>
+                                    <input
+                                      type="checkbox"
+                                      checked={guest.attending !== false}
+                                      onChange={(e) => {
+                                        const newGuests = [...form.additionalGuests];
+                                        newGuests[index] = { ...newGuests[index], attending: e.target.checked };
+                                        setForm({ ...form, additionalGuests: newGuests, guests: newGuests.filter(g => g.attending !== false).length });
+                                      }}
+                                      className="sr-only"
+                                    />
+                                    <span
+                                      className="text-base font-medium"
+                                      style={{
+                                        color: guest.attending !== false ? C.blue : '#999',
+                                        textDecoration: guest.attending === false ? 'line-through' : 'none'
+                                      }}
+                                    >
+                                      {guest.name}
+                                    </span>
+                                    <span className="text-xs ml-auto" style={{ color: guest.attending !== false ? C.blue : '#999' }}>
+                                      {guest.attending !== false
+                                        ? (lang === 'es' ? 'Asistirá' : 'Attending')
+                                        : (lang === 'es' ? 'No asistirá' : 'Not attending')
+                                      }
+                                    </span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
-                          <div>
+                          {/* Allergy info for attending guests when primary selected "no" */}
+                          {maxGuests && maxGuests > 1 && form.additionalGuests.filter(g => g.attending !== false).map((guest, index) => {
+                            const originalIndex = form.additionalGuests.findIndex(g => g.name === guest.name);
+                            return (
+                              <div key={originalIndex} className="p-4 rounded-xl border-t-4" style={{ backgroundColor: C.creamDark, borderTopColor: C.gold }}>
+                                <p className="text-base font-medium mb-3" style={{ color: C.blue }}>
+                                  {index + 1}. {guest.name}
+                                </p>
+
+                                <div className="mb-3">
+                                  <label className="block text-xs mb-1" style={{ color: C.blue }}>
+                                    {lang === 'es' ? 'Correo electrónico (opcional)' : 'Email (optional)'}
+                                  </label>
+                                  <input
+                                    type="email"
+                                    value={guest.email || ''}
+                                    onChange={e => updateAdditionalGuest(originalIndex, 'email', e.target.value)}
+                                    className="w-full px-3 py-2 rounded-lg border bg-white text-sm"
+                                    style={{ borderColor: '#E8E4DF' }}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs mb-1" style={{ color: C.blue }}>
+                                    {lang === 'es' ? 'Alergias o restricciones' : 'Allergies or restrictions'}
+                                  </label>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {t.rsvp.fields.allergyOpts.map(a => (
+                                      <button
+                                        key={a}
+                                        type="button"
+                                        onClick={() => toggleAdditionalGuestAllergy(originalIndex, a)}
+                                        className="px-2.5 py-1 rounded-full text-xs transition-all"
+                                        style={{
+                                          backgroundColor: (guest.allergies || []).includes(a) ? C.blue : 'white',
+                                          color: (guest.allergies || []).includes(a) ? 'white' : C.blue,
+                                          border: `1px solid ${C.blue}`
+                                        }}
+                                      >
+                                        {a}
+                                      </button>
+                                    ))}
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={guest.other || ''}
+                                    onChange={e => updateAdditionalGuest(originalIndex, 'other', e.target.value)}
+                                    placeholder={lang === 'es' ? 'Otro...' : 'Other...'}
+                                    className="w-full mt-2 px-3 py-2 rounded-lg border bg-white text-sm"
+                                    style={{ borderColor: '#E8E4DF' }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                          <div className="">
                             <label className="block text-xs md:text-sm mb-1 md:mb-1.5" style={{ color: C.blue }}>{t.rsvp.fields.msg}</label>
                             <textarea value={form.msg} onChange={e => setForm({ ...form, msg: e.target.value })} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base resize-none" style={{ borderColor: '#E8E4DF' }} rows={3} />
                           </div>
@@ -1828,7 +1978,18 @@ export default function Wedding() {
                           </button>
 
                           {formError && (
-                            <p className="text-center text-sm text-red-500 mt-2">{formError}</p>
+                            <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
+                              <p className="text-center text-sm text-red-500 mb-3">{formError}</p>
+                              <div className="flex flex-row gap-4 justify-center items-center">
+                                {[t.contact.marijo, t.contact.juanca].map((c, i) => (
+                                  <div key={i} className="flex items-center gap-2">
+                                    <span className="text-xs" style={{ color: C.blue }}>{c.name}:</span>
+                                    <button onClick={() => window.open(`https://wa.me/${c.wa}`, '_blank')} className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer" style={{ backgroundColor: C.blue, color: 'white' }}><Icons.Whatsapp /></button>
+                                    <button onClick={() => window.open(`sms:${c.phone}`, '_self')} className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer" style={{ backgroundColor: C.blue, color: 'white' }}><Icons.Imessage /></button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           )}
                         </>
                       )}
@@ -1950,7 +2111,7 @@ export default function Wedding() {
                   { label: lang === 'es' ? 'Hospedaje' : 'Stay', href: '#s2' },
                   { label: lang === 'es' ? 'Vestimenta' : 'Dress Code', href: '#s3' },
                   { label: lang === 'es' ? 'Nuestra Historia' : 'Our Story', href: '#s4' },
-                  { label: lang === 'es' ? 'Regalos' : 'Gifts', action: () => { setMobileMenuOpen(false); goToGifts({ preventDefault: () => {} }); } },
+                  { label: lang === 'es' ? 'Regalos' : 'Gifts', href: '#gifts' },
                   { label: 'FAQ', href: '#faq' },
                 ].map((item, i) => (
                   item.action ? (
@@ -2426,6 +2587,7 @@ export default function Wedding() {
       </section>
 
   <section
+    id="gifts"
     className="py-12 md:py-20 px-4 md:px-6 relative overflow-hidden"
     style={{ backgroundColor: C.blue }}
   >
@@ -2558,36 +2720,36 @@ export default function Wedding() {
         <StoryTimeline items={t.story.items} intro={t.story.intro} title={t.story.title} subtitle={t.story.subtitle} />
       </section>
 
-      <footer className="relative py-10 md:py-16 text-center overflow-hidden" style={{ backgroundColor: C.blue }}>
+      <footer className="relative py-6 md:py-10 text-center overflow-hidden" style={{ backgroundColor: C.blue }}>
         <div className="absolute inset-0 opacity-10"><Img src="mjc_couple_vineyard.jpg" alt="Footer" className="w-full h-full" /></div>
         <div className="relative z-10">
-          <Img src="mjc_doodle_dancing_dark_blue.png" alt="Dancing" className="w-28 h-24 md:w-48 md:h-40 rounded-xl mx-auto mb-3 md:mb-4 opacity-70" style={{ filter: 'brightness(0) invert(1)' }}/>
+          <Img src="mjc_doodle_dancing_dark_blue.png" alt="Dancing" className="w-20 h-16 md:w-32 md:h-28 rounded-xl mx-auto -mb-10 md:-mb-16 opacity-70" style={{ filter: 'brightness(0) invert(1)' }}/>
           <CoupleWordmark
             variant="footer"
-            // optional: fine tune footer independently
             offsetPct={2}
             style={{
               filter: "brightness(0) invert(1)",
-              transform: "translateY(-4px)",
+              marginTop: "-20px",
+              marginBottom: "-24px",
             }}
           />
-          <p className="text-white/60 text-xs md:text-sm">{t.date.full} · {t.hero.location}</p>
-          <p className="text-white/80 text-base md:text-lg mt-3 md:mt-4">{t.footer.hash}</p>
-          
-          <div className="mt-6 md:mt-8 mb-4">
-            <p className="text-white/50 text-xs md:text-sm mb-3">{lang === 'es' ? '¿Preguntas? Contáctanos' : 'Questions? Contact us'}</p>
-            <div className="flex flex-col md:flex-row gap-4 md:gap-8 justify-center items-center">
+          <p className="text-white/60 text-xs -mt-6">{t.date.full} · {t.hero.location}</p>
+          <p className="text-white/80 text-sm md:text-base mt-2">{t.footer.hash}</p>
+
+          <div className="mt-4 md:mt-5 mb-3">
+            <p className="text-white/50 text-xs mb-2">{lang === 'es' ? '¿Preguntas? Contáctanos' : 'Questions? Contact us'}</p>
+            <div className="flex flex-col md:flex-row gap-3 md:gap-6 justify-center items-center">
               {[t.contact.marijo, t.contact.juanca].map((c, i) => (
-                <div key={i} className="flex items-center gap-2 md:gap-3 relative z-30">
-                  <span className="text-white/70 text-xs md:text-sm">{c.name}:</span>
-                  <button onClick={() => window.open(`https://wa.me/${c.wa}`, '_blank')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'white' }}><Icons.Whatsapp /></button>
-                  <button onClick={() => window.open(`sms:${c.phone}`, '_self')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'white' }}><Icons.Imessage /></button>
+                <div key={i} className="flex items-center gap-2 relative z-30">
+                  <span className="text-white/70 text-xs">{c.name}:</span>
+                  <button onClick={() => window.open(`https://wa.me/${c.wa}`, '_blank')} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'white' }}><Icons.Whatsapp /></button>
+                  <button onClick={() => window.open(`sms:${c.phone}`, '_self')} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'white' }}><Icons.Imessage /></button>
                 </div>
               ))}
             </div>
           </div>
-          
-          <p className="text-white/40 text-xs md:text-sm mt-6 md:mt-8 flex items-center justify-center gap-1">{t.footer.made} <Icons.Heart /></p>
+
+          <p className="text-white/40 text-xs mt-4 flex items-center justify-center gap-1">{t.footer.made} <Icons.Heart /></p>
         </div>
       </footer>
     </div>
