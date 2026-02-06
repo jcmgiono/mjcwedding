@@ -1125,6 +1125,7 @@ export default function Wedding() {
         other: form.other,
         additionalGuests: JSON.stringify(form.additionalGuests.map(g => ({
           name: g.name,
+          attending: g.attending !== false,
           email: g.email || '',
           allergies: (g.allergies || []).join(', '),
           other: g.other || ''
