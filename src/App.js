@@ -2247,7 +2247,7 @@ export default function Wedding() {
           </p>
 
           <div className="relative">
-            {/* Hand-drawn “paper” blob */}
+            {/* Hand-drawn "paper" blob */}
             <svg
               className="absolute -inset-6 md:-inset-8 w-[calc(100%+48px)] md:w-[calc(100%+64px)] h-[calc(100%+48px)] md:h-[calc(100%+64px)]"
               viewBox="0 0 200 120"
@@ -2267,7 +2267,7 @@ export default function Wedding() {
               />
             </svg>
 
-            <div className="relative z-10 p-5 md:p-8">
+            <div className="relative z-10 pt-10 pb-10 px-6 md:p-8">
               <div className="space-y-5 md:space-y-6">
                 {t.transport.cards.map((c, i) => (
                   <div key={i}>
