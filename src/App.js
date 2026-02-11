@@ -465,11 +465,11 @@ const content = {
     },
     itinerary: { title: "Itinerario", subtitle: "Celebra con nosotros", days: [
       { day: "Miércoles", date: "30", month: "Sep", events: [
-        { title: "Rompe Hielo", time: "20:00", venue: "Por confirmar", address: "", tbd: true, icon: "wine" }
+        { title: "Rompehielos", time: "20:00", venue: "Por confirmar", address: "", tbd: true, icon: "wine" }
       ]},
       { day: "Jueves", date: "1", month: "Oct", events: [
-        { title: "La Ceremonia Religiosa", time: "16:00", venue: "Mezquita-Catedral de Córdoba", address: "C. Cardenal Herrero, 1, 14003 Córdoba", tbd: false, icon: "church" },
-        { title: "La Celebración", time: "18:00", venue: "Castillo de Monclova", address: "Autovía E5, 4, km 475, 41430 Fuentes de Andalucía, Spain", tbd: false, icon: "sparkles" }
+        { title: "Ceremonia Religiosa", time: "16:00", venue: "Mezquita-Catedral de Córdoba", address: "C. Cardenal Herrero, 1, 14003 Córdoba", tbd: false, icon: "church" },
+        { title: "Recepción", time: "18:00", venue: "Castillo de Monclova", address: "Autovía E5, 4, km 475, 41430 Fuentes de Andalucía, Spain", tbd: false, icon: "sparkles" }
       ]}
     ]},
     hotels: { title: "Hospedaje", subtitle: "", bookBy: "", intro: "Hoteles seleccionados por su ubicación y encanto.", disclaimer: "Estos hoteles estaran cerca del punto de regreso de la ceremonia.", list: [
@@ -498,7 +498,7 @@ const content = {
         }
       ]
     },
-    dress: { title: "Vestimenta", subtitle: "", note: "Octubre en Córdoba: 68-77°F de día, noches frescas.", codes: [{ event: "Rompehielos", code: "Cocktail Attire", desc: "", icon: "Sunset", inspo: "rompehielo.jpg" },{ event: "Boda", code: "Black Tie / Formal", desc: "", icon: "Sparkles", inspo: ["dresses.jpg", "suits.jpg"] }] },
+    dress: { title: "Vestimenta", subtitle: "", note: "Octubre en Córdoba: 68-77°F de día, noches frescas.", codes: [{ event: "Rompehielos", code: "Relaxed Cocktail", desc: "", icon: "Sunset" },{ event: "Boda", code: "Black Tie / Formal", desc: "", icon: "Sparkles" }] },
     travel: { title: "Cómo Llegar", subtitle: "", sections: [{ icon: "Plane", title: "Por Avión", text: "Recomendamos volar a Madrid y tomar el tren AVE a Córdoba.", tips: ["También se puede volar a Sevilla o Málaga"] },{ icon: "Train", title: "Por Tren", text: "", tips: ["Madrid 1h 45min", "Sevilla 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Reserva en Renfe" },{ icon: "Car", title: "Por Coche", text: "", tips: ["Madrid 4h", "Sevilla 1.5h", "Málaga 2h"] }] },
     gifts: { title: "Regalos", subtitle: "Su presencia es el mejor regalo, si desean darnos algún detalle, sepan que lo agradecemos profundamente.", msg: "", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
     faq: { title: "Información Importante", items: [{ q: "¿Cómo será el clima?", a: "68-77°F (20-25°C) y noches frescas." },{ q: "¿Puedo traer a mis hijos?", a: "Con cariño, les informamos que la celebración será solo para adultos." },{ q: "¿Puedo llevar acompañante?", a: "Con mucho cariño, les pedimos respetar el número de personas indicado en la invitación. Te invitamos a consultar tu invitación para más detalles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Madrid (1h 45min en tren), Sevilla (1.5h en tren) o Málaga (2h en tren)." },{ q: "¿Necesito visa?", a: "EEUU, México, Colombia: no necesitan visa para estancias de hasta 90 días." },{ q: "¿Restricciones de comida?", a: "Indica restricciones en el formulario." }] },
@@ -555,7 +555,7 @@ const content = {
         }
       ]
     },
-    dress: { title: "Dress Code", subtitle: "", note: "October in Córdoba: 68-77°F days, cool evenings.", codes: [{ event: "Ice Breaker", code: "Cocktail", desc: "Cocktail Attire", icon: "Sunset", inspo: "rompehielo.jpg" },{ event: "Wedding", code: "Black Tie / Formal", desc: "", icon: "Sparkles", inspo: ["dresses.jpg", "suits.jpg"] }] },
+    dress: { title: "Dress Code", subtitle: "", note: "October in Córdoba: 68-77°F days, cool evenings.", codes: [{ event: "Ice Breaker", code: "Relaxed Cocktail", desc: "", icon: "Sunset" },{ event: "Wedding", code: "Black Tie / Formal", desc: "", icon: "Sparkles" }] },
     travel: { title: "Getting There", subtitle: "", sections: [{ icon: "Plane", title: "By Plane", text: "We recommend flying to Madrid and taking the AVE train to Córdoba.", tips: ["You can also fly to Seville or Málaga"] },{ icon: "Train", title: "By Train", text: "", tips: ["Madrid 1h 45min", "Seville 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Book on Renfe" },{ icon: "Car", title: "By Car", text: "", tips: ["Madrid 4h", "Seville 1.5h", "Málaga 2h"] }] },
     gifts: { title: "Gifts", subtitle: "Your presence is the best gift, if you'd like to give us a gift, know that we deeply appreciate it.", msg: "", bank: { title: "Bank Details", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "View bank details", note: "Venmo and PayPal also accepted" },
     faq: { title: "Important Information", items: [{ q: "What's the weather like?", a: "68-77°F (20-25°C) and cool evenings." },{ q: "Can I bring children?", a: "With love, we inform you that the celebration will be adults only." },{ q: "Can I bring a plus one?", a: "With love, we ask you to respect the number of people indicated on your invitation. Please check your invitation for details." },{ q: "What language is the ceremony?", a: "Bilingual: Spanish and English." },{ q: "Nearest airport?", a: "Madrid (1h 45min by train), Seville (1.5h by train) or Málaga (2h by train)." },{ q: "Do I need a visa?", a: "US, Mexico, Colombia: no visa needed for stays up to 90 days." },{ q: "Dietary restrictions?", a: "Note restrictions in the RSVP form." }] },
@@ -728,7 +728,7 @@ const MonthCalendar = ({ lang }) => {
 
   const renderMonth = (monthName, monthNameFull, days, startDay, specialDates) => (
     <div className="flex-1 min-w-0">
-      <h4 className="text-center text-sm md:text-lg mb-2 md:mb-4" style={{ color: C.blue, fontStyle: 'italic' }}>
+      <h4 className="text-center text-sm md:text-lg mb-2 md:mb-4 font-bold" style={{ color: C.blue, fontStyle: 'italic' }}>
         <span className="md:hidden">{monthName} '26</span>
         <span className="hidden md:inline">{monthNameFull} 2026</span>
       </h4>
@@ -814,11 +814,18 @@ export default function Wedding() {
     guests: 1,
     allergies: [],
     other: '',
+    rompehielos: '',
     msg: '',
     additionalGuests: []
   });
   const [countdown, setCountdown] = useState({ d: 0, h: 0, m: 0 });
-  const [page, setPage] = useState('home'); // 'home', 'gifts', 'rsvp'
+  const getInitialPage = () => {
+    const path = window.location.pathname.toLowerCase();
+    if (path === '/rsvp') return 'rsvp';
+    if (path === '/gifts' || path === '/regalos') return 'gifts';
+    return 'home';
+  };
+  const [page, setPage] = useState(getInitialPage); // 'home', 'gifts', 'rsvp'
   const [maxGuests, setMaxGuests] = useState(null);
   const [formError, setFormError] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -842,6 +849,18 @@ export default function Wedding() {
       .then(res => res.text())
       .then(csv => setParties(parseGuestsCSV(csv)))
       .catch(err => console.error('Failed to load guests:', err));
+  }, []);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      if (path === '/rsvp') setPage('rsvp');
+      else if (path === '/gifts' || path === '/regalos') setPage('gifts');
+      else setPage('home');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const markAsSubmitted = (code, name) => {
@@ -978,11 +997,12 @@ export default function Wedding() {
 
 
   
-  const goToRsvp = (attending) => (e) => { 
-    e.preventDefault(); 
-    setForm((f) => ({ ...f, attending })); 
+  const goToRsvp = (attending) => (e) => {
+    e.preventDefault();
+    setForm((f) => ({ ...f, attending }));
     setPage('rsvp');
     setMobileMenuOpen(false);
+    window.history.pushState({}, '', '/rsvp');
     window.scrollTo(0, 0);
   };
 
@@ -990,6 +1010,7 @@ export default function Wedding() {
     e.preventDefault();
     setPage('gifts');
     setMobileMenuOpen(false);
+    window.history.pushState({}, '', '/gifts');
     window.scrollTo(0, 0);
   };
 
@@ -1003,6 +1024,7 @@ export default function Wedding() {
     setInvite(null);
     setInviteError('');
     setLookupPhone('');
+    window.history.pushState({}, '', '/');
     setForm({ name: '', email: '', attending: '', guests: 1, allergies: [], other: '', msg: '', code: '', additionalGuests: [] });
     window.scrollTo(0, 0);
   };
@@ -1126,6 +1148,7 @@ export default function Wedding() {
         guests: form.attending === 'yes' ? 1 : 0,
         allergies: form.allergies.join(', '),
         other: form.other,
+        rompehielos: form.attending === 'yes' ? (form.rompehielos === 'yes' ? 1 : form.rompehielos === 'no' ? 0 : '') : '',
         msg: form.msg,
         submittedBy: form.name,
         lang,
@@ -1148,6 +1171,7 @@ export default function Wedding() {
           guests: guest.attending !== false ? 1 : 0,
           allergies: (guest.allergies || []).join(', '),
           other: guest.other || '',
+          rompehielos: guest.attending !== false ? (guest.rompehielos === 'yes' ? 1 : guest.rompehielos === 'no' ? 0 : '') : '',
           msg: '',
           submittedBy: form.name,
           lang,
@@ -1672,6 +1696,39 @@ export default function Wedding() {
                               />
                             )}
                           </div>
+
+                          {/* Rompehielos attendance for primary guest */}
+                          <div className="mt-3">
+                            <label className="block text-xs mb-2" style={{ color: C.blue }}>
+                              {lang === 'es' ? '¿Asistirás al Rompehielos? (Miércoles 30 Sep)' : 'Will you attend the Ice Breaker? (Wednesday Sep 30)'}
+                            </label>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setForm({ ...form, rompehielos: 'yes' })}
+                                className="flex-1 py-2 rounded-lg text-xs transition-all"
+                                style={{
+                                  backgroundColor: form.rompehielos === 'yes' ? C.blue : 'white',
+                                  color: form.rompehielos === 'yes' ? 'white' : C.blue,
+                                  border: `2px solid ${C.blue}`
+                                }}
+                              >
+                                {lang === 'es' ? 'Sí' : 'Yes'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setForm({ ...form, rompehielos: 'no' })}
+                                className="flex-1 py-2 rounded-lg text-xs transition-all"
+                                style={{
+                                  backgroundColor: form.rompehielos === 'no' ? C.blue : 'white',
+                                  color: form.rompehielos === 'no' ? 'white' : C.blue,
+                                  border: `2px solid ${C.blue}`
+                                }}
+                              >
+                                No
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       )}
 
@@ -1714,6 +1771,39 @@ export default function Wedding() {
                                 style={{ borderColor: '#E8E4DF' }}
                               />
                             )}
+                          </div>
+
+                          {/* Rompehielos attendance */}
+                          <div>
+                            <label className="block text-xs md:text-sm mb-2" style={{ color: C.blue }}>
+                              {lang === 'es' ? '¿Asistirás al Rompehielos? (Miércoles 30 Sep)' : 'Will you attend the Ice Breaker? (Wednesday Sep 30)'}
+                            </label>
+                            <div className="flex gap-3">
+                              <button
+                                type="button"
+                                onClick={() => setForm({ ...form, rompehielos: 'yes' })}
+                                className="flex-1 py-2 rounded-lg text-sm transition-all"
+                                style={{
+                                  backgroundColor: form.rompehielos === 'yes' ? C.blue : 'white',
+                                  color: form.rompehielos === 'yes' ? 'white' : C.blue,
+                                  border: `2px solid ${C.blue}`
+                                }}
+                              >
+                                {lang === 'es' ? 'Sí' : 'Yes'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setForm({ ...form, rompehielos: 'no' })}
+                                className="flex-1 py-2 rounded-lg text-sm transition-all"
+                                style={{
+                                  backgroundColor: form.rompehielos === 'no' ? C.blue : 'white',
+                                  color: form.rompehielos === 'no' ? 'white' : C.blue,
+                                  border: `2px solid ${C.blue}`
+                                }}
+                              >
+                                No
+                              </button>
+                            </div>
                           </div>
                         </>
                       )}
@@ -1771,6 +1861,39 @@ export default function Wedding() {
                                   style={{ borderColor: '#E8E4DF' }}
                                 />
                               )}
+                            </div>
+
+                            {/* Rompehielos attendance for additional guest */}
+                            <div className="mt-3">
+                              <label className="block text-xs mb-2" style={{ color: C.blue }}>
+                                {lang === 'es' ? '¿Asistirá al Rompehielos? (Miércoles 30 Sep)' : 'Will attend Ice Breaker? (Wednesday Sep 30)'}
+                              </label>
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateAdditionalGuest(originalIndex, 'rompehielos', 'yes')}
+                                  className="flex-1 py-2 rounded-lg text-xs transition-all"
+                                  style={{
+                                    backgroundColor: guest.rompehielos === 'yes' ? C.blue : 'white',
+                                    color: guest.rompehielos === 'yes' ? 'white' : C.blue,
+                                    border: `2px solid ${C.blue}`
+                                  }}
+                                >
+                                  {lang === 'es' ? 'Sí' : 'Yes'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => updateAdditionalGuest(originalIndex, 'rompehielos', 'no')}
+                                  className="flex-1 py-2 rounded-lg text-xs transition-all"
+                                  style={{
+                                    backgroundColor: guest.rompehielos === 'no' ? C.blue : 'white',
+                                    color: guest.rompehielos === 'no' ? 'white' : C.blue,
+                                    border: `2px solid ${C.blue}`
+                                  }}
+                                >
+                                  No
+                                </button>
+                              </div>
                             </div>
                           </div>
                         );
@@ -1939,6 +2062,39 @@ export default function Wedding() {
                                     className="w-full mt-2 px-3 py-2 rounded-lg border bg-white text-sm"
                                     style={{ borderColor: '#E8E4DF' }}
                                   />
+                                </div>
+
+                                {/* Rompehielos attendance for additional guest in "no" flow */}
+                                <div className="mt-3">
+                                  <label className="block text-xs mb-2" style={{ color: C.blue }}>
+                                    {lang === 'es' ? '¿Asistirá al Rompehielos? (Miércoles 30 Sep)' : 'Will attend Ice Breaker? (Wednesday Sep 30)'}
+                                  </label>
+                                  <div className="flex gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => updateAdditionalGuest(originalIndex, 'rompehielos', 'yes')}
+                                      className="flex-1 py-2 rounded-lg text-xs transition-all"
+                                      style={{
+                                        backgroundColor: guest.rompehielos === 'yes' ? C.blue : 'white',
+                                        color: guest.rompehielos === 'yes' ? 'white' : C.blue,
+                                        border: `2px solid ${C.blue}`
+                                      }}
+                                    >
+                                      {lang === 'es' ? 'Sí' : 'Yes'}
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => updateAdditionalGuest(originalIndex, 'rompehielos', 'no')}
+                                      className="flex-1 py-2 rounded-lg text-xs transition-all"
+                                      style={{
+                                        backgroundColor: guest.rompehielos === 'no' ? C.blue : 'white',
+                                        color: guest.rompehielos === 'no' ? 'white' : C.blue,
+                                        border: `2px solid ${C.blue}`
+                                      }}
+                                    >
+                                      No
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             );
