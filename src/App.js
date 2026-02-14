@@ -92,10 +92,12 @@ const norm = (s) =>
 
 const normPhone = (s) => (s || "").replace(/\D/g, ""); // strip non-digits
 
-// Check if names are similar enough (fuzzy match)
-const namesMatch = (inputName, memberName) => {
+// Fuzzy name matching - checks if names are similar enough
+const fuzzyNameMatch = (inputName, memberName) => {
   const input = norm(inputName);
   const member = norm(memberName);
+
+  if (!input || !member) return false;
 
   // Exact match
   if (input === member) return true;
@@ -108,40 +110,63 @@ const namesMatch = (inputName, memberName) => {
   const memberParts = member.split(' ').filter(p => p.length > 1);
 
   // At least one significant word matches
-  const hasMatchingPart = inputParts.some(ip =>
+  return inputParts.some(ip =>
     memberParts.some(mp => ip === mp || ip.includes(mp) || mp.includes(ip))
   );
-
-  return hasMatchingPart;
 };
 
 const findPartyByNameAndPhone = (parties, fullName, countryCode, phone) => {
   const fullPhone = normPhone(countryCode + phone);
 
-  // First, find by phone number (primary match)
-  const partyByPhone = parties.find(party =>
-    party.members.some(member => normPhone(member.phone) === fullPhone)
-  );
+  // First, find by phone number
+  if (fullPhone && fullPhone.length > 3) {
+    // Collect all members with matching phone
+    const phoneMatches = [];
+    for (const party of parties) {
+      for (const member of party.members) {
+        if (normPhone(member.phone) === fullPhone) {
+          phoneMatches.push({ party, member });
+        }
+      }
+    }
 
-  if (partyByPhone) {
-    // Check if name is close enough to any member
-    const matchingMember = partyByPhone.members.find(member =>
-      normPhone(member.phone) === fullPhone && namesMatch(fullName, member.name)
-    );
-    if (matchingMember) {
-      return { party: partyByPhone, matchedMember: matchingMember };
+    if (phoneMatches.length === 1) {
+      // Single phone match - return it
+      return { party: phoneMatches[0].party, matchedMember: phoneMatches[0].member };
+    }
+
+    if (phoneMatches.length > 1) {
+      // Multiple people share this phone - try fuzzy name match
+      const nameMatch = phoneMatches.find(pm => fuzzyNameMatch(fullName, pm.member.name));
+      if (nameMatch) {
+        return { party: nameMatch.party, matchedMember: nameMatch.member };
+      }
+      // No name match, just use the first phone match
+      return { party: phoneMatches[0].party, matchedMember: phoneMatches[0].member };
     }
   }
 
   // Fallback: exact name match for any guest
   const normalizedInput = norm(fullName);
+
+  // Collect all matching members to check for duplicates
+  const matchingMembers = [];
   for (const party of parties) {
-    const matchingMember = party.members.find(member =>
-      norm(member.name) === normalizedInput
-    );
-    if (matchingMember) {
-      return { party, matchedMember: matchingMember };
+    for (const member of party.members) {
+      if (norm(member.name) === normalizedInput) {
+        matchingMembers.push({ party, member });
+      }
     }
+  }
+
+  // If multiple matches exist, require phone number
+  if (matchingMembers.length > 1) {
+    return { duplicates: true, count: matchingMembers.length };
+  }
+
+  // If single match, return it
+  if (matchingMembers.length === 1) {
+    return { party: matchingMembers[0].party, matchedMember: matchingMembers[0].member };
   }
 
   return null;
@@ -473,11 +498,11 @@ const content = {
       ]}
     ]},
     hotels: { title: "Hospedaje", subtitle: "", bookBy: "", intro: "Hoteles seleccionados por su ubicación y encanto.", disclaimer: "Estos hoteles estaran cerca del punto de regreso de la ceremonia.", list: [
-      { name: "NH Collection Palacio de Córdoba", price: "€€€€€", note: "Plaza de Maimónides, 3, 14004 Córdoba", top: true, images: ["nh_collection1.avif", "nh_collection2.webp", "nh_collection3.avif"], url: "https://www.nh-collection.com/en/hotel/nh-collection-palacio-de-cordoba" },
+      { name: "NH Collection Palacio de Córdoba", price: "€€€€€", note: "Plaza de Maimónides, 3, 14004 Córdoba", top: true, ourStay: true, images: ["nh_collection1.avif", "nh_collection2.webp", "nh_collection3.avif"], url: "https://www.nh-collection.com/en/hotel/nh-collection-palacio-de-cordoba" },
+      { name: "Eurostars Palace", price: "€€€€€", note: "Paseo de la Victoria, s/n, 14004 Córdoba", top: false, images: ["eurostarpal1.jpg", "eurostarpal2.jpg", "eurostarpal3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-palace.html", discountCode: "BODA1OCT26" },
       { name: "H10 Palacio Colomera", price: "€€€€", note: "Plaza de las Tendillas, 3, 14002 Córdoba", top: false, images: ["h10palacio1.jpg", "h10palacio2.jpg", "H10Palacio3.jpg"], url: "https://www.h10hotels.com/en/cordova-hotels/h10-palacio-colomera", discountCode: "BODAMYJO26" },
       { name: "Eurostars Conquistador", price: "€€€€", note: "C/ Magistral González Francés, 15-17, 14003 Córdoba", top: false, images: ["eurostarcon1.jpg", "eurostarcon2.jpg", "eurostarcon3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-conquistador.html" },
-      { name: "Eurostars Palace", price: "€€€€€", note: "Paseo de la Victoria, s/n, 14004 Córdoba", top: false, images: ["eurostarpal1.jpg", "eurostarpal2.jpg", "eurostarpal3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-palace.html" },
-      { name: "NH Córdoba Califa", price: "€€€€", note: "Lope de Hoces, 14, 14003 Córdoba", top: false, images: ["nhcalifa1.jpg", "nhcalifa2.jpg", "nhcalifa3.jpg"], url: "https://www.nh-hotels.com/en/hotel/nh-cordoba-califa" },
+      { name: "Hotel Hacienda Posada de Vallina", price: "€€€", note: "Corregidor Luis de la Cerda, 83, 14003 Córdoba", top: false, images: ["hotelhacienda.jpg", "hotelhacienda2.jpg", "hotelhacienda3.jpg"], url: "https://www.hhposadadevallina.es/" },
       { name: "Hotel Córdoba Centro", price: "€€€", note: "C/ Jesús y María, 8, 14003 Córdoba", top: false, images: ["centro1.jpg", "centro2.jpg", "centro3.jpg"], url: "https://www.hotel-cordobacentro.es/" }
     ] },
     transport: {
@@ -503,7 +528,7 @@ const content = {
     gifts: { title: "Regalos", subtitle: "Su presencia es el mejor regalo, si desean darnos algún detalle, sepan que lo agradecemos profundamente.", msg: "", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
     faq: { title: "Información Importante", items: [{ q: "¿Cómo será el clima?", a: "68-77°F (20-25°C) y noches frescas." },{ q: "¿Puedo traer a mis hijos?", a: "Con cariño, les informamos que la celebración será solo para adultos." },{ q: "¿Puedo llevar acompañante?", a: "Con mucho cariño, les pedimos respetar el número de personas indicado en la invitación. Te invitamos a consultar tu invitación para más detalles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Madrid (1h 45min en tren), Sevilla (1.5h en tren) o Málaga (2h en tren)." },{ q: "¿Necesito visa?", a: "EEUU, México, Colombia: no necesitan visa para estancias de hasta 90 días." },{ q: "¿Restricciones de comida?", a: "Indica restricciones en el formulario." }] },
     contact: { title: "¿Preguntas?", subtitle: "Estamos aquí para ayudaros", msg: "Cualquier duda, no dudéis en contactarnos.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
-    rsvp: { title: "Confirma tu Asistencia", subtitle: "Esperamos contar contigo", deadline: "Confirma antes del 1 Ago 2026", fields: { name: "Nombre completo *", email: "Email (opcional)", attending: "¿Asistirás?", yes: "Sí, asistiré", no: "No asistiré", guests: "Número de invitados", allergies: "Alergias", allergyOpts: ["Frutos secos", "Mariscos", "Gluten", "Lácteos", "Vegetariano", "Vegano"], other: "Otras restricciones", msg: "Mensaje (opcional)", submit: "Enviar" }, thanks: { title: "¡Gracias!", subtitle: "Confirmación recibida", msg: "Estamos muy emocionados de celebrar contigo." } },
+    rsvp: { title: "Confirma tu Asistencia", subtitle: "Esperamos contar contigo", deadline: "Confirma antes del 1 Jul 2026", fields: { name: "Nombre completo *", email: "Email (opcional)", attending: "¿Asistirás?", yes: "Sí, asistiré", no: "No asistiré", guests: "Número de invitados", allergies: "Alergias", allergyOpts: ["Frutos secos", "Mariscos", "Gluten", "Lácteos", "Vegetariano", "Vegano"], other: "Otras restricciones", msg: "Mensaje (opcional)", submit: "Enviar" }, thanks: { title: "¡Gracias!", subtitle: "Confirmación recibida", msg: "Estamos muy emocionados de celebrar contigo." } },
     footer: { made: "Hecho con amor", hash: "#MJCBODA" },
     lang: "EN"
   },
@@ -530,11 +555,11 @@ const content = {
       ]}
     ]},
     hotels: { title: "Where to Stay", subtitle: "", bookBy: "", intro: "Hotels selected for location and charm.", disclaimer: "These hotels will be near the drop-off point for transportation returning from the ceremony.", list: [
-      { name: "NH Collection Palacio de Córdoba", price: "€€€€€", note: "Plaza de Maimónides, 3, 14004 Córdoba", top: true, images: ["nh_collection1.avif", "nh_collection2.webp", "nh_collection3.avif"], url: "https://www.nh-collection.com/en/hotel/nh-collection-palacio-de-cordoba" },
+      { name: "NH Collection Palacio de Córdoba", price: "€€€€€", note: "Plaza de Maimónides, 3, 14004 Córdoba", top: true, ourStay: true, images: ["nh_collection1.avif", "nh_collection2.webp", "nh_collection3.avif"], url: "https://www.nh-collection.com/en/hotel/nh-collection-palacio-de-cordoba" },
+      { name: "Eurostars Palace", price: "€€€€€", note: "Paseo de la Victoria, s/n, 14004 Córdoba", top: false, images: ["eurostarpal1.jpg", "eurostarpal2.jpg", "eurostarpal3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-palace.html", discountCode: "BODA1OCT26" },
       { name: "H10 Palacio Colomera", price: "€€€€", note: "Plaza de las Tendillas, 3, 14002 Córdoba", top: false, images: ["h10palacio1.jpg", "h10palacio2.jpg", "H10Palacio3.jpg"], url: "https://www.h10hotels.com/en/cordova-hotels/h10-palacio-colomera", discountCode: "BODAMYJO26" },
       { name: "Eurostars Conquistador", price: "€€€€", note: "C/ Magistral González Francés, 15-17, 14003 Córdoba", top: false, images: ["eurostarcon1.jpg", "eurostarcon2.jpg", "eurostarcon3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-conquistador.html" },
-      { name: "Eurostars Palace", price: "€€€€€", note: "Paseo de la Victoria, s/n, 14004 Córdoba", top: false, images: ["eurostarpal1.jpg", "eurostarpal2.jpg", "eurostarpal3.jpg"], url: "https://www.eurostarshotels.co.uk/eurostars-palace.html" },
-      { name: "NH Córdoba Califa", price: "€€€€", note: "Lope de Hoces, 14, 14003 Córdoba", top: false, images: ["nhcalifa1.jpg", "nhcalifa2.jpg", "nhcalifa3.jpg"], url: "https://www.nh-hotels.com/en/hotel/nh-cordoba-califa" },
+      { name: "Hotel Hacienda Posada de Vallina", price: "€€€", note: "Corregidor Luis de la Cerda, 83, 14003 Córdoba", top: false, images: ["hotelhacienda.jpg", "hotelhacienda2.jpg", "hotelhacienda3.jpg"], url: "https://www.hhposadadevallina.es/" },
       { name: "Hotel Córdoba Centro", price: "€€€", note: "C/ Jesús y María, 8, 14003 Córdoba", top: false, images: ["centro1.jpg", "centro2.jpg", "centro3.jpg"], url: "https://www.hotel-cordobacentro.es/" }
     ] },
     transport: {
@@ -560,7 +585,7 @@ const content = {
     gifts: { title: "Gifts", subtitle: "Your presence is the best gift, if you'd like to give us a gift, know that we deeply appreciate it.", msg: "", bank: { title: "Bank Details", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "View bank details", note: "Venmo and PayPal also accepted" },
     faq: { title: "Important Information", items: [{ q: "What's the weather like?", a: "68-77°F (20-25°C) and cool evenings." },{ q: "Can I bring children?", a: "With love, we inform you that the celebration will be adults only." },{ q: "Can I bring a plus one?", a: "With love, we ask you to respect the number of people indicated on your invitation. Please check your invitation for details." },{ q: "What language is the ceremony?", a: "Bilingual: Spanish and English." },{ q: "Nearest airport?", a: "Madrid (1h 45min by train), Seville (1.5h by train) or Málaga (2h by train)." },{ q: "Do I need a visa?", a: "US, Mexico, Colombia: no visa needed for stays up to 90 days." },{ q: "Dietary restrictions?", a: "Note restrictions in the RSVP form." }] },
     contact: { title: "Questions?", subtitle: "We're here to help", msg: "Any questions, don't hesitate to reach out.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
-    rsvp: { title: "RSVP", subtitle: "We hope to celebrate with you", deadline: "Confirm by Aug 1, 2026", fields: { name: "Full name *", email: "Email (optional)", attending: "Will you attend?", yes: "Yes, I'll be there", no: "Can't make it", guests: "Number of guests", allergies: "Allergies", allergyOpts: ["Tree nuts", "Shellfish", "Gluten", "Dairy", "Vegetarian", "Vegan"], other: "Other restrictions", msg: "Message (optional)", submit: "Send" }, thanks: { title: "Thank You!", subtitle: "RSVP received", msg: "We're excited to celebrate with you." } },
+    rsvp: { title: "RSVP", subtitle: "We hope to celebrate with you", deadline: "Confirm by Jul 1, 2026", fields: { name: "Full name *", email: "Email (optional)", attending: "Will you attend?", yes: "Yes, I'll be there", no: "Can't make it", guests: "Number of guests", allergies: "Allergies", allergyOpts: ["Tree nuts", "Shellfish", "Gluten", "Dairy", "Vegetarian", "Vegan"], other: "Other restrictions", msg: "Message (optional)", submit: "Send" }, thanks: { title: "Thank You!", subtitle: "RSVP received", msg: "We're excited to celebrate with you." } },
     footer: { made: "Made with love", hash: "#MJCBODA" },
     lang: "ES"
   }
@@ -719,7 +744,7 @@ const CalendarCard = ({ date, month, day }) => (
 const MonthCalendar = ({ lang }) => {
   const months = { sep: 'Sep', oct: 'Oct' };
   const monthsFull = lang === 'es' ? { sep: 'Septiembre', oct: 'Octubre' } : { sep: 'September', oct: 'October' };
-  const weekDays = lang === 'es' ? ['L', 'M', 'X', 'J', 'V', 'S', 'D'] : ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const weekDays = lang === 'es' ? ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'] : ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
   const sepDays = Array.from({ length: 30 }, (_, i) => i + 1);
   const sepStartDay = 1;
   const octDays = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -833,6 +858,7 @@ export default function Wedding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [zelleCopied, setZelleCopied] = useState(false);
   const [hotelImageIndex, setHotelImageIndex] = useState(0);
+  const [copiedHotelCode, setCopiedHotelCode] = useState(null);
   const introStartRef = React.useRef(Date.now());
   const [introLeaving, setIntroLeaving] = useState(false);
   const [showSite, setShowSite] = useState(false);
@@ -1497,6 +1523,18 @@ export default function Wedding() {
                               lang === "es"
                                 ? "No encontramos tu invitación. Revisa el nombre y teléfono."
                                 : "We couldn't find your invitation. Please check your name and phone number."
+                            );
+                            setInvite(null);
+                            setMaxGuests(null);
+                            return;
+                          }
+
+                          // Handle duplicate names - require phone number
+                          if (result.duplicates) {
+                            setInviteError(
+                              lang === "es"
+                                ? `Encontramos ${result.count} invitados con ese nombre. Por favor ingresa tu número de teléfono para identificarte.`
+                                : `We found ${result.count} guests with that name. Please enter your phone number to identify yourself.`
                             );
                             setInvite(null);
                             setMaxGuests(null);
@@ -2523,13 +2561,31 @@ export default function Wedding() {
                   </div>
                   <p className="text-xs md:text-sm leading-snug" style={{ color: C.text }}>{h.note}</p>
                   {h.discountCode && (
-                    <p className="mt-2 text-xs font-medium px-2 py-1 rounded" style={{ backgroundColor: C.creamDark, color: C.blue }}>
-                      {lang === 'es' ? 'Código: ' : 'Code: '}<span className="font-bold">{h.discountCode}</span>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(h.discountCode);
+                        setCopiedHotelCode(h.discountCode);
+                        setTimeout(() => setCopiedHotelCode(null), 1500);
+                      }}
+                      className="mt-2 text-xs font-medium px-2 py-1 rounded cursor-pointer hover:opacity-80 transition-opacity relative z-10"
+                      style={{ backgroundColor: C.creamDark, color: C.blue }}
+                    >
+                      {copiedHotelCode === h.discountCode
+                        ? (lang === 'es' ? '✓ Copiado!' : '✓ Copied!')
+                        : <>{lang === 'es' ? 'Código: ' : 'Code: '}<span className="font-bold">{h.discountCode}</span></>
+                      }
+                    </button>
+                  )}
+                  {h.ourStay && (
+                    <p className="mt-2 text-xs italic" style={{ color: C.blueLight }}>
+                      {lang === 'es' ? '✨ Donde se hospedan los novios' : '✨ Where the couple is staying'}
                     </p>
                   )}
                 </div>
 
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                   <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: C.blue, color: 'white' }}>{lang === 'es' ? 'Reservar' : 'Book'}</span>
                 </div>
               </div>
