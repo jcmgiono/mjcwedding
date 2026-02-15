@@ -1506,7 +1506,7 @@ export default function Wedding() {
                               setLookupPhone(e.target.value);
                               setInviteError("");
                             }}
-                            placeholder="xxx-xxx-xxxx"
+                            placeholder="xxxxxxxxxx"
                             className="flex-1 px-3 md:px-4 py-2.5 md:py-3 rounded-xl border bg-white text-sm md:text-base"
                             style={{ borderColor: inviteError ? '#ef4444' : '#E8E4DF' }}
                           />
