@@ -524,7 +524,7 @@ const content = {
       ]
     },
     dress: { title: "Vestimenta", subtitle: "", note: "Octubre en Córdoba: 68-77°F de día, noches frescas.", codes: [{ event: "Rompehielos", code: "Relaxed Cocktail", desc: "", icon: "Sunset" },{ event: "Boda", code: "Black Tie / Formal", desc: "", icon: "Sparkles" }] },
-    travel: { title: "Cómo Llegar", subtitle: "", sections: [{ icon: "Plane", title: "Por Avión", text: "Recomendamos volar a Madrid y tomar el tren AVE a Córdoba.", tips: ["También se puede volar a Sevilla o Málaga"] },{ icon: "Train", title: "Por Tren", text: "", tips: ["Madrid 1h 45min", "Sevilla 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Reserva en Renfe" },{ icon: "Car", title: "Por Coche", text: "", tips: ["Madrid 4h", "Sevilla 1.5h", "Málaga 2h"] }] },
+    travel: { title: "Cómo Llegar", subtitle: "", sections: [{ icon: "Plane", title: "Por Avión", text: "Recomendamos volar a Madrid y tomar el tren AVE a Córdoba.", tips: ["También se puede volar a Sevilla o Málaga"] },{ icon: "Train", title: "Por Tren", text: "", tips: ["Madrid 1h 45min", "Sevilla 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Reserva en Renfe" },{ icon: "Car", title: "Por Coche", text: "", tips: ["Madrid 4h", "Sevilla 1.5h", "Málaga 2h"] }], flightTip: "Recomendamos comprar los vuelos con anticipación — entre antes, mejor." },
     gifts: { title: "Regalos", subtitle: "Su presencia es el mejor regalo, si desean darnos algún detalle, sepan que lo agradecemos profundamente.", msg: "", bank: { title: "Datos Bancarios", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "Ver datos bancarios", note: "Bizum y PayPal también" },
     faq: { title: "Información Importante", items: [{ q: "¿Cómo será el clima?", a: "68-77°F (20-25°C) y noches frescas." },{ q: "¿Puedo traer a mis hijos?", a: "Con cariño, les informamos que la celebración será solo para adultos." },{ q: "¿Puedo llevar acompañante?", a: "Con mucho cariño, les pedimos respetar el número de personas indicado en la invitación. Te invitamos a consultar tu invitación para más detalles." },{ q: "¿Idioma de la ceremonia?", a: "Bilingüe: español e inglés." },{ q: "¿Aeropuerto más cercano?", a: "Madrid (1h 45min en tren), Sevilla (1.5h en tren) o Málaga (2h en tren)." },{ q: "¿Necesito visa?", a: "EEUU, México, Colombia: no necesitan visa para estancias de hasta 90 días." },{ q: "¿Restricciones de comida?", a: "Indica restricciones en el formulario." }] },
     contact: { title: "¿Preguntas?", subtitle: "Estamos aquí para ayudaros", msg: "Cualquier duda, no dudéis en contactarnos.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
@@ -581,7 +581,7 @@ const content = {
       ]
     },
     dress: { title: "Dress Code", subtitle: "", note: "October in Córdoba: 68-77°F days, cool evenings.", codes: [{ event: "Ice Breaker", code: "Relaxed Cocktail", desc: "", icon: "Sunset" },{ event: "Wedding", code: "Black Tie / Formal", desc: "", icon: "Sparkles" }] },
-    travel: { title: "Getting There", subtitle: "", sections: [{ icon: "Plane", title: "By Plane", text: "We recommend flying to Madrid and taking the AVE train to Córdoba.", tips: ["You can also fly to Seville or Málaga"] },{ icon: "Train", title: "By Train", text: "", tips: ["Madrid 1h 45min", "Seville 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Book on Renfe" },{ icon: "Car", title: "By Car", text: "", tips: ["Madrid 4h", "Seville 1.5h", "Málaga 2h"] }] },
+    travel: { title: "Getting There", subtitle: "", sections: [{ icon: "Plane", title: "By Plane", text: "We recommend flying to Madrid and taking the AVE train to Córdoba.", tips: ["You can also fly to Seville or Málaga"] },{ icon: "Train", title: "By Train", text: "", tips: ["Madrid 1h 45min", "Seville 45min", "Málaga 2h"], url: "https://www.renfe.com", urlText: "Book on Renfe" },{ icon: "Car", title: "By Car", text: "", tips: ["Madrid 4h", "Seville 1.5h", "Málaga 2h"] }], flightTip: "We recommend booking flights early — the sooner, the better." },
     gifts: { title: "Gifts", subtitle: "Your presence is the best gift, if you'd like to give us a gift, know that we deeply appreciate it.", msg: "", bank: { title: "Bank Details", iban: "ES00 0000 0000 0000 0000 0000", swift: "XXXXESXX", holder: "Maria Jose Licona / Juan Carlos Moreno" }, cta: "View bank details", note: "Venmo and PayPal also accepted" },
     faq: { title: "Important Information", items: [{ q: "What's the weather like?", a: "68-77°F (20-25°C) and cool evenings." },{ q: "Can I bring children?", a: "With love, we inform you that the celebration will be adults only." },{ q: "Can I bring a plus one?", a: "With love, we ask you to respect the number of people indicated on your invitation. Please check your invitation for details." },{ q: "What language is the ceremony?", a: "Bilingual: Spanish and English." },{ q: "Nearest airport?", a: "Madrid (1h 45min by train), Seville (1.5h by train) or Málaga (2h by train)." },{ q: "Do I need a visa?", a: "US, Mexico, Colombia: no visa needed for stays up to 90 days." },{ q: "Dietary restrictions?", a: "Note restrictions in the RSVP form." }] },
     contact: { title: "Questions?", subtitle: "We're here to help", msg: "Any questions, don't hesitate to reach out.", marijo: { name: "Marijo", phone: "+1-832-388-9435", wa: "18323889435" }, juanca: { name: "Juanca", phone: "+1-915-588-9258", wa: "19155889258" } },
@@ -2734,6 +2734,11 @@ export default function Wedding() {
               </HandDrawnCard>
             ))}
           </div>
+          {t.travel.flightTip && (
+            <p className="text-center text-xs md:text-sm mt-6 md:mt-8 text-white/80 italic">
+              {t.travel.flightTip}
+            </p>
+          )}
         </div>
       </section>
 
