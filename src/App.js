@@ -1503,7 +1503,7 @@ export default function Wedding() {
                             type="tel"
                             value={lookupPhone}
                             onChange={(e) => {
-                              setLookupPhone(e.target.value);
+                              setLookupPhone(e.target.value.replace(/\D/g, ''));
                               setInviteError("");
                             }}
                             placeholder="xxxxxxxxxx"
